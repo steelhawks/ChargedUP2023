@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.Pigeon2;
 
@@ -16,6 +17,8 @@ public class Drivetrain extends SubsystemBase{
     // MOTORS
   public final WPI_TalonSRX LEFT_MOTOR_ONE;
   public final WPI_TalonSRX RIGHT_MOTOR_ONE;
+
+  public final WPI_TalonFX TEST_MOTOR;
 
   public final MotorControllerGroup leftGroup;
   public final MotorControllerGroup rightGroup;
@@ -37,14 +40,17 @@ public class Drivetrain extends SubsystemBase{
 
   public Drivetrain() 
   {
-    //SPARK MAX LEFT MOTORS
+    //LEFT MOTORS
     this.LEFT_MOTOR_ONE = new WPI_TalonSRX(1);
-    //SPARK MAX RIGHT MOTORS
-    this.RIGHT_MOTOR_ONE = new WPI_TalonSRX(0);
+    //RIGHT MOTORS
+    this.RIGHT_MOTOR_ONE = new WPI_TalonSRX(2);
+    
+    //TEST FX MOTOR
+    this.TEST_MOTOR = new WPI_TalonFX(4);
 
     //SPEED CONTROLLER GROUPS
     this.rightGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE);
-    this.leftGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE);
+    this.leftGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE,this.TEST_MOTOR);
 
     //DIFFERENTIAL DRIVE
     this.DIFF_DRIVE = new DifferentialDrive(this.rightGroup, this.leftGroup);
@@ -117,12 +123,17 @@ public class Drivetrain extends SubsystemBase{
     return false;
   }
 
-  /** Pings the subsystem. */
-  public void ping(){}
-
   /** Checks if the subsystem is functioning properly. @return True if functioning */
   public boolean isAlive(){
     return true;
+  }
+
+  public double getIntegratedSensorVelocity(){
+    return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorVelocity();
+  }
+
+  public double getIntegratedSensorPosition(){
+    return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorPosition();
   }
 
   /** Print info to shuffleboard */
@@ -136,22 +147,10 @@ public class Drivetrain extends SubsystemBase{
 
 
     SmartDashboard.putNumber("gyroangle", getGyroAngle());
+    SmartDashboard.putNumber("int vel", getIntegratedSensorVelocity());
+    SmartDashboard.putNumber("int pos", getIntegratedSensorPosition());
+
     
   }
-  
-  //VISION STUFF
-
-  // LOOK FOR BALL
-  public void spinRobot() {
-    this.DIFF_DRIVE.arcadeDrive(0, 0.7);
-  }
-
-  
-  // Turns robot 180 degrees
-  private void rotateRobot() {
-    this.DIFF_DRIVE.arcadeDrive(0, 180);
-  }
-
-
 
 }

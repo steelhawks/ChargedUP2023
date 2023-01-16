@@ -23,6 +23,7 @@ public class DrivetrainDriveCommand extends CommandBase {
 
     public void execute() {
         drivetrain.arcadeDrive(driver);
+        drivetrain.shuffleBoard();
 
     }
 
