@@ -35,7 +35,13 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-        Timer.delay(1.0);
+        // Thread thread = new Thread(() -> {
+        //     Thread.sleep(0.5);
+        //     resetModulesToAbsolute();
+        // });
+        // thread.run();
+
+        Timer.delay(1);
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
@@ -131,11 +137,18 @@ public class Swerve extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);   
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Amp", mod.getAngleAmperage());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Amp", mod.getDriveAmperage()); 
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Percent", mod.getAngleOutput());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Percent", mod.getDriveOutput()); 
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
         }
 
         SmartDashboard.putNumber("Yaw", gyro.getYaw());
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
         SmartDashboard.putNumber("Roll", gyro.getRoll());
+
+        
     }
 }
