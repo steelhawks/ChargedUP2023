@@ -23,6 +23,8 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
+    private final double rollDeadband = 8;
+
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
         gyro.configFactoryDefault();
@@ -130,6 +132,27 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    // private void zeroWheels() {
+    //     for (SwerveModule mod : mSwerveMods) {
+    //         mod.
+    //     }
+    // }
+
+    /*
+     * Call after robot is on ramp
+     * Click button to call method
+     * Move all wheels to zero degrees ("tank mode")
+     * If roll positive, move wheels positive
+     * If roll negative, move wheels negative
+     * Speed proportional to roll
+     */
+    private void autoBalance() {
+        double roll = gyro.getRoll();
+        if (Math.abs(roll) <= rollDeadband) return;
+
+
+    }
+
     @Override
     public void periodic(){
         swerveOdometry.update(getYaw(), getModulePositions());  
@@ -145,7 +168,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
         }
 
-        SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Yaw", gyro.getYaw() % 360);
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
         SmartDashboard.putNumber("Roll", gyro.getRoll());
 
