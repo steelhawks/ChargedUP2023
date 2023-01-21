@@ -4,9 +4,28 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+    
+    public static final double ksVolts = 0.22;
+    public static final double kvVoltSecondsPerMeter = 1.90;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+
+    public static final double kPDriveVel = 8.5;
+
+    public static final double kTrackwidthMeters = 0.69;
+    public static final DifferentialDriveKinematics kDriveKinematics = 
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+    
+    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxAccerelationMetersPerSecondSquared = 1;
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = 0.7;
+
+
+
 
     private Constants() {}
 

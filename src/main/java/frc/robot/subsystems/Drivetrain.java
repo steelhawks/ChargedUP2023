@@ -2,12 +2,17 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.ErrorCode;
@@ -18,7 +23,7 @@ public class Drivetrain extends SubsystemBase{
   public final WPI_TalonSRX LEFT_MOTOR_ONE;
   public final WPI_TalonSRX RIGHT_MOTOR_ONE;
 
-  public final WPI_TalonFX TEST_MOTOR;
+  // public final WPI_TalonFX TEST_MOTOR;
 
   public final MotorControllerGroup leftGroup;
   public final MotorControllerGroup rightGroup;
@@ -35,28 +40,31 @@ public class Drivetrain extends SubsystemBase{
   public double twistCoefficient;
 
   //NAVX MXP GYRO
-  public final Pigeon2 GYRO;
+  public final AHRS GYRO;
+  // public final Pigeon2 GYRO;
   public final double KP_GYRO;
+  private DifferentialDriveOdometry m_odometry;
 
   public Drivetrain() 
   {
     //LEFT MOTORS
-    this.LEFT_MOTOR_ONE = new WPI_TalonSRX(1);
+    this.LEFT_MOTOR_ONE = new WPI_TalonSRX(0);
     //RIGHT MOTORS
-    this.RIGHT_MOTOR_ONE = new WPI_TalonSRX(2);
+    this.RIGHT_MOTOR_ONE = new WPI_TalonSRX(1);
     
     //TEST FX MOTOR
-    this.TEST_MOTOR = new WPI_TalonFX(4);
+    //this.TEST_MOTOR = new WPI_TalonFX(4);
 
     //SPEED CONTROLLER GROUPS
-    this.rightGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE);
-    this.leftGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE,this.TEST_MOTOR);
+    this.rightGroup = new MotorControllerGroup(this.RIGHT_MOTOR_ONE);
+    this.leftGroup = new MotorControllerGroup(this.LEFT_MOTOR_ONE);
 
     //DIFFERENTIAL DRIVE
     this.DIFF_DRIVE = new DifferentialDrive(this.rightGroup, this.leftGroup);
 
     //NAVX MXP GYRO
-    this.GYRO = new Pigeon2(5);
+    this.GYRO = new AHRS();
+    //this.GYRO = new Pigeon2(5);
     this.KP_GYRO = 0;
 
     //VARIABLE RPM ELECTRO-SHIFT
@@ -67,6 +75,9 @@ public class Drivetrain extends SubsystemBase{
 
     Constants.Drivetrain.LEFT.configure(LEFT_MOTOR_ONE);
     Constants.Drivetrain.RIGHT.configure(RIGHT_MOTOR_ONE);
+
+    //odometry
+    m_odometry = new DifferentialDriveOdometry(GYRO.getRotation2d(), rPMCoefficient, KP_GYRO);
     
   }
 
@@ -97,25 +108,48 @@ public class Drivetrain extends SubsystemBase{
     this.leftGroup.set(speed);
     this.rightGroup.set(speed);
   }
-
-  public Pigeon2 getGyro()
+  
+  public AHRS getGyro()
   {
     return this.GYRO;
   }
+
 
   public double getGyroAngle() 
   {
     return this.GYRO.getYaw(); 
   }
 
-  public ErrorCode getAllAngles(double[] ypr_deg) 
+  public double getAllAngles(double[] ypr_deg) 
   {
-    return this.GYRO.getYawPitchRoll(ypr_deg);
+    return this.GYRO.getAngle();
   }
 
   public void resetGyro() 
   {
-    this.GYRO.setYaw(0);
+    this.GYRO.reset();
+  }
+
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  public DifferentialDriveOdometry getOdometry() {
+    return m_odometry;
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(new Rotation2d(getGyroAngle()), 0, 0, pose);
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(LEFT_MOTOR_ONE.getSelectedSensorVelocity(), RIGHT_MOTOR_ONE.getSelectedSensorVelocity());
+  }
+
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    leftGroup.setVoltage(leftVolts);
+    rightGroup.setVoltage(rightVolts);
+    DIFF_DRIVE.feed();
   }
 
   public boolean stop(){
@@ -128,13 +162,13 @@ public class Drivetrain extends SubsystemBase{
     return true;
   }
 
-  public double getIntegratedSensorVelocity(){
-    return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorVelocity();
-  }
+  // public double getIntegratedSensorVelocity(){
+  //   return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorVelocity();
+  // }
 
-  public double getIntegratedSensorPosition(){
-    return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorPosition();
-  }
+  // public double getIntegratedSensorPosition(){
+  //   return this.TEST_MOTOR.getSensorCollection().getIntegratedSensorPosition();
+  // }
 
   /** Print info to shuffleboard */
   public void shuffleBoard(){
@@ -147,8 +181,8 @@ public class Drivetrain extends SubsystemBase{
 
 
     SmartDashboard.putNumber("gyroangle", getGyroAngle());
-    SmartDashboard.putNumber("int vel", getIntegratedSensorVelocity());
-    SmartDashboard.putNumber("int pos", getIntegratedSensorPosition());
+    // SmartDashboard.putNumber("int vel", getIntegratedSensorVelocity());
+    // SmartDashboard.putNumber("int pos", getIntegratedSensorPosition());
 
     
   }
