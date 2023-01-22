@@ -37,12 +37,6 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-        // Thread thread = new Thread(() -> {
-        //     Thread.sleep(0.5);
-        //     resetModulesToAbsolute();
-        // });
-        // thread.run();
-
         Timer.delay(1);
         resetModulesToAbsolute();
 
@@ -78,6 +72,7 @@ public class Swerve extends SubsystemBase {
                                     translation.getY(), 
                                     rotation)
                                 );
+
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for(SwerveModule mod : mSwerveMods){
@@ -132,11 +127,11 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    // private void zeroWheels() {
-    //     for (SwerveModule mod : mSwerveMods) {
-    //         mod.
-    //     }
-    // }
+    private void zeroWheels() {
+        for (SwerveModule mod : mSwerveMods) {
+            mod.setDesiredState(null, true);
+        }
+    }
 
     /*
      * Call after robot is on ramp
@@ -146,8 +141,25 @@ public class Swerve extends SubsystemBase {
      * If roll negative, move wheels negative
      * Speed proportional to roll
      */
-    private void autoBalance() {
+    public void autoBalance() {
         double roll = gyro.getRoll();
+        double yaw = Math.abs(gyro.getYaw() % 360);
+        int multiplier = 1;
+        double deadband = 0.5;
+
+        if (yaw > 180) {
+            multiplier = -1;
+            System.out.println("greater");
+        }
+
+        Translation2d translation = new Translation2d(0, 0);
+        double rotation = multiplier * 0.15 * Constants.Swerve.maxAngularVelocity;
+
+        while (yaw > deadband || 360 - yaw < deadband) {
+            yaw = Math.abs(gyro.getYaw() % 360);
+            drive(translation, rotation, true, true);
+        }
+
         if (Math.abs(roll) <= rollDeadband) return;
 
 
@@ -168,10 +180,9 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
         }
 
-        SmartDashboard.putNumber("Yaw", gyro.getYaw() % 360);
+        SmartDashboard.putNumber("Yaw", Math.abs(gyro.getYaw() % 360));
+        // SmartDashboard.putNumber("Yaw", gyro.getYaw());
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
         SmartDashboard.putNumber("Roll", gyro.getRoll());
-
-        
     }
 }

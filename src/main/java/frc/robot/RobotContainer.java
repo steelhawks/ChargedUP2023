@@ -33,6 +33,7 @@ public class RobotContainer {
     private final JoystickButton zeroCumulativeGyros = new JoystickButton(driver, 2); // A
     private final JoystickButton zeroGyro = new JoystickButton(driver, 3); // B
     private final JoystickButton robotCentric = new JoystickButton(driver, 5); // Left Bumper
+    private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
 
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
@@ -67,6 +68,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        autoBalance.onTrue(new InstantCommand(() -> s_Swerve.autoBalance()));
     }
 
     /**
