@@ -13,7 +13,14 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -22,6 +29,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,12 +44,13 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private SendableChooser<Integer> moduleChooser;
   private SendableChooser<Integer> moduleCumulativeChooser;
+  private SendableChooser<Integer> pathChooser;
 
   private RobotContainer m_robotContainer;
 
-  private String trajectoryJSON = "src/main/deploy/pathplanner/generatedJSON/Test Path.wpilib.json";
-  private Trajectory trajectory = new Trajectory();
-
+  private TrajectoryConfig config;
+  private List<Trajectory> trajectories = new ArrayList<>();
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -51,31 +61,78 @@ public class Robot extends TimedRobot {
 
     moduleChooser = new SendableChooser<>();
     moduleCumulativeChooser = new SendableChooser<>();
+    pathChooser = new SendableChooser<>();
 
+    config = new TrajectoryConfig(
+      Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+      Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+      .setKinematics(Constants.Swerve.swerveKinematics);
+
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+      // Start at the origin facing the +X direction
+      new Pose2d(0, 0, new Rotation2d(0)),
+      // Pass through these two interior waypoints, making an 's' curve path
+      List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+      // End 3 meters straight ahead of where we started, facing forward
+      new Pose2d(3, 0, new Rotation2d(0)),
+      config);
+
+    trajectories.add(exampleTrajectory);
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json"));
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json"));
+    
     moduleChooser.setDefaultOption("None", -1);
     moduleChooser.addOption("Module 0", 0);
     moduleChooser.addOption("Module 1", 1);
     moduleChooser.addOption("Module 2",2);
     moduleChooser.addOption("Module 3",3);
-
+    
     moduleCumulativeChooser.setDefaultOption("1 Module", 1);
     moduleCumulativeChooser.addOption("2 Modules", 2);
     moduleCumulativeChooser.addOption("3 Modules", 3);
     moduleCumulativeChooser.addOption("4 Modules", 4);
 
+    pathChooser.setDefaultOption("S Curve", 0);
+    pathChooser.addOption("Test Path", 1);
+    pathChooser.addOption("Red Bump", 2);
+    
     SmartDashboard.putData(moduleChooser);
     SmartDashboard.putData(moduleCumulativeChooser);
-
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    SmartDashboard.putData(pathChooser);
+    
+      // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+      // autonomous chooser on the dashboard.
+      m_robotContainer = new RobotContainer();
     }
     
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    private Trajectory loadTrajectory(String path) {
+      Trajectory trajectory = new Trajectory();
+      try {
+        Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path);
+        trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+      } catch (IOException ex) {
+        DriverStation.reportError("Unable to open trajectory: " + path, ex.getStackTrace());
+      }
+      
+    return trajectory;  
+  }
+
+  private Command loadCommand(Trajectory trajectory) {
+    var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    SwerveControllerCommand swerveControllerCommand =
+    new SwerveControllerCommand(
+      trajectory, // PUT TRAJECTORY HERE
+      m_robotContainer.s_Swerve::getPose,
+      Constants.Swerve.swerveKinematics,
+      new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+      new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+      thetaController,
+      m_robotContainer.s_Swerve::setModuleStates,
+      m_robotContainer.s_Swerve);
+        
+      return new InstantCommand(() -> m_robotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
   /**
@@ -104,6 +161,12 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    
+
+    Trajectory trajectory = trajectories.get(pathChooser.getSelected());
+    m_autonomousCommand = loadCommand(trajectory);
+
+    
 
     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // PathPlannerTrajectory path = PathPlanner.loadPath("C:/Users/samis/Code/Steel Hawks/BaseFalconSwerveNEW23/BaseFalconSwerve/src/main/deploy/pathplanner/Test Path", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
