@@ -85,7 +85,7 @@ public final class Constants {
         public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
+        public static final NeutralMode angleNeutralMode = NeutralMode.Brake; //coast
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
         /* Module Specific Constants */
@@ -104,7 +104,7 @@ public final class Constants {
             public static final int driveMotorID = 10;
             public static final int angleMotorID = 11;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(275.54);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(278.54); //275.54
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -136,10 +136,12 @@ public final class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
-    
+        public static final double kPXController = 0.0;
+        public static final double kPYController = 0.0;
+        public static final double kPThetaController = 0.0; // 0.8
+        public static final double kIThetaController = 0.0; // 0.016 
+        public static final double kDThetaController = 0.0; // 0.048
+
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(

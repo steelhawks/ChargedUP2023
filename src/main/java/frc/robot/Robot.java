@@ -5,23 +5,29 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.metal.MetalBorders.ScrollPaneBorder;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -30,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 /**
@@ -55,6 +62,30 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
+   public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+    return new SequentialCommandGroup(
+         new InstantCommand(() -> {
+           // Reset odometry for the first path you run during auto
+           if(isFirstPath){
+               this.m_robotContainer.s_Swerve.resetOdometry(traj.getInitialHolonomicPose());
+           }
+         }),
+         new PPSwerveControllerCommand(
+             traj, 
+             m_robotContainer.s_Swerve::getPose,
+             Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
+             new PIDController(Constants.AutoConstants.kPXController, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+             new PIDController(Constants.AutoConstants.kPYController, 0, 0), // Y controller (usually the same values as X controller)
+             new PIDController(Constants.AutoConstants.kPThetaController, Constants.AutoConstants.kIThetaController, Constants.AutoConstants.kDThetaController), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+             m_robotContainer.s_Swerve::setModuleStates, // Module states consumer
+             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+             m_robotContainer.s_Swerve // Requires this drive subsystem
+         )
+     );
+ }
+ 
+
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
@@ -77,10 +108,12 @@ public class Robot extends TimedRobot {
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
 
-    trajectories.add(exampleTrajectory);
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json"));
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json"));
-    
+    trajectories.add(exampleTrajectory); // S curve
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path Holonomic.wpilib.json")); // Swerve
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
+
     moduleChooser.setDefaultOption("None", -1);
     moduleChooser.addOption("Module 0", 0);
     moduleChooser.addOption("Module 1", 1);
@@ -93,8 +126,10 @@ public class Robot extends TimedRobot {
     moduleCumulativeChooser.addOption("4 Modules", 4);
 
     pathChooser.setDefaultOption("S Curve", 0);
-    pathChooser.addOption("Test Path", 1);
-    pathChooser.addOption("Red Bump", 2);
+    pathChooser.setDefaultOption("Test Path", 1);
+    pathChooser.addOption("Red Bump Tank", 2);
+    pathChooser.addOption("Red Bump Swerve", 3);
+    pathChooser.addOption("Test Spin", 4);
     
     SmartDashboard.putData(moduleChooser);
     SmartDashboard.putData(moduleCumulativeChooser);
@@ -132,6 +167,7 @@ public class Robot extends TimedRobot {
       m_robotContainer.s_Swerve::setModuleStates,
       m_robotContainer.s_Swerve);
         
+      // return swerveControllerCommand;
       return new InstantCommand(() -> m_robotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
@@ -161,12 +197,12 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    
+    //PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
+    PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
-    Trajectory trajectory = trajectories.get(pathChooser.getSelected());
-    m_autonomousCommand = loadCommand(trajectory);
-
-    
+    // Trajectory trajectory = trajectories.get(pathChooser.getSelected());
+    // m_autonomousCommand = loadCommand(trajectory);
+    m_autonomousCommand = followTrajectoryCommand(traj, true);
 
     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // PathPlannerTrajectory path = PathPlanner.loadPath("C:/Users/samis/Code/Steel Hawks/BaseFalconSwerveNEW23/BaseFalconSwerve/src/main/deploy/pathplanner/Test Path", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
