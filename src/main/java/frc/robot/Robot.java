@@ -5,9 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.TeleopInitCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.TestCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,10 +16,8 @@ import frc.robot.commands.TeleopInitCommand;
  * project.
  */
 public class Robot extends TimedRobot {
+  private RobotContainer robot;
 
-  public RobotContainer robot;
-  
-  private Command m_autonomousCommand; 
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,8 +26,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     robot = new RobotContainer();
-    new TeleopInitCommand(robot).schedule();
-   }
+    new JoystickButton(robot.joystick, 0).whileTrue(new TestCommand());
+    CommandScheduler.getInstance().registerSubsystem(robot.drivetrain);
+    // CommandScheduler.getInstance().schedule(new TestCommand());
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -40,16 +40,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println(robot.joystick.getTwist());
     CommandScheduler.getInstance().run();
   }
   
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = robot.getAutonomousCommand();
-    // schedule the autonomous command
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
   }
 
   /** This function is called periodically during autonomous. */
