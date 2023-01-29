@@ -76,13 +76,13 @@ public class Arm extends SubsystemBase {
     }
 
     public void armExtend(){
-        MOTORONE.set(0.3);
-        MOTORTWO.set(0.3);
+        MOTORONE.set(0.7);
+        MOTORTWO.set(0.7);
     }
 
     public void armRetract(){
-        MOTORONE.set(-0.3);
-        MOTORTWO.set(-0.3);
+        MOTORONE.set(-0.7);
+        MOTORTWO.set(-0.7);
     }
 
     public void armStop(){
