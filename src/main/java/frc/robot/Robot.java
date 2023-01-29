@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
     trajectories.add(exampleTrajectory); // S curve
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path Holonomic.wpilib.json")); // Swerve
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/ChargeStationTest.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
 
     moduleChooser.setDefaultOption("None", -1);
@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     pathChooser.setDefaultOption("S Curve", 0);
     pathChooser.setDefaultOption("Test Path", 1);
     pathChooser.addOption("Red Bump Tank", 2);
-    pathChooser.addOption("Red Bump Swerve", 3);
+    pathChooser.addOption("Charge Station", 3);
     pathChooser.addOption("Test Spin", 4);
     
     SmartDashboard.putData(moduleChooser);
@@ -197,16 +197,16 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
-    PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
+    // PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
+    // PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
-    // Trajectory trajectory = trajectories.get(pathChooser.getSelected());
-    // m_autonomousCommand = loadCommand(trajectory);
-    m_autonomousCommand = followTrajectoryCommand(traj, true);
+    Trajectory trajectory = trajectories.get(pathChooser.getSelected());
+    m_autonomousCommand = loadCommand(trajectory);
+    // m_autonomousCommand = followTrajectoryCommand(traj, true);
 
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // PathPlannerTrajectory path = PathPlanner.loadPath("C:/Users/samis/Code/Steel Hawks/BaseFalconSwerveNEW23/BaseFalconSwerve/src/main/deploy/pathplanner/Test Path", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-    //m_autonomousCommand = m_robotContainer.s_Swerve.followTrajectoryCommand(path, true);
+    // m_autonomousCommand = m_robotContainer.s_Swerve.followTrajectoryCommand(path, true);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

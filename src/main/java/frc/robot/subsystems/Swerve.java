@@ -152,7 +152,7 @@ public class Swerve extends SubsystemBase {
         double roll = gyro.getRoll();
         double yaw = Math.abs(gyro.getYaw() % 360);
         int multiplier = 1;
-        double deadband = 0.5;
+        double deadband = 2;
 
         if (yaw > 180) {
             multiplier = -1;
@@ -162,14 +162,15 @@ public class Swerve extends SubsystemBase {
         Translation2d translation = new Translation2d(0, 0);
         double rotation = multiplier * 0.15 * Constants.Swerve.maxAngularVelocity;
 
-        while (yaw > deadband || 360 - yaw < deadband) {
+        while (yaw < 360 - deadband && yaw > deadband) { //yaw > deadband || 360 - yaw < deadband
             yaw = Math.abs(gyro.getYaw() % 360);
+
             drive(translation, rotation, true, true);
         }
 
         if (Math.abs(roll) <= rollDeadband) return;
 
-
+        
     }
 
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
