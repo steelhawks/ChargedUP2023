@@ -74,9 +74,10 @@ public final class Constants {
 
         /* Drive Motor Characterization Values 
          * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
-        public static final double driveKS = (0.13 / 12); //TODO: This must be tuned to specific robot 0.18
-        public static final double driveKV = (2.24 / 12); // 1.51
-        public static final double driveKA = (0.21 / 12); // 0.27
+
+        public static final double driveKS = (0.2 / 12); // 8
+        public static final double driveKV = (2.21 / 12); // 5
+        public static final double driveKA = (0.22 / 12); // 5
 
         /* Swerve Profiling Values */
         /** Meters per Second */
@@ -85,7 +86,7 @@ public final class Constants {
         public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
 
         /* Neutral Modes */
-        public static final NeutralMode angleNeutralMode = NeutralMode.Brake; //coast
+        public static final NeutralMode angleNeutralMode = NeutralMode.Coast; //coast
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
         /* Module Specific Constants */
@@ -136,8 +137,9 @@ public final class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
-        public static final double kPController = 0.5;
-        public static final double kPController = 0.5;
+        public static final double kPController = 3.75; // 3.5
+        public static final double kIController = 0; //10 
+        public static final double kDController = 0; // 0.1
         public static final double kPThetaController = 0.0; // 0.8
         public static final double kIThetaController = 0.0; // 0.016 
         public static final double kDThetaController = 0.0; // 0.048

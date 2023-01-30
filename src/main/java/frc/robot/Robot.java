@@ -75,8 +75,8 @@ public class Robot extends TimedRobot {
              traj, 
              m_robotContainer.s_Swerve::getPose,
              Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
-             new PIDController(Constants.AutoConstants.kPController, 0, Constants.AutoConstants.kDController), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-             new PIDController(Constants.AutoConstants.kPController, 0, Constants.AutoConstants.kDController), // Y controller (usually the same values as X controller)
+             new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+             new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController), // Y controller (usually the same values as X controller)
              new PIDController(Constants.AutoConstants.kPThetaController, Constants.AutoConstants.kIThetaController, Constants.AutoConstants.kDThetaController), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
              m_robotContainer.s_Swerve::setModuleStates, // Module states consumer
              true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
@@ -113,6 +113,7 @@ public class Robot extends TimedRobot {
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/ChargeStationTest.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
 
     moduleChooser.setDefaultOption("None", -1);
     moduleChooser.addOption("Module 0", 0);
@@ -130,6 +131,7 @@ public class Robot extends TimedRobot {
     pathChooser.addOption("Red Bump Tank", 2);
     pathChooser.addOption("Charge Station", 3);
     pathChooser.addOption("Test Spin", 4);
+    pathChooser.addOption("Straight", 5);
     
     SmartDashboard.putData(moduleChooser);
     SmartDashboard.putData(moduleCumulativeChooser);
@@ -161,8 +163,8 @@ public class Robot extends TimedRobot {
       trajectory, // PUT TRAJECTORY HERE
       m_robotContainer.s_Swerve::getPose,
       Constants.Swerve.swerveKinematics,
-      new PIDController(Constants.AutoConstants.kPController, 0, Constants.AutoConstants.kDController),
-      new PIDController(Constants.AutoConstants.kPController, 0, Constants.AutoConstants.kDController),
+      new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
+      new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
       thetaController,
       m_robotContainer.s_Swerve::setModuleStates,
       m_robotContainer.s_Swerve);

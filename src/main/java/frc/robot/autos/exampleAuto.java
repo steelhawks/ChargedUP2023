@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
+// UNUSED BUT WILL USE IN THE FUTURE TO ORGANIZE
+
 public class exampleAuto extends SequentialCommandGroup {
     public exampleAuto(Swerve s_Swerve){
         

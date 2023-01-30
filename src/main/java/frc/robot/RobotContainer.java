@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.time.Instant;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -55,7 +53,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        // compressor.disable();
+        compressor.disable();
         CommandScheduler.getInstance().registerSubsystem(ARM);
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
