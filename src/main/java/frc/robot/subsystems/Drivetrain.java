@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
-    private WPI_TalonSRX rightMotorOne;
-    private WPI_TalonSRX leftMotorOne;
-    private WPI_TalonSRX rightMotorTwo;
-    private WPI_TalonSRX leftMotorTwo;
+    private final WPI_TalonSRX rightMotorOne;
+    private final WPI_TalonSRX leftMotorOne;
+    private final WPI_TalonSRX rightMotorTwo;
+    private final WPI_TalonSRX leftMotorTwo;
 
-    private MotorControllerGroup leftMotors;
-    private MotorControllerGroup rightMotors;
+    private final MotorControllerGroup leftMotors;
+    private final MotorControllerGroup rightMotors;
 
-    private DifferentialDrive drive;
+    private final DifferentialDrive drive;
 
     public Drivetrain() {
         this.rightMotorOne = new WPI_TalonSRX(Constants.Motors.MOTOR_RIGHT_ONE_PORT);
