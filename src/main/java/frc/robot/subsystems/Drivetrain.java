@@ -19,7 +19,7 @@ public class Drivetrain extends SubsystemBase {
 
         configureMotors();
 
-        this.drive = new DifferentialDrive(leftMotor, rightMotor);
+        this.drive = new DifferentialDrive(this.leftMotor, this.rightMotor);
     }
 
     public void arcadeDrive(Joystick stick) {
