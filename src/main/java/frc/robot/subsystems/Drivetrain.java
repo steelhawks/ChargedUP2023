@@ -4,34 +4,32 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.RobotMap;
 
 public class Drivetrain extends SubsystemBase {
-    private final WPI_TalonSRX rightMotorOne;
-    private final WPI_TalonSRX leftMotorOne;
-    private final WPI_TalonSRX rightMotorTwo;
-    private final WPI_TalonSRX leftMotorTwo;
-
-    private final MotorControllerGroup leftMotors;
-    private final MotorControllerGroup rightMotors;
+    private final WPI_TalonSRX rightMotor;
+    private final WPI_TalonSRX leftMotor;
 
     private final DifferentialDrive drive;
 
     public Drivetrain() {
-        this.rightMotorOne = new WPI_TalonSRX(Constants.Motors.MOTOR_RIGHT_ONE_PORT);
-        this.leftMotorOne = new WPI_TalonSRX(Constants.Motors.MOTOR_LEFT_ONE_PORT);
-        this.rightMotorTwo = new WPI_TalonSRX(Constants.Motors.MOTOR_RIGHT_TWO_PORT);
-        this.leftMotorTwo = new WPI_TalonSRX(Constants.Motors.MOTOR_LEFT_TWO_PORT);
+        this.rightMotor = new WPI_TalonSRX(RobotMap.Motors.MOTOR_RIGHT_ONE_PORT);
+        this.leftMotor = new WPI_TalonSRX(RobotMap.Motors.MOTOR_LEFT_ONE_PORT);
 
-        this.leftMotors = new MotorControllerGroup(leftMotorOne, leftMotorTwo);
-        this.rightMotors = new MotorControllerGroup(rightMotorOne, rightMotorTwo);
+        configureMotors();
 
-        this.drive = new DifferentialDrive(leftMotors, rightMotors);
+        this.drive = new DifferentialDrive(leftMotor, rightMotor);
     }
 
     public void arcadeDrive(Joystick stick) {
-        this.drive.arcadeDrive(stick.getY(), -stick.getTwist());
+        this.drive.arcadeDrive(stick.getY() / 2, -stick.getTwist());
+    }
+
+    public void configureMotors() {
+        this.rightMotor.configFactoryDefault();
+        this.leftMotor.configFactoryDefault();
+
+        this.leftMotor.setInverted(true);
     }
 }
