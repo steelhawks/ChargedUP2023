@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  private RobotContainer robot;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -26,7 +25,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    robot = new RobotContainer();
+    // Initialize Robot (Robot Container)
+    new RobotContainer();
   }
 
   /**
