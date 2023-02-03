@@ -11,16 +11,17 @@ public class ArcadeDrive extends CommandBase {
     public ArcadeDrive(Drivetrain drivetrain, Joystick joystick) {
         this.drivetrain = drivetrain;
         this.joystick = joystick;
+
+        addRequirements(drivetrain);
     }
 
     @Override
     public void initialize() {
-        addRequirements(this.drivetrain);
     }
 
     @Override
     public void execute() {
-        drivetrain.arcadeDrive(this.joystick);
+        this.drivetrain.arcadeDrive(this.joystick);
     }
 
     @Override

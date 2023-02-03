@@ -30,6 +30,6 @@ public class Drivetrain extends SubsystemBase {
         this.rightMotor.configFactoryDefault();
         this.leftMotor.configFactoryDefault();
 
-        this.leftMotor.setInverted(true);
+        this.rightMotor.setInverted(true);
     }
 }
