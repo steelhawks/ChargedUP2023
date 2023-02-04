@@ -114,6 +114,7 @@ public class Robot extends TimedRobot {
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/ChargeStationTest.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Long.wpilib.json")); // Move 4.09 meters (163 inches)
 
     moduleChooser.setDefaultOption("None", -1);
     moduleChooser.addOption("Module 0", 0);
@@ -132,6 +133,7 @@ public class Robot extends TimedRobot {
     pathChooser.addOption("Charge Station", 3);
     pathChooser.addOption("Test Spin", 4);
     pathChooser.addOption("Straight", 5);
+    pathChooser.addOption("Long Straight", 6);
     
     SmartDashboard.putData(moduleChooser);
     SmartDashboard.putData(moduleCumulativeChooser);

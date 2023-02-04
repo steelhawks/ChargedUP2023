@@ -103,4 +103,8 @@ public class Conversions {
     public static double MetersToFalcon(double meters, double circumference, double gearRatio){
         return meters / (circumference / (gearRatio * 2048.0));
     }
+
+    public static double toNearestZero(double current, double round) {
+        return round * Math.round(current / round);
+    }
 }

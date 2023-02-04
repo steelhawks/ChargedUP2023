@@ -6,21 +6,16 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
@@ -39,19 +34,23 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, 3); // B
     private final JoystickButton robotCentric = new JoystickButton(driver, 5); // Left Bumper
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
+    private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
+    private final POVButton upButton = new POVButton(driver, 0);
+    private final POVButton rightButton = new POVButton(driver, 90);
+    private final POVButton downButton = new POVButton(driver, 180);
+    private final POVButton leftButton = new POVButton(driver, 270);
 
-    /*OPerator Buttons*/ 
+    /*Operator Buttons*/ 
     private final JoystickButton armExtend = new JoystickButton(operator, 5); //left bumper
     private final JoystickButton armRetract = new JoystickButton(operator, 6); //right bumpter
     private final JoystickButton toggleArm = new JoystickButton(operator, 7); //left trigger
     private final JoystickButton toggleClaw = new JoystickButton(operator, 8); //right trigger
 
     /* Subsystems */
-    public final Swerve s_Swerve = new Swerve();
+    public static final Swerve s_Swerve = new Swerve();
     private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     public static final Arm ARM = new Arm();
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         compressor.disable();
         CommandScheduler.getInstance().registerSubsystem(ARM);
@@ -67,7 +66,6 @@ public class RobotContainer {
 
         CameraServer.startAutomaticCapture();
 
-        // Configure the button bindings
         configureButtonBindings();
     }
 
@@ -75,27 +73,25 @@ public class RobotContainer {
         zeroCumulativeGyros.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));
     }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        autoBalance.onTrue(new InstantCommand(() -> s_Swerve.autoBalance()));
-        armExtend.whileTrue(new ArmExtend());
-        armRetract.whileTrue(new ArmRetract());
-        toggleArm.onTrue(new InstantCommand(() -> ARM.toggleArm()));
-        toggleClaw.onTrue(new InstantCommand(() -> ARM.toggleClaw()));
+        shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
+        autoBalance.whileTrue(new BalanceCommand());
+        upButton.whileTrue(new RotateToAngle(0));
+        rightButton.whileTrue(new RotateToAngle(90));
+        downButton.whileTrue(new RotateToAngle(180));
+        leftButton.whileTrue(new RotateToAngle(270));
+
+        /* Operator Buttons */
+        // armExtend.whileTrue(new ArmExtend());
+        // armRetract.whileTrue(new ArmRetract());
+        // toggleArm.onTrue(new InstantCommand(() -> ARM.toggleArm()));
+        // toggleClaw.onTrue(new InstantCommand(() -> ARM.toggleClaw()));
+
+
     }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         return new exampleAuto(s_Swerve);

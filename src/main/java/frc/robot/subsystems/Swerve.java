@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
 
+import frc.lib.math.Conversions;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -30,6 +32,7 @@ public class Swerve extends SubsystemBase {
     public Pigeon2 gyro;
 
     private final double rollDeadband = 8;
+    private double speedMultiplier;
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -47,6 +50,53 @@ public class Swerve extends SubsystemBase {
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+
+        speedMultiplier = 1;
+    }
+
+    private void rotateInPlace(double rotation) {
+        SwerveModuleState[] swerveModuleStates =
+            Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                                    0, 
+                                    0, 
+                                    rotation * speedMultiplier,
+                                    getYaw()
+                                ));
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+
+        for(SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], true);
+        }
+    }    
+
+    // private void rotateInPlace(double rotation) {
+    //     Translation2d translation = new Translation2d(0, 0);
+
+    //     drive(translation, rotation, true, true);
+    //     System.out.println(rotation);
+    // }
+
+    public void rotateToAngle(int angle) {
+        System.out.println("Angle: " + angle);
+        double goal = Conversions.toNearestZero(gyro.getYaw(), angle);
+
+        if (gyro.getYaw() < goal) {
+            rotateInPlace(0.5);
+        }
+        else {
+            rotateInPlace(-0.5);
+        }
+    }
+
+    public void shiftGear() {
+        if (speedMultiplier == 1) {
+            speedMultiplier = 0.2;
+        }
+        else {
+            speedMultiplier = 1;
+        }
     }
 
     public void resetModule(int index) {
@@ -68,9 +118,9 @@ public class Swerve extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    translation.getX(), 
-                                    translation.getY(), 
-                                    rotation, 
+                                    translation.getX() * speedMultiplier, 
+                                    translation.getY() * speedMultiplier, 
+                                    rotation * speedMultiplier,
                                     getYaw()
                                 )
                                 : new ChassisSpeeds(
@@ -125,6 +175,10 @@ public class Swerve extends SubsystemBase {
 
     public Rotation2d getYaw() {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
+    }
+
+    public double getRoll() {
+        return gyro.getRoll();
     }
 
     public void resetModulesToAbsolute(){
@@ -187,6 +241,11 @@ public class Swerve extends SubsystemBase {
              )
          );
      }
+
+     public void stop() {
+        Translation2d translation = new Translation2d(0, 0);
+        drive(translation, 0, true, true);
+     }
      
 
     @Override
@@ -204,7 +263,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
         }
 
-        SmartDashboard.putNumber("Yaw", Math.abs(gyro.getYaw() % 360));
+        SmartDashboard.putNumber("Yaw", gyro.getYaw()); // Math.abs(gyro.getYaw() % 360)
         // SmartDashboard.putNumber("Yaw", gyro.getYaw());
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
         SmartDashboard.putNumber("Roll", gyro.getRoll());

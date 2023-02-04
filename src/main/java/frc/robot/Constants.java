@@ -132,13 +132,13 @@ public final class Constants {
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxSpeedMetersPerSecond = 3; // 3
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
-        public static final double kPController = 3.75; // 3.5
-        public static final double kIController = 0; //10 
+        public static final double kPController = 5; // 4.75
+        public static final double kIController = 5; //10 
         public static final double kDController = 0; // 0.1
         public static final double kPThetaController = 0.0; // 0.8
         public static final double kIThetaController = 0.0; // 0.016 
