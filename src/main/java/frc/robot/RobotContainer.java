@@ -20,4 +20,8 @@ public class RobotContainer {
         CommandScheduler.getInstance().setDefaultCommand(this.drivetrain,
                 new ArcadeDrive(this.drivetrain, this.joystick));
     }
+
+    public void getSmartDashboardValues() {
+        this.drivetrain.getSmartDashboardValues();
+    }
 }

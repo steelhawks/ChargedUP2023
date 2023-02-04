@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
@@ -23,7 +24,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void arcadeDrive(Joystick stick) {
-        this.drive.arcadeDrive(stick.getY() / 2, -stick.getTwist());
+        this.drive.arcadeDrive(stick.getY() * 0.63, -stick.getTwist() / 2);
     }
 
     public void configureMotors() {
@@ -31,5 +32,15 @@ public class Drivetrain extends SubsystemBase {
         this.leftMotor.configFactoryDefault();
 
         this.rightMotor.setInverted(true);
+    }
+
+
+    public void getSmartDashboardValues() {
+        this.rightMotor.getSelectedSensorVelocity();
+        this.leftMotor.getSelectedSensorVelocity();
+
+        SmartDashboard.putNumber("Velocity", (this.rightMotor.getSelectedSensorVelocity() / 6250 + this.leftMotor.getSelectedSensorVelocity() / 6250) / 2);
+        SmartDashboard.putNumber("Right Enc Vel.", this.rightMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Left Enc Vel.", this.leftMotor.getSelectedSensorVelocity());
     }
 }
