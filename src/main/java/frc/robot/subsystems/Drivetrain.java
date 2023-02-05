@@ -15,8 +15,8 @@ public class Drivetrain extends SubsystemBase {
     private final DifferentialDrive drive;
 
     public Drivetrain() {
-        this.rightMotor = new WPI_TalonSRX(RobotMap.Motors.MOTOR_RIGHT_ONE_PORT);
-        this.leftMotor = new WPI_TalonSRX(RobotMap.Motors.MOTOR_LEFT_ONE_PORT);
+        this.rightMotor = new WPI_TalonSRX(RobotMap.DRIVETRAIN.MOTOR_RIGHT_ONE_PORT);
+        this.leftMotor = new WPI_TalonSRX(RobotMap.DRIVETRAIN.MOTOR_LEFT_ONE_PORT);
 
         configureMotors();
 
@@ -25,6 +25,10 @@ public class Drivetrain extends SubsystemBase {
 
     public void arcadeDrive(Joystick stick) {
         this.drive.arcadeDrive(stick.getY() * 0.63, -stick.getTwist() / 2);
+    }
+
+    public void driveStraight(double speed) {
+        this.drive.arcadeDrive(speed, 0);
     }
 
     public void configureMotors() {
@@ -36,11 +40,9 @@ public class Drivetrain extends SubsystemBase {
 
 
     public void getSmartDashboardValues() {
-        this.rightMotor.getSelectedSensorVelocity();
-        this.leftMotor.getSelectedSensorVelocity();
-
-        SmartDashboard.putNumber("Velocity", (this.rightMotor.getSelectedSensorVelocity() / 6250 + this.leftMotor.getSelectedSensorVelocity() / 6250) / 2);
-        SmartDashboard.putNumber("Right Enc Vel.", this.rightMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Left Enc Vel.", this.leftMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Velocity", (this.rightMotor.getSelectedSensorVelocity() / RobotMap.DRIVETRAIN.VELOCITY_CONVERSION + 
+            this.leftMotor.getSelectedSensorVelocity() / RobotMap.DRIVETRAIN.VELOCITY_CONVERSION) / 2);
+        SmartDashboard.putNumber("Right Enc Vel.", this.rightMotor.getSelectedSensorVelocity() / RobotMap.DRIVETRAIN.VELOCITY_CONVERSION);
+        SmartDashboard.putNumber("Left Enc Vel.", this.leftMotor.getSelectedSensorVelocity() / RobotMap.DRIVETRAIN.VELOCITY_CONVERSION);
     }
 }

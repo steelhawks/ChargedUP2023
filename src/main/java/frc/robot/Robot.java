@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -17,7 +18,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-  public RobotContainer robot;
+  private RobotContainer robot;
+  private Command autonCommand;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -48,6 +50,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    this.autonCommand = this.robot.autonChooser.getSelected();
+
+    if (this.autonCommand != null) {
+      autonCommand.schedule();
+    }
   }
 
   /** This function is called periodically during autonomous. */
