@@ -19,7 +19,7 @@ public class RobotContainer {
         this.joystick = new Joystick(0);
         this.drivetrain = new Drivetrain();
 
-        configAutons();
+        configAutonDashboard();
 
         // Register Subsystems
         CommandScheduler.getInstance().registerSubsystem(this.drivetrain);
@@ -27,14 +27,14 @@ public class RobotContainer {
         // Set Commands
         CommandScheduler.getInstance().setDefaultCommand(this.drivetrain,
                 new ArcadeDrive(this.drivetrain, this.joystick));
-    
+
     }
 
     public void getSmartDashboardValues() {
         this.drivetrain.getSmartDashboardValues();
     }
 
-    public void configAutons() {
+    public void configAutonDashboard() {
         autonChooser.addOption("No Auton", null);
         autonChooser.addOption("Default Auton", new DefaultAuton(this.drivetrain));
 
