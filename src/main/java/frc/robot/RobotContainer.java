@@ -35,6 +35,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, 5); // Left Bumper
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
+    private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
     private final POVButton upButton = new POVButton(driver, 0);
     private final POVButton rightButton = new POVButton(driver, 90);
     private final POVButton downButton = new POVButton(driver, 180);
@@ -48,12 +49,13 @@ public class RobotContainer {
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
+    public static final StationPusher s_Pusher = new StationPusher();
+    public static final Arm s_Arm = new Arm();
     private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-    public static final Arm ARM = new Arm();
 
     public RobotContainer() {
         compressor.disable();
-        CommandScheduler.getInstance().registerSubsystem(ARM);
+        CommandScheduler.getInstance().registerSubsystem(s_Arm);
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 

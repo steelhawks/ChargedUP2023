@@ -53,6 +53,7 @@ public class Swerve extends SubsystemBase {
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
 
         speedMultiplier = 1;
+        isShifted = false;
     }
 
     private void rotateInPlace(double rotation) {
@@ -61,7 +62,7 @@ public class Swerve extends SubsystemBase {
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                                     0, 
                                     0, 
-                                    rotation * speedMultiplier,
+                                    rotation,
                                     getYaw()
                                 ));
 

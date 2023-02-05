@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
     trajectories.add(exampleTrajectory); // S curve
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/ChargeStationTest.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path Holonomic.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Long.wpilib.json")); // Move 4.09 meters (163 inches)
@@ -150,7 +150,6 @@ public class Robot extends TimedRobot {
         Trajectory trajectory = trajectories.get(pathChooser.getSelected());
         m_autonomousCommand = new SequentialCommandGroup(
           loadCommand(trajectory),
-          new WaitCommand(1),
           new BalanceCommand()
         );
 

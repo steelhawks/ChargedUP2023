@@ -11,7 +11,7 @@ public class ArmExtend extends CommandBase {
   /** Creates a new ArmExtend. */
   public ArmExtend() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.ARM);
+    addRequirements(RobotContainer.s_Arm);
   }
 
   // Called when the command is initially scheduled.
@@ -21,13 +21,13 @@ public class ArmExtend extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.ARM.armExtend();
+    RobotContainer.s_Arm.armExtend();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.ARM.armStop();
+    RobotContainer.s_Arm.armStop();
   }
 
   // Returns true when the command should end.
