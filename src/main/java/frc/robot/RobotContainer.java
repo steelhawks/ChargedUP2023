@@ -77,7 +77,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
-        autoBalance.whileTrue(new BalanceCommand());
+        autoBalance.onTrue(new BalanceCommand());
         upButton.whileTrue(new RotateToAngle(0));
         rightButton.whileTrue(new RotateToAngle(90));
         downButton.whileTrue(new RotateToAngle(180));

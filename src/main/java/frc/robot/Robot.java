@@ -38,6 +38,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.BalanceCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -143,6 +145,17 @@ public class Robot extends TimedRobot {
       // autonomous chooser on the dashboard.
       m_robotContainer = new RobotContainer();
     }
+
+    private Command chargeCommand() {
+        Trajectory trajectory = trajectories.get(pathChooser.getSelected());
+        m_autonomousCommand = new SequentialCommandGroup(
+          loadCommand(trajectory),
+          new WaitCommand(1),
+          new BalanceCommand()
+        );
+
+        return m_autonomousCommand;
+    }
     
     private Trajectory loadTrajectory(String path) {
       Trajectory trajectory = new Trajectory();
@@ -205,13 +218,14 @@ public class Robot extends TimedRobot {
     // PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
     Trajectory trajectory = trajectories.get(pathChooser.getSelected());
-    m_autonomousCommand = loadCommand(trajectory);
+    //m_autonomousCommand = loadCommand(trajectory);
     // m_autonomousCommand = followTrajectoryCommand(traj, true);
 
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // PathPlannerTrajectory path = PathPlanner.loadPath("C:/Users/samis/Code/Steel Hawks/BaseFalconSwerveNEW23/BaseFalconSwerve/src/main/deploy/pathplanner/Test Path", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
     // m_autonomousCommand = m_robotContainer.s_Swerve.followTrajectoryCommand(path, true);
 
+    m_autonomousCommand = chargeCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

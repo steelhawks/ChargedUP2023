@@ -33,6 +33,7 @@ public class Swerve extends SubsystemBase {
 
     private final double rollDeadband = 8;
     private double speedMultiplier;
+    private boolean isShifted; 
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -93,9 +94,11 @@ public class Swerve extends SubsystemBase {
     public void shiftGear() {
         if (speedMultiplier == 1) {
             speedMultiplier = 0.2;
+            isShifted = true;
         }
         else {
             speedMultiplier = 1;
+            isShifted = false;
         }
     }
 
@@ -261,6 +264,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Percent", mod.getAngleOutput());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Percent", mod.getDriveOutput()); 
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
+            SmartDashboard.putBoolean("Is Shifted", isShifted);
         }
 
         SmartDashboard.putNumber("Yaw", gyro.getYaw()); // Math.abs(gyro.getYaw() % 360)
