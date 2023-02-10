@@ -58,6 +58,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(s_Arm);
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
+                driver,
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
@@ -79,11 +80,12 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
-        autoBalance.onTrue(new BalanceCommand());
+        autoBalance.whileTrue(new BalanceCommand());
         upButton.whileTrue(new RotateToAngle(0));
         rightButton.whileTrue(new RotateToAngle(90));
         downButton.whileTrue(new RotateToAngle(180));
         leftButton.whileTrue(new RotateToAngle(270));
+        push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
 
         /* Operator Buttons */
         // armExtend.whileTrue(new ArmExtend());

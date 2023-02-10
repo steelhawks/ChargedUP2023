@@ -48,7 +48,7 @@ public class BalanceCommand implements Command
     //Actual Thing
     // return Math.abs(error) > 0 && Math.abs(error) < 0.75; 
     // return balancer.atSetpoint();
-    return false;
+    return true;
     
     //Fake test because of stupid gyro.
     //return Math.abs(error) == 1; 

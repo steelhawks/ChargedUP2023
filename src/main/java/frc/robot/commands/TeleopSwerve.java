@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
@@ -8,6 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
@@ -17,10 +19,12 @@ public class TeleopSwerve extends CommandBase {
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
+    private Joystick stick;
 
-    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
+    public TeleopSwerve(Joystick stick, Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
+        this.stick = stick;
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -30,6 +34,21 @@ public class TeleopSwerve extends CommandBase {
 
     @Override
     public void execute() {
+        switch(stick.getPOV()) {
+            case 0: 
+              RobotContainer.s_Swerve.rotateToAngle(0);
+              return;
+            case 90:
+              RobotContainer.s_Swerve.rotateToAngle(90);
+              return;
+            case 180:
+              RobotContainer.s_Swerve.rotateToAngle(180);   
+              return;
+            case 270:
+              RobotContainer.s_Swerve.rotateToAngle(270);
+              return;
+        }
+
         /* Get Values, Deadband*/
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
@@ -42,5 +61,6 @@ public class TeleopSwerve extends CommandBase {
             !robotCentricSup.getAsBoolean(), 
             true
         );
+        
     }
 }

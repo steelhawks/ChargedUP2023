@@ -56,22 +56,22 @@ public class Swerve extends SubsystemBase {
         isShifted = false;
     }
 
-    private void rotateInPlace(double rotation) {
-        SwerveModuleState[] swerveModuleStates =
-            Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    0, 
-                                    0, 
-                                    rotation,
-                                    getYaw()
-                                ));
+    // private void rotateInPlace(double rotation) {
+    //     SwerveModuleState[] swerveModuleStates =
+    //         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+    //             ChassisSpeeds.fromFieldRelativeSpeeds(
+    //                                 0, 
+    //                                 0, 
+    //                                 rotation,
+    //                                 getYaw()
+    //                             ));
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
-
-        for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], true);
-        }
-    }    
+    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+        
+    //     for(SwerveModule mod : mSwerveMods){
+    //         mod.setDesiredState(swerveModuleStates[mod.moduleNumber], true);
+    //     }
+    // }    
 
     // private void rotateInPlace(double rotation) {
     //     Translation2d translation = new Translation2d(0, 0);
@@ -81,14 +81,13 @@ public class Swerve extends SubsystemBase {
     // }
 
     public void rotateToAngle(int angle) {
-        System.out.println("Angle: " + angle);
         double goal = Conversions.toNearestZero(gyro.getYaw(), angle);
 
         if (gyro.getYaw() < goal) {
-            rotateInPlace(0.5);
+            drive(new Translation2d(0, 0), -0.3 * Constants.Swerve.maxAngularVelocity, true, true);
         }
         else {
-            rotateInPlace(-0.5);
+            drive(new Translation2d(0, 0), 0.3 * Constants.Swerve.maxAngularVelocity, true, true);
         }
     }
 
@@ -145,7 +144,7 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false); // false for feedforward
+            mod.setDesiredState(desiredStates[mod.moduleNumber], true); // false for feedforward
         }
     }    
 

@@ -7,9 +7,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class PushingP extends CommandBase {
-  /** Creates a new PushingP. */
-  public PushingP() {
+public class RetractPusher extends CommandBase {
+  /** Creates a new RetractPusher. */
+  public RetractPusher() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.s_Pusher);
   }
@@ -21,7 +21,7 @@ public class PushingP extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.s_Pusher.push();
+    RobotContainer.s_Pusher.retract();
   }
 
   // Called once the command ends or is interrupted.
