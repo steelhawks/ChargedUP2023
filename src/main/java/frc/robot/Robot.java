@@ -5,15 +5,10 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.metal.MetalBorders.ScrollPaneBorder;
-
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
@@ -22,12 +17,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -38,15 +31,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.BalanceCommand;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
 
@@ -70,19 +56,19 @@ public class Robot extends TimedRobot {
          new InstantCommand(() -> {
            // Reset odometry for the first path you run during auto
            if(isFirstPath){
-               this.m_robotContainer.s_Swerve.resetOdometry(traj.getInitialHolonomicPose());
+               RobotContainer.s_Swerve.resetOdometry(traj.getInitialHolonomicPose());
            }
          }),
          new PPSwerveControllerCommand(
              traj, 
-             m_robotContainer.s_Swerve::getPose,
+             RobotContainer.s_Swerve::getPose,
              Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
              new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
              new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController), // Y controller (usually the same values as X controller)
              new PIDController(Constants.AutoConstants.kPThetaController, Constants.AutoConstants.kIThetaController, Constants.AutoConstants.kDThetaController), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-             m_robotContainer.s_Swerve::setModuleStates, // Module states consumer
+             RobotContainer.s_Swerve::setModuleStates, // Module states consumer
              true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-             m_robotContainer.s_Swerve // Requires this drive subsystem
+             RobotContainer.s_Swerve // Requires this drive subsystem
          )
      );
  }
@@ -175,16 +161,16 @@ public class Robot extends TimedRobot {
     SwerveControllerCommand swerveControllerCommand =
     new SwerveControllerCommand(
       trajectory, // PUT TRAJECTORY HERE
-      m_robotContainer.s_Swerve::getPose,
+      RobotContainer.s_Swerve::getPose,
       Constants.Swerve.swerveKinematics,
       new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
       new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
       thetaController,
-      m_robotContainer.s_Swerve::setModuleStates,
-      m_robotContainer.s_Swerve);
+      RobotContainer.s_Swerve::setModuleStates,
+      RobotContainer.s_Swerve);
         
       // return swerveControllerCommand;
-      return new InstantCommand(() -> m_robotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
+      return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
   /**
@@ -216,7 +202,7 @@ public class Robot extends TimedRobot {
     // PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
     // PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
-    Trajectory trajectory = trajectories.get(pathChooser.getSelected());
+    // Trajectory trajectory = trajectories.get(pathChooser.getSelected());
     //m_autonomousCommand = loadCommand(trajectory);
     // m_autonomousCommand = followTrajectoryCommand(traj, true);
 

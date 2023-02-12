@@ -21,7 +21,7 @@ public class PushingP extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.s_Pusher.push();
+    RobotContainer.s_Pusher.extend();
   }
 
   // Called once the command ends or is interrupted.

@@ -131,6 +131,25 @@ public final class Constants {
         }
     }
 
+    // Elevator constants
+    public static final class Elevator {
+        public static final int motor1ID = 13;
+        public static final int motor2ID = 14;
+        public static final int Solenoid1Forward = 2;
+        public static final int Solenoid1Reverse = 3;
+        public static final int Solenoid2Forward = 4;
+        public static final int Solenoid2Reverse = 5;
+
+        public static final NeutralMode motorNeutralMode = NeutralMode.Brake;
+
+        public static final int lowEncoderPos = 0;
+        public static final int midEncoderPos = 50;
+        public static final int highEncoderPos = 120;
+        public static final int minPivotEncoderPos = 50;
+        public static final int maxEncoderPos = 300;
+        public static final int minEncoderPos = 0;
+    }
+
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3; // 3
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;

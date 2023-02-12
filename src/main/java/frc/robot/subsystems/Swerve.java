@@ -81,7 +81,7 @@ public class Swerve extends SubsystemBase {
     // }
 
     public void rotateToAngle(int angle) {
-        double goal = Conversions.toNearestZero(gyro.getYaw(), angle);
+        double goal = getTargetAngle(angle);
 
         if (gyro.getYaw() < goal) {
             drive(new Translation2d(0, 0), -0.3 * Constants.Swerve.maxAngularVelocity, true, true);
@@ -89,6 +89,10 @@ public class Swerve extends SubsystemBase {
         else {
             drive(new Translation2d(0, 0), 0.3 * Constants.Swerve.maxAngularVelocity, true, true);
         }
+    }
+
+    public double getTargetAngle(int angle) {
+        return Conversions.toNearestZero(gyro.getYaw(), angle);
     }
 
     public void shiftGear() {
@@ -198,30 +202,30 @@ public class Swerve extends SubsystemBase {
      * If roll negative, move wheels negative
      * Speed proportional to roll
      */
-    public void autoBalance() {
-        double roll = gyro.getRoll();
-        double yaw = Math.abs(gyro.getYaw() % 360);
-        int multiplier = 1;
-        double deadband = 2;
+    // public void autoBalance() {
+    //     double roll = gyro.getRoll();
+    //     double yaw = Math.abs(gyro.getYaw() % 360);
+    //     int multiplier = 1;
+    //     double deadband = 2;
 
-        if (yaw > 180) {
-            multiplier = -1;
-            System.out.println("greater");
-        }
+    //     if (yaw > 180) {
+    //         multiplier = -1;
+    //         System.out.println("greater");
+    //     }
 
-        Translation2d translation = new Translation2d(0, 0);
-        double rotation = multiplier * 0.15 * Constants.Swerve.maxAngularVelocity;
+    //     Translation2d translation = new Translation2d(0, 0);
+    //     double rotation = multiplier * 0.15 * Constants.Swerve.maxAngularVelocity;
 
-        while (yaw < 360 - deadband && yaw > deadband) { //yaw > deadband || 360 - yaw < deadband
-            yaw = Math.abs(gyro.getYaw() % 360);
+    //     while (yaw < 360 - deadband && yaw > deadband) { //yaw > deadband || 360 - yaw < deadband
+    //         yaw = Math.abs(gyro.getYaw() % 360);
 
-            drive(translation, rotation, true, true);
-        }
+    //         drive(translation, rotation, true, true);
+    //     }
 
-        if (Math.abs(roll) <= rollDeadband) return;
+    //     if (Math.abs(roll) <= rollDeadband) return;
 
         
-    }
+    // }
 
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
         return new SequentialCommandGroup(

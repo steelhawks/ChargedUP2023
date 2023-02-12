@@ -2,16 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.lib.util.ElevatorLevels;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -36,34 +33,36 @@ public class RobotContainer {
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
-    private final POVButton upButton = new POVButton(driver, 0);
-    private final POVButton rightButton = new POVButton(driver, 90);
-    private final POVButton downButton = new POVButton(driver, 180);
-    private final POVButton leftButton = new POVButton(driver, 270);
+    // private final POVButton upButton = new POVButton(driver, 0);
+    // private final POVButton rightButton = new POVButton(driver, 90);
+    // private final POVButton downButton = new POVButton(driver, 180);
+    // private final POVButton leftButton = new POVButton(driver, 270);
 
     /*Operator Buttons*/ 
-    private final JoystickButton armExtend = new JoystickButton(operator, 5); //left bumper
-    private final JoystickButton armRetract = new JoystickButton(operator, 6); //right bumpter
-    private final JoystickButton toggleArm = new JoystickButton(operator, 7); //left trigger
-    private final JoystickButton toggleClaw = new JoystickButton(operator, 8); //right trigger
+    private final JoystickButton lowElevator = new JoystickButton(operator, 2); // A
+    private final JoystickButton midElevator = new JoystickButton(operator, 3); // B
+    private final JoystickButton highElevator = new JoystickButton(operator, 4); // Y
+    private final POVButton raiseElevator = new POVButton(operator, 0); // Up
+    private final POVButton lowerElevator = new POVButton(operator, 180); // Down
+    private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
+    private final JoystickButton toggleElevator = new JoystickButton(operator, 6); // Right bumper
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
     public static final StationPusher s_Pusher = new StationPusher();
-    public static final Arm s_Arm = new Arm();
-    private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+    public static final Elevator s_Elevator = new Elevator();
+    private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
     public RobotContainer() {
-        compressor.disable();
-        CommandScheduler.getInstance().registerSubsystem(s_Arm);
+        // compressor.disable();
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
-                driver,
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
-                () -> robotCentric.getAsBoolean()
+                () -> robotCentric.getAsBoolean(),
+                () -> driver.getPOV()
             )
         );
 
@@ -81,23 +80,21 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         autoBalance.whileTrue(new BalanceCommand());
-        upButton.whileTrue(new RotateToAngle(0));
-        rightButton.whileTrue(new RotateToAngle(90));
-        downButton.whileTrue(new RotateToAngle(180));
-        leftButton.whileTrue(new RotateToAngle(270));
+        // upButton.whileTrue(new RotateToAngle(0));
+        // rightButton.whileTrue(new RotateToAngle(90));
+        // downButton.whileTrue(new RotateToAngle(180));
+        // leftButton.whileTrue(new RotateToAngle(270));
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
 
         /* Operator Buttons */
-        // armExtend.whileTrue(new ArmExtend());
-        // armRetract.whileTrue(new ArmRetract());
-        // toggleArm.onTrue(new InstantCommand(() -> ARM.toggleArm()));
-        // toggleClaw.onTrue(new InstantCommand(() -> ARM.toggleClaw()));
-
-
+        lowElevator.onTrue(new ElevatorCommand(ElevatorLevels.LOW));
+        midElevator.onTrue(new ElevatorCommand(ElevatorLevels.MID));
+        highElevator.onTrue(new ElevatorCommand(ElevatorLevels.HIGH));
+        raiseElevator.whileTrue(new ElevatorManual(true));
+        lowerElevator.whileTrue(new ElevatorManual(false));
     }
 
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
         return new exampleAuto(s_Swerve);
     }
 }
