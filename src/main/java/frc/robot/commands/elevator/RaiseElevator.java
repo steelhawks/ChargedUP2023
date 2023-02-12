@@ -3,10 +3,10 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
 
-public class Retract extends CommandBase{
+public class RaiseElevator extends CommandBase {
     private Elevator elevator;
 
-    public Retract(Elevator elevator) {
+    public RaiseElevator(Elevator elevator) {
         this.elevator = elevator;
 
         addRequirements(elevator);
@@ -14,7 +14,6 @@ public class Retract extends CommandBase{
 
     @Override
     public void execute() {
-        elevator.retract();
+        elevator.extend();
     }
-
 }
