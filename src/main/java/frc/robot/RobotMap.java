@@ -7,4 +7,9 @@ public final class RobotMap {
 
         int VELOCITY_CONVERSION = 6250;
     }
+
+    public static interface ELEVATOR {
+        int MOTOR_RIGHT_ONE_PORT = 0;
+        int MOTOR_LEFT_ONE_PORT = 1;
+    }
 }

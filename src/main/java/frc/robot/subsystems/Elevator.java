@@ -4,29 +4,46 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
 
 public class Elevator extends SubsystemBase {
   private DoubleSolenoid rightSolenoid;
   private DoubleSolenoid leftSolenoid;
+  private WPI_TalonFX rightElevatorMotor;
+  private WPI_TalonFX leftElevatorMotor;
 
   public Elevator() {
-    rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
-    leftSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
+    this.rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
+    this.leftSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
+    this.rightElevatorMotor = new WPI_TalonFX(RobotMap.ELEVATOR.MOTOR_RIGHT_ONE_PORT);
+    this.leftElevatorMotor = new WPI_TalonFX(RobotMap.ELEVATOR.MOTOR_RIGHT_ONE_PORT);
 
-    rightSolenoid.set(DoubleSolenoid.Value.kOff);
-    leftSolenoid.set(DoubleSolenoid.Value.kOff);
+    this.rightSolenoid.set(DoubleSolenoid.Value.kOff);
+    this.leftSolenoid.set(DoubleSolenoid.Value.kOff);
   }
 
   public void extend() {
-    rightSolenoid.set(DoubleSolenoid.Value.kForward);
-    leftSolenoid.set(DoubleSolenoid.Value.kForward);
+    this.rightSolenoid.set(DoubleSolenoid.Value.kForward);
+    this.leftSolenoid.set(DoubleSolenoid.Value.kForward);
   }
 
   public void retract() {
     rightSolenoid.set(DoubleSolenoid.Value.kReverse);
     leftSolenoid.set(DoubleSolenoid.Value.kReverse);
+  }
+
+  public void raiseClaw() {
+    this.rightElevatorMotor.set(0.5);
+    this.leftElevatorMotor.set(0.5);
+  }
+
+  public void lowerClaw() {
+    this.rightElevatorMotor.set(-0.5);
+    this.leftElevatorMotor.set(-0.5);
   }
 }

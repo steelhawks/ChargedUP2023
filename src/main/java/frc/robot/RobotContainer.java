@@ -8,13 +8,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.auton.DefaultAuton;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.elevator.Extend;
+import frc.robot.commands.elevator.LowerClaw;
+import frc.robot.commands.elevator.RaiseClaw;
 import frc.robot.commands.elevator.Retract;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
-    public final Joystick joystick;
-    public final Drivetrain drivetrain;
+    private final Joystick joystick;
+    private final Drivetrain drivetrain;
     private final Elevator elevator;
 
     public final SendableChooser<Command> autonChooser = new SendableChooser<>();
@@ -25,10 +27,10 @@ public class RobotContainer {
         this.elevator = new Elevator();
 
         configAutonDashboard();
-        scheduleCommands();
+        configureCommands();
     }
 
-    public void scheduleCommands() {
+    private void configureCommands() {
         this.drivetrain.register();
         this.elevator.register();
 
@@ -36,10 +38,8 @@ public class RobotContainer {
 
         new JoystickButton(this.joystick, 7).onTrue(new Extend(this.elevator));
         new JoystickButton(this.joystick, 8).onTrue(new Retract(this.elevator));
-    }
-
-    public void getSmartDashboardValues() {
-        this.drivetrain.getSmartDashboardValues();
+        new JoystickButton(this.joystick, 6).whileTrue(new RaiseClaw(this.elevator));
+        new JoystickButton(this.joystick, 5).whileTrue(new LowerClaw(this.elevator));
     }
 
     public void configAutonDashboard() {
@@ -48,4 +48,9 @@ public class RobotContainer {
 
         SmartDashboard.putData("Autonomous Modes", autonChooser);
     }
+
+    public void getSmartDashboardValues() {
+        this.drivetrain.getSmartDashboardValues();
+    }
+
 }
