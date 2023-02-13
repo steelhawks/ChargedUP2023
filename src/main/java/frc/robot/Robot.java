@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.VisionAlign;
 
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
@@ -215,6 +216,14 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    /* VISION STUFF */
+    // if (RobotContainer.s_Swerve.isLowGear()) {
+    //   RobotContainer.s_Swerve.shiftGear();
+    // }
+
+    // m_autonomousCommand = new VisionAlign();
+    // m_autonomousCommand.schedule();
   }
 
   /** This function is called periodically during autonomous. */

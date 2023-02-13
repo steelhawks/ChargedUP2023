@@ -194,6 +194,10 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public boolean isLowGear() {
+        return isShifted;
+    }
+
     /*
      * Call after robot is on ramp
      * Click button to call method
