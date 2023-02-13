@@ -11,6 +11,10 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.lib.util.ElevatorLevels;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.Drivetrain.BalanceCommand;
+import frc.robot.commands.Drivetrain.TeleopSwerve;
+import frc.robot.commands.Elevator.ElevatorCommand;
+import frc.robot.commands.Elevator.ElevatorManual;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
