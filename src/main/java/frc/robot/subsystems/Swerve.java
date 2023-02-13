@@ -31,7 +31,6 @@ public class Swerve extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
-    private final double rollDeadband = 8;
     private double speedMultiplier;
     private boolean isShifted; 
 
@@ -55,30 +54,6 @@ public class Swerve extends SubsystemBase {
         speedMultiplier = 1;
         isShifted = false;
     }
-
-    // private void rotateInPlace(double rotation) {
-    //     SwerveModuleState[] swerveModuleStates =
-    //         Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-    //             ChassisSpeeds.fromFieldRelativeSpeeds(
-    //                                 0, 
-    //                                 0, 
-    //                                 rotation,
-    //                                 getYaw()
-    //                             ));
-
-    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
-        
-    //     for(SwerveModule mod : mSwerveMods){
-    //         mod.setDesiredState(swerveModuleStates[mod.moduleNumber], true);
-    //     }
-    // }    
-
-    // private void rotateInPlace(double rotation) {
-    //     Translation2d translation = new Translation2d(0, 0);
-
-    //     drive(translation, rotation, true, true);
-    //     System.out.println(rotation);
-    // }
 
     public void rotateToAngle(int angle) {
         double goal = getTargetAngle(angle);

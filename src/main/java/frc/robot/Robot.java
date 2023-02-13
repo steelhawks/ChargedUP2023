@@ -46,11 +46,6 @@ public class Robot extends TimedRobot {
 
   private TrajectoryConfig config;
   private List<Trajectory> trajectories = new ArrayList<>();
-  
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
 
    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
@@ -128,8 +123,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(moduleCumulativeChooser);
     SmartDashboard.putData(pathChooser);
     
-      // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-      // autonomous chooser on the dashboard.
       m_robotContainer = new RobotContainer();
     }
 
@@ -174,30 +167,17 @@ public class Robot extends TimedRobot {
       return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     // PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
@@ -234,10 +214,6 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     //m_robotContainer.s_Swerve.resetModule(moduleChooser.getSelected());
     m_robotContainer.configureMoreButtonBindings(moduleCumulativeChooser.getSelected());
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
