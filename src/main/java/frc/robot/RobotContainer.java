@@ -10,11 +10,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.lib.util.ElevatorLevels;
 import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.commands.Drivetrain.BalanceCommand;
-import frc.robot.commands.Drivetrain.TeleopSwerve;
-import frc.robot.commands.Elevator.ElevatorCommand;
-import frc.robot.commands.Elevator.ElevatorManual;
+import frc.robot.commands.Drivetrain.*;
+import frc.robot.commands.Elevator.*;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -55,6 +52,7 @@ public class RobotContainer {
     public static final Swerve s_Swerve = new Swerve();
     public static final StationPusher s_Pusher = new StationPusher();
     public static final Elevator s_Elevator = new Elevator();
+    public static final LED s_Led = new LED(Constants.Led.port, Constants.Led.length);
     private static final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
     public RobotContainer() {

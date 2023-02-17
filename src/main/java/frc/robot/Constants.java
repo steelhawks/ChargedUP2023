@@ -150,6 +150,12 @@ public final class Constants {
         public static final int minEncoderPos = 0;
     }
 
+    // LED constants
+    public static final class Led {
+        public static final int port = 0;
+        public static final int length = 60;
+    }
+
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3; // 3
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;

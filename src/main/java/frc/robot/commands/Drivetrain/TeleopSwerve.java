@@ -22,7 +22,7 @@ public class TeleopSwerve extends CommandBase {
     private IntSupplier POV;
     private PIDController angler;
 
-    public TeleopSwerve( Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, IntSupplier POV) {
+    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, IntSupplier POV) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
         this.POV = POV;
