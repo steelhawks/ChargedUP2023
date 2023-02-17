@@ -15,21 +15,7 @@ public class ArcadeDrive extends CommandBase {
         addRequirements(drivetrain);
     }
 
-    @Override
-    public void initialize() {
-    }
-
-    @Override
     public void execute() {
         this.drivetrain.arcadeDrive(this.joystick);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

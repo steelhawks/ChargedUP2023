@@ -15,15 +15,7 @@ public class DriveSeconds extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-    }
-
-    @Override
     public void execute() {
         this.drivetrain.driveStraight(this.speed);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
     }
 }
