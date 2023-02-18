@@ -28,7 +28,7 @@ public class RobotContainer {
     private final Joystick joystick;
     private final Joystick LEDJoystick;
 
-    private final Drivetrain drivetrain;
+    public final Drivetrain drivetrain;
     private final Elevator elevator;
     private final Claw claw;
     private final LED LED;

@@ -59,7 +59,6 @@ public class Robot extends TimedRobot {
       autonCommand.schedule();
     }
   }
-
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
@@ -68,6 +67,9 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {  
+    if (autonCommand != null) {
+      autonCommand.cancel();
+    }
     this.timer.start();
   }
 
