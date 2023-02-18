@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,11 +10,16 @@ import frc.util.LEDColor;
 public class LED extends SubsystemBase {
     private AddressableLED LEDStrip;
     private AddressableLEDBuffer LEDBuffer;
+
     private int waveIndex;
+    private int currentColor; // index of colors array
+
     private static int start = 0;
 
     public LED() {
         this.waveIndex = 0;
+        this.currentColor = 0;
+
         this.LEDStrip = new AddressableLED(0);
         this.LEDBuffer = new AddressableLEDBuffer(60);
 
@@ -29,10 +36,10 @@ public class LED extends SubsystemBase {
         this.LEDStrip.setData(this.LEDBuffer);
     }
 
-    public void wave(int waveLength, LEDColor color) {
-        int red = color.getRed();
-        int green = color.getGreen();
-        int blue = color.getBlue();
+    public void wave(int waveLength, ArrayList<LEDColor> colors) {
+        int red = colors.get(this.currentColor).getRed();
+        int green = colors.get(this.currentColor).getGreen();
+        int blue = colors.get(this.currentColor).getBlue();
 
         if (this.waveIndex == 0) {
             for (byte i = 0; i <= waveLength; i++) {
@@ -43,12 +50,16 @@ public class LED extends SubsystemBase {
                 if (this.waveIndex > 0) this.LEDBuffer.setRGB(this.waveIndex - 1, 0, 0, 0);
 
                 if (this.waveIndex + waveLength < LEDBuffer.getLength() - 1) {
-                    this.LEDBuffer.setRGB(this.waveIndex + waveLength, red, green, blue);
+                    LEDColor nextColor = colors.get(this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1);
+                    this.LEDBuffer.setRGB(this.waveIndex + waveLength, nextColor.getRed(), nextColor.getGreen(), nextColor.getBlue());
                 } else {
                     this.LEDBuffer.setRGB(this.waveIndex + waveLength - 59, red, green, blue);
                 }
 
-                if (this.waveIndex > LEDBuffer.getLength() - 1) this.waveIndex = -1;
+                if (this.waveIndex > LEDBuffer.getLength() - 1) {
+                    this.waveIndex = -1; 
+                    this.currentColor = this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1;
+                }
             }
         }
         waveIndex += 1;

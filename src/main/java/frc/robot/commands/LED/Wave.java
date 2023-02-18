@@ -1,24 +1,26 @@
 package frc.robot.commands.LED;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
 import frc.util.LEDColor;
 
 public class Wave extends CommandBase {
     private LED LED;
-    private LEDColor color;
+    private ArrayList<LEDColor> colors;
     private int waveLength;
 
-    public Wave(LED LED, int waveLength, LEDColor color) {
+    public Wave(LED LED, int waveLength, ArrayList<LEDColor> colors) {
         this.LED = LED;
         this.waveLength = waveLength;
-        this.color = color;
+        this.colors = colors;
 
         addRequirements(LED);
     }
 
     @Override
     public void execute() {
-        this.LED.wave(this.waveLength, this.color);
+        this.LED.wave(this.waveLength, this.colors);
     }
 }
