@@ -58,7 +58,7 @@ public class RobotContainer {
 
         new JoystickButton(this.LEDJoystick, 1).onTrue(new SetColor(this.LED, new LEDColor(0, 0, 0)));
         new JoystickButton(this.LEDJoystick, 2).onTrue(new SetColor(this.LED, new LEDColor(0, 255, 0)));
-        new JoystickButton(this.LEDJoystick, 3).onTrue(new Wave(this.LED, 20, new ArrayList<LEDColor>(Arrays.asList(new LEDColor(0, 255, 0), new LEDColor(255, 0, 0), new LEDColor(0, 0, 255)))));
+        new JoystickButton(this.LEDJoystick, 3).onTrue(new Wave(this.LED, 30, new ArrayList<LEDColor>(Arrays.asList(new LEDColor(0, 255, 0), new LEDColor(255, 0, 0), new LEDColor(0, 0, 255)))));
         new JoystickButton(this.joystick, 7).onTrue(new RaiseElevator(this.elevator));
         new JoystickButton(this.joystick, 8).onTrue(new LowerElevator(this.elevator));
         new JoystickButton(this.joystick, 9).whileTrue(new RaiseClaw(this.elevator));

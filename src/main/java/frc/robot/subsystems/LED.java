@@ -46,14 +46,14 @@ public class LED extends SubsystemBase {
                 this.LEDBuffer.setRGB(i, red, green, blue);
             }
         } else {
-            for (byte i = 0; i < this.LEDBuffer.getLength() - 2; i++) {
+            for (byte i = 0; i < this.LEDBuffer.getLength() - 1; i++) {
                 if (this.waveIndex > 0) this.LEDBuffer.setRGB(this.waveIndex - 1, 0, 0, 0);
 
                 if (this.waveIndex + waveLength < LEDBuffer.getLength() - 1) {
-                    LEDColor nextColor = colors.get(this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1);
-                    this.LEDBuffer.setRGB(this.waveIndex + waveLength, nextColor.getRed(), nextColor.getGreen(), nextColor.getBlue());
+                    this.LEDBuffer.setRGB(this.waveIndex + waveLength, red, green, blue);
                 } else {
-                    this.LEDBuffer.setRGB(this.waveIndex + waveLength - 59, red, green, blue);
+                    LEDColor nextColor = colors.get(this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1);
+                    this.LEDBuffer.setRGB(this.waveIndex + waveLength - this.LEDBuffer.getLength() + 1, nextColor.getRed(), nextColor.getGreen(), nextColor.getBlue());
                 }
 
                 if (this.waveIndex > LEDBuffer.getLength() - 1) {
