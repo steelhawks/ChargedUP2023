@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private RobotContainer robot;
   private Command autonCommand;
+  private Timer timer;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -29,6 +31,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Initialize Robot (Robot Container)
+    this.timer = new Timer();
     this.robot = new RobotContainer();
   }
 
@@ -64,13 +67,16 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {
+  public void teleopInit() {  
+    this.timer.start();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    this.robot.endgameLED(this.timer.get());
   }
+  
 
   /** This function is called once when the robot is disabled. */
   @Override

@@ -51,8 +51,9 @@ public class RobotContainer {
 
         this.drivetrain.setDefaultCommand(new ArcadeDrive(this.drivetrain, this.joystick));
 
+        new JoystickButton(this.joystick, 4).onTrue(new SetColor(this.LED, new LEDColor(0, 0, 0)));
         new JoystickButton(this.joystick, 5).onTrue(new SetColor(this.LED, new LEDColor(0, 255, 0)));
-        new JoystickButton(this.joystick, 6).onTrue(new Wave(this.LED, 10, new LEDColor(0, 255, 0)));
+        new JoystickButton(this.joystick, 6).onTrue(new Wave(this.LED, 20, new LEDColor(0, 255, 255)));
         new JoystickButton(this.joystick, 7).onTrue(new RaiseElevator(this.elevator));
         new JoystickButton(this.joystick, 8).onTrue(new LowerElevator(this.elevator));
         new JoystickButton(this.joystick, 9).whileTrue(new RaiseClaw(this.elevator));
@@ -72,4 +73,7 @@ public class RobotContainer {
         this.drivetrain.getSmartDashboardValues();
     }
 
+    public void endgameLED(double timer) {
+        this.LED.endgameLED(timer);
+    }
 }
