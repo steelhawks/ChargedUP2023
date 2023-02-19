@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.util.Limelight;
 import frc.robot.RobotContainer;
 
-public class VisionAlignLime extends CommandBase {
+public class FollowTrajectory extends CommandBase {
   
-  public VisionAlignLime() {
+  public FollowTrajectory() {
     addRequirements(RobotContainer.s_Swerve);
   }
 

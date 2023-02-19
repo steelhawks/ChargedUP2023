@@ -13,10 +13,10 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class Elevator extends SubsystemBase {
-  private DoubleSolenoid pistonOne;
+  private DoubleSolenoid piston;
   private WPI_TalonFX motorOne;
   private WPI_TalonFX motorTwo;
-  private boolean pistonVal;
+  private Value pistonVal;
 
   private CANCoder can;
   private double initialRotations;
@@ -29,40 +29,39 @@ public class Elevator extends SubsystemBase {
     this.motorOne = new WPI_TalonFX(Constants.Elevator.motor1ID);
     this.motorTwo = new WPI_TalonFX(Constants.Elevator.motor2ID);
 
-    this.pistonOne = new DoubleSolenoid(PNEUMATIC_TYPE, Constants.Elevator.SolenoidForward, Constants.Elevator.SolenoidReverse);
+    this.piston = new DoubleSolenoid(PNEUMATIC_TYPE, Constants.Elevator.SolenoidForward, Constants.Elevator.SolenoidReverse);
 
     can = new CANCoder(Constants.Elevator.canCoderID);
     initialRotations = getEncoderRotations();
 
     limitSwitch = new DigitalInput(Constants.Elevator.limitSwitchPort);
 
-    pistonVal = false; // true is down
+    pistonVal = piston.get(); // true is down
 
     configMotors();
     configCanCoders();
   }
 
   public void togglePistons() {
-    if (pistonVal) {
+    if (pistonVal.equals(Value.kReverse)) {
       forward();  
     } else if (getEncoderRotations() > Constants.Elevator.minPivotEncoderPos) {
-      System.out.println("reverse");
       reverse();
     }
-    System.out.println("done");
-
-    pistonVal = !pistonVal;
   }
 
-  private void forward() {
-    pistonOne.set(Value.kForward);
+  public void forward() {
+    piston.set(Value.kForward);
     System.out.println("forward");
-
   }
 
-  private void reverse() {
-    pistonOne.set(Value.kReverse);
+  public void reverse() {
+    piston.set(Value.kReverse);
     System.out.println("reverse");
+  }
+
+  private boolean elevatorDown() {
+    return piston.get().equals(Value.kReverse);
   }
 
   public void moveElevator(double speed, boolean isManual) {
@@ -72,7 +71,7 @@ public class Elevator extends SubsystemBase {
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
       motorOne.set(speed);
       motorTwo.set(speed);
-      if (!isManual && encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal) {
+      if (!isManual && encoderVal >= Constants.Elevator.maxPivotEncoderPos && !elevatorDown()) {
         togglePistons();
         System.out.println("AUTO TOGGLE WIEFNWEJF");
       }
@@ -84,7 +83,7 @@ public class Elevator extends SubsystemBase {
       stop();
     }
 
-    if (!moveUp && encoderVal <= Constants.Elevator.minPivotEncoderPos && pistonVal) {
+    if (!moveUp && encoderVal <= Constants.Elevator.minPivotEncoderPos && elevatorDown()) {
       togglePistons();
       stop();
     }

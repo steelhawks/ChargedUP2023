@@ -26,13 +26,6 @@ public class ElevatorCommand extends CommandBase {
     addRequirements(RobotContainer.s_Elevator);
   }
 
-  @Override
-  public Set<Subsystem> getRequirements() 
-  {
-    Set<Subsystem> list = new HashSet<Subsystem>();
-    list.add(RobotContainer.s_Elevator);
-    return list;
-  }
 
   @Override
   public void initialize() {}

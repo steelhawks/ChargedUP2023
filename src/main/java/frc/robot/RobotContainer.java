@@ -14,11 +14,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.lib.util.ClawStatus;
 import frc.lib.util.ElevatorLevels;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
 import frc.robot.autos.*;
-import frc.robot.commands.ToggleClaw;
+import frc.robot.commands.Claw.SetClaw;
+import frc.robot.commands.Claw.ToggleClaw;
 import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
 import frc.robot.commands.Led.LedCommand;
@@ -111,14 +113,14 @@ public class RobotContainer {
     //     return Command();
     // }
     
-    private static Command ejectGamePieceCommmand() {
-        Command com = new SequentialCommandGroup(
-            new InstantCommand(() -> s_Claw.toggleClaw()),
-            new WaitCommand(1),
-            new InstantCommand(() -> s_Claw.toggleClaw())
-        );
-        return com;
-    }
+    // private static Command ejectGamePieceCommmand() {
+    //     Command com = new SequentialCommandGroup(
+    //         new InstantCommand(() -> s_Claw.toggleClaw()),
+    //         new WaitCommand(1),
+    //         new InstantCommand(() -> s_Claw.toggleClaw())
+    //     );
+    //     return com;
+    // }
 
     private static Command requestPieceCommand(LEDColor color){
         Command com = new SequentialCommandGroup(new Request(color),
@@ -148,10 +150,10 @@ public class RobotContainer {
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
 
         /* Operator Buttons */
-        homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME));
+        homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME).andThen(new SetClaw(ClawStatus.OPEN)));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
-        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID).andThen(ejectGamePieceCommmand()));
-        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH).andThen(ejectGamePieceCommmand()));
+        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));//.andThen(ejectGamePieceCommmand()));
+        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));//.andThen(ejectGamePieceCommmand()));
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());

@@ -3,13 +3,14 @@ package frc.robot.commands.Drivetrain;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.RobotContainer;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BalanceCommand implements Command 
+public class BalanceCommand extends CommandBase
 {
   private PIDController balancer;
   
@@ -19,14 +20,7 @@ public class BalanceCommand implements Command
     balancer.setSetpoint(-0.7);
     balancer.setTolerance(0.45);
     balancer.enableContinuousInput(0, 360);
-  }
-
-  @Override
-  public Set<Subsystem> getRequirements() 
-  {
-    Set<Subsystem> list = new HashSet<Subsystem>();
-    list.add(RobotContainer.s_Swerve);
-    return list;
+    addRequirements(RobotContainer.s_Swerve);
   }
 
   @Override
