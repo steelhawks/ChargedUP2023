@@ -25,6 +25,10 @@ import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
 import frc.robot.commands.Led.LedCommand;
 import frc.robot.commands.Led.Request;
+import frc.robot.commands.Vision.VisionAlignLime;
+import frc.robot.commands.Vision.VisionCrabTag1;
+import frc.robot.commands.Vision.VisionCrabTag2;
+import frc.robot.commands.Vision.VisionSquareRobot;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -48,6 +52,8 @@ public class RobotContainer {
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
     private final JoystickButton testTrajectory = new JoystickButton(driver, 1);
+    private final JoystickButton centerToTag = new JoystickButton(driver, 6);
+    
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
@@ -150,7 +156,13 @@ public class RobotContainer {
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
-
+        centerToTag.onTrue(new SequentialCommandGroup(new VisionAlignLime(),
+                                                        new VisionSquareRobot(),
+                                                        new WaitCommand(1),
+                                                        new VisionCrabTag2(),
+                                                        new WaitCommand(2),
+                                                        new VisionCrabTag1()       
+                                                                            ));
         /* Operator Buttons */
         homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME).andThen(new SetClaw(ClawStatus.OPEN)));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));

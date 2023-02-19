@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 
@@ -34,15 +36,14 @@ public class Limelight {
         tx = getEntryAsDouble("tx");
         ty = getEntryAsDouble("ty");
         tv = getEntryAsDouble("tv");
-        apriltag_pose = table.getEntry("t6r_ts").getDoubleArray(new double[0]);
-        robot_space = table.getEntry("t6t_rs").getDoubleArray(new double[0]);
+        apriltag_pose = table.getEntry("botpose_targetspace").getDoubleArray(new double[0]);
+        robot_space = table.getEntry("botpose").getDoubleArray(new double[0]);
         horizontalBoundingSide = getEntryAsDouble("thor");
         verticalBoundingSide = getEntryAsDouble("tvert");
         
         pipeline = (int)getEntryAsDouble("getpipe");
 
         contours = table.getEntry("tcornxy").getDoubleArray(new double[0]);
-
     }
 
     public static double getArea(){
@@ -73,6 +74,10 @@ public class Limelight {
         return contours;
     }
 
+    public static double getTagYaw(){
+        return apriltag_pose[5];
+    }
+
     public static Pose2d getApriltagPose() {
         return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[5])); 
     }
@@ -93,6 +98,5 @@ public class Limelight {
         return table.getEntry(key).getDouble(0);
     }
 
-    
 
 }

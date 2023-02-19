@@ -15,9 +15,10 @@ import frc.robot.RobotContainer;
 public class Vision extends SubsystemBase{
     
     // Pipeline IDs'
+    public static final int ID3_PIPELINE = 0;
     private static final int CONE_PIPELINE = 1;
-    private static final int BLUE_SUBSTATION_PIPELINE = 2;
-    private static final int RED_SUBSTATION_PIPELINE = 3;
+    public static final int ID2_PIPELINE = 2;
+    public static final int ID1_PIPELINE = 3;
     private static final int CUBE_PIPELINE = 4;
     private static final int REFLECTIVE_TAPE_PIPELINE = 5;
 
@@ -25,20 +26,40 @@ public class Vision extends SubsystemBase{
         Limelight.init();
     }
 
-    public void GoToTag(){
+    public void goToTag(){
         if (Limelight.hasValidTarget() && Limelight.getArea() < Constants.Vision.areaThreshold) {
             double y_vel;
+            double ang_vel;
+
             if (Math.abs(Limelight.getXOffset()) > Constants.Vision.xOffsetThreshold) {
-              y_vel = -(Math.sin(Math.PI / Constants.Vision.FiftyFour) * Limelight.getXOffset());
+              y_vel = (Math.sin((Math.PI / Constants.Vision.FiftyFour) * Limelight.getXOffset()));
             } else {
               y_vel = 0;
             }
       
+            if(Math.abs(Limelight.getTagYaw()) < 0.15){
+                ang_vel = 0;
+            } else {
+                ang_vel = -(Math.sin((Math.PI / 14) * Limelight.getTagYaw()));
+            }
+
             Translation2d velocity = new Translation2d(Constants.Vision.xVelocity, y_vel);
-            RobotContainer.s_Swerve.drive(velocity, 0, true, false);
+            RobotContainer.s_Swerve.drive(velocity, ang_vel, true, false);
         } else if (!Limelight.hasValidTarget()) {
             RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
         }
+    }
+
+    public void squareToTag(){
+        double ang_vel;
+
+        if(Math.abs(Limelight.getTagYaw()) < 0.4) {
+            ang_vel = 0;
+        } else {
+            ang_vel = -Math.sin((Math.PI / 14) * Limelight.getTagYaw());
+        }
+
+        RobotContainer.s_Swerve.drive(new Translation2d(0, 0), ang_vel, true, false);
     }
 
     public Command testTrajectory(Trajectory trajectory) {

@@ -41,11 +41,12 @@ public class ApriltagTrajectory extends CommandBase {
 
     @Override
     public void execute() {
-        RobotContainer.s_Vision.testTrajectory(test);
+        RobotContainer.s_Vision.testTrajectory(test).execute();
     }
 
     @Override
     public void end(boolean interrupted) {
+        
         RobotContainer.s_Swerve.stop();
     }
 
