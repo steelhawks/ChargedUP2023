@@ -16,7 +16,7 @@ public class Elevator extends SubsystemBase {
   private DoubleSolenoid pistonOne;
   private WPI_TalonFX motorOne;
   private WPI_TalonFX motorTwo;
-  private boolean elevatorUp;
+  private boolean pistonVal;
 
   private CANCoder can;
   private double initialRotations;
@@ -36,14 +36,14 @@ public class Elevator extends SubsystemBase {
 
     limitSwitch = new DigitalInput(Constants.Elevator.limitSwitchPort);
 
-    elevatorUp = true;
+    pistonVal = false; // true is down
 
     configMotors();
     configCanCoders();
   }
 
   public void togglePistons() {
-    if (!elevatorUp) {
+    if (pistonVal) {
       pistonOne.set(Value.kForward);
       System.out.println("forward");
     } else if (getEncoderRotations() > Constants.Elevator.minPivotEncoderPos) {
@@ -51,7 +51,8 @@ public class Elevator extends SubsystemBase {
       pistonOne.set(Value.kReverse);
     }
     System.out.println("done");
-    elevatorUp = !elevatorUp;
+
+    pistonVal = !pistonVal;
   }
 
   public void moveElevator(double speed) {
@@ -61,11 +62,20 @@ public class Elevator extends SubsystemBase {
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
       motorOne.set(speed);
       motorTwo.set(speed);
+      if (encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal) {
+        togglePistons();
+        System.out.println("AUTO TOGGLE WIEFNWEJF");
+      }
     } else if (!moveUp && !limitPressed()) {
       motorOne.set(speed);
       motorTwo.set(speed);
     } else if (!moveUp && limitPressed()) {
       can.setPosition(0);
+      stop();
+    }
+
+    if (!moveUp && encoderVal <= Constants.Elevator.minPivotEncoderPos && pistonVal) {
+      togglePistons();
       stop();
     }
     // else if (!moveUp && encoderVal <= Constants.Elevator.minEncoderPos) {

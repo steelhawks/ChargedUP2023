@@ -41,7 +41,7 @@ public class ElevatorCommand extends CommandBase {
     double speed = -setter.calculate(RobotContainer.s_Elevator.getEncoderRotations(), level.getEncoderVal());
 
     if (level == ElevatorLevels.HOME) {
-      speed = 0.3;
+      speed = 0.35;
     }
 
     RobotContainer.s_Elevator.moveElevator(speed);
