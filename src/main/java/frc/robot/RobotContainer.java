@@ -148,10 +148,10 @@ public class RobotContainer {
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
 
         /* Operator Buttons */
-        homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME));
+        homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME).andThen(new InstantCommand(() -> s_Claw.openClaw())));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
-        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID).andThen(ejectGamePieceCommmand()));
-        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH).andThen(ejectGamePieceCommmand()));
+        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
+        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());

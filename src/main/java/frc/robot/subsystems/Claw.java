@@ -24,20 +24,21 @@ public class Claw extends SubsystemBase {
 
   public void toggleClaw() {
     if (clawPistonBottom.get().equals(Value.kForward)){
-      reverse();
+      closeClaw();
     }
     else {
-      forward();
+      openClaw();
     }
   }
-  private void forward() {
+
+  public void openClaw() {
     clawPistonBottom.set(Value.kForward);
     clawPistonTop.set(Value.kForward);
     // System.out.println("forward");
 
   }
 
-  private void reverse() {
+  public void closeClaw() {
     clawPistonBottom.set(Value.kReverse);
     clawPistonTop.set(Value.kReverse);
     // System.out.println("reverse");

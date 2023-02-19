@@ -15,7 +15,7 @@ public class BalanceCommand implements Command
   
 
   public BalanceCommand() {
-    balancer = new PIDController(0.048, 0.0065, 0.015);
+    balancer = new PIDController(0.08, 0.0065, 0.015);
     balancer.setSetpoint(-0.7);
     balancer.setTolerance(0.45);
     balancer.enableContinuousInput(0, 360);
