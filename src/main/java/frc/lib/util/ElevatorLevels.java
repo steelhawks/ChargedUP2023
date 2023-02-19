@@ -3,17 +3,18 @@ package frc.lib.util;
 import frc.robot.Constants;
 
 public enum ElevatorLevels {
+    HOME(Constants.Elevator.homeEncoderPos),
     LOW(Constants.Elevator.lowEncoderPos),
     MID(Constants.Elevator.midEncoderPos),
     HIGH(Constants.Elevator.highEncoderPos);
 
-    private int encoderVal;
+    private double encoderVal;
 
-    ElevatorLevels(int encoderVal) {
+    ElevatorLevels(double encoderVal) {
         this.encoderVal = encoderVal;
     }
 
-    public int getEncoderVal() {
+    public double getEncoderVal() {
         return encoderVal;
     }
 }

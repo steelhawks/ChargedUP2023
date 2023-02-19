@@ -133,27 +133,56 @@ public final class Constants {
 
     // Elevator constants
     public static final class Elevator {
-        public static final int motor1ID = 13;
-        public static final int motor2ID = 14;
-        public static final int Solenoid1Forward = 2;
-        public static final int Solenoid1Reverse = 3;
-        public static final int Solenoid2Forward = 4;
-        public static final int Solenoid2Reverse = 5;
+        public static final int motor1ID = 21;
+        public static final int motor2ID = 22;
+        public static final int SolenoidForward = 0;
+        public static final int SolenoidReverse = 1;
 
         public static final NeutralMode motorNeutralMode = NeutralMode.Brake;
 
-        public static final int lowEncoderPos = 0;
-        public static final int midEncoderPos = 50;
-        public static final int highEncoderPos = 120;
-        public static final int minPivotEncoderPos = 50;
-        public static final int maxEncoderPos = 300;
-        public static final int minEncoderPos = 0;
+        public static final double homeEncoderPos = 0;
+        public static final double lowEncoderPos = 1.235;
+        public static final double midEncoderPos = 2.73;
+        public static final double highEncoderPos = 3.88;
+        public static final double minPivotEncoderPos = 1.39;
+        public static final double maxEncoderPos = 3.88;
+
+        public static final double elevatorSpeed = 0.4;
+
+        public static final int canCoderID = 13;
+        public static final boolean canCoderInvert = true;
+
+        public static final int limitSwitchPort = 1;
+    }
+
+    // Claw constants
+    public static final class Claw {
+        public static final int SolenoidTopForward = 2;
+        public static final int SolenoidTopReverse = 3;
+        public static final int SolenoidBottomForward = 4;
+        public static final int SolenoidBottomReverse = 5;
+        public static final int beamPort = 0;
+    }
+
+    // Pushing p
+    public static final class Pusher {
+        public static final int solenoidForward = 6;
+        public static final int solenoidReverse = 7;
     }
 
     // LED constants
     public static final class Led {
         public static final int port = 0;
         public static final int length = 60;
+    }
+
+    // Vision constants
+    public static final class Vision {
+        public static final double areaThreshold = 1.6;
+        public static final double xOffsetThreshold = 1;
+        public static final double xVelocity = 0.8;
+        public static final double spinVelocity = 1;
+        public static final int FiftyFour = 54;
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot

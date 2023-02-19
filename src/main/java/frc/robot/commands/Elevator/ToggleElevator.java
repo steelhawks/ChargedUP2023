@@ -8,12 +8,9 @@ import frc.robot.RobotContainer;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ElevatorManual implements Command {
+public class ToggleElevator implements Command {
 
-  private boolean moveUp;
-
-  public ElevatorManual(boolean moveUp) {
-    this.moveUp = moveUp;
+  public ToggleElevator() {
   }
 
   @Override
@@ -29,18 +26,15 @@ public class ElevatorManual implements Command {
 
   @Override
   public void execute() {
-    double speed = moveUp ? -1 * Constants.Elevator.elevatorSpeed : Constants.Elevator.elevatorSpeed;
-    System.out.println("Elevator");
-    RobotContainer.s_Elevator.moveElevator(speed);
+    RobotContainer.s_Elevator.togglePistons();
   }
     
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 
   @Override
   public void end(boolean interrupted) {
-      RobotContainer.s_Elevator.stop();
   }
 }

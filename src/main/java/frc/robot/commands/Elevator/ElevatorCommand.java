@@ -2,6 +2,7 @@ package frc.robot.commands.Elevator;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.lib.util.ElevatorLevels;
 import frc.robot.RobotContainer;
@@ -9,7 +10,7 @@ import frc.robot.RobotContainer;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ElevatorCommand implements Command {
+public class ElevatorCommand extends CommandBase {
 
   private ElevatorLevels level;
   private PIDController setter;
@@ -17,9 +18,11 @@ public class ElevatorCommand implements Command {
   public ElevatorCommand(ElevatorLevels level) {
     this.level = level;
 
-    setter = new PIDController(0.03, 0, 0);
-    setter.setTolerance(1);
+    setter = new PIDController(0.65, 0, 0);
+    setter.setTolerance(0.1);
     setter.setSetpoint(level.getEncoderVal());
+
+    addRequirements(RobotContainer.s_Elevator);
   }
 
   @Override
@@ -35,12 +38,21 @@ public class ElevatorCommand implements Command {
 
   @Override
   public void execute() {
-    double speed = setter.calculate(RobotContainer.s_Elevator.getEncoderVal(), level.getEncoderVal()); // TODO fix this
-    RobotContainer.s_Elevator.moveToPosition(speed);
+    double speed = -setter.calculate(RobotContainer.s_Elevator.getEncoderRotations(), level.getEncoderVal());
+
+    if (level == ElevatorLevels.HOME) {
+      speed = 0.3;
+    }
+
+    RobotContainer.s_Elevator.moveElevator(speed);
   }
     
   @Override
   public boolean isFinished() {
+    if (level == ElevatorLevels.HOME) {
+      return RobotContainer.s_Elevator.limitPressed();
+    }
+
     return setter.atSetpoint();
   }
 

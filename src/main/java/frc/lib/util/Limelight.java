@@ -1,5 +1,7 @@
 package frc.lib.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -15,6 +17,7 @@ public class Limelight {
     private static double horizontalBoundingSide; // horizontal side of rough bounding box
     private static double verticalBoundingSide; // vertical side of rough bounding box
     private static double[] contours;
+    private static double[] apriltag_pose; 
 
     private static int pipeline;
 
@@ -30,6 +33,7 @@ public class Limelight {
         tx = getEntryAsDouble("tx");
         ty = getEntryAsDouble("ty");
         tv = getEntryAsDouble("tv");
+        apriltag_pose = table.getEntry("botpose").getDoubleArray(new double[0]); 
         horizontalBoundingSide = getEntryAsDouble("thor");
         verticalBoundingSide = getEntryAsDouble("tvert");
         
@@ -67,6 +71,10 @@ public class Limelight {
         return contours;
     }
 
+    public static Pose2d getApriltagPose() {
+        return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[2])); 
+    }
+
     public static int getPipeline(){
         return pipeline;
     }
@@ -78,5 +86,7 @@ public class Limelight {
     public static double getEntryAsDouble(String key){
         return table.getEntry(key).getDouble(0);
     }
+
+    
 
 }

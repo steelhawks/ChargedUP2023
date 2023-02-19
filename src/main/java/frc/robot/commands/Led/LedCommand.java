@@ -38,6 +38,9 @@ public class LedCommand extends CommandBase {
     else if (mode == LEDMode.RAINBOW) {
       RobotContainer.s_Led.rainbow();
     }
+    else if (mode == LEDMode.WAVE) {
+      RobotContainer.s_Led.wave(color);
+    }
   }
 
   @Override
