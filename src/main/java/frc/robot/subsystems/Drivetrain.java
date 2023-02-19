@@ -27,9 +27,9 @@ public class Drivetrain extends SubsystemBase {
         this.drive.arcadeDrive(stick.getY() * 0.63, -stick.getTwist() / 2);
     }
 
-    public void driveStraight(double speed) {
-        this.rightMotor.set(speed);
-        this.leftMotor.set(speed);
+    public void manualDrive(double rightMotorSpeed, double leftMotorSpeed) {
+        this.rightMotor.set(rightMotorSpeed);
+        this.leftMotor.set(leftMotorSpeed);
     }
 
     public void configureMotors() {

@@ -14,7 +14,7 @@ public class LowerElevator extends CommandBase {
 
     @Override
     public void execute() {
-        elevator.retract();
+        this.elevator.retract();
     }
 
 }

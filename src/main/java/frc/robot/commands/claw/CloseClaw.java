@@ -14,6 +14,6 @@ public class CloseClaw extends CommandBase {
 
   @Override
   public void execute() {
-    claw.closeClaw();
+    this.claw.closeClaw();
   }
 }

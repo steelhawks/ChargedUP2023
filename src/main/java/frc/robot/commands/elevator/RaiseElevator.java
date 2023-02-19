@@ -14,6 +14,6 @@ public class RaiseElevator extends CommandBase {
 
     @Override
     public void execute() {
-        elevator.extend();
+        this.elevator.extend();
     }
 }

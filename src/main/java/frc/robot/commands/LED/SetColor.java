@@ -17,6 +17,11 @@ public class SetColor extends CommandBase {
 
     @Override
     public void execute() {
-        LED.setColor(color);
+        this.LED.setColor(color);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.LED.setColor(new LEDColor(0, 0, 0));
     }
 }

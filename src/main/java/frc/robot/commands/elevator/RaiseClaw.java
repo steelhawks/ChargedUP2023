@@ -14,6 +14,6 @@ public class RaiseClaw extends CommandBase {
 
   @Override
   public void execute() {
-    elevator.raiseClaw();
+    this.elevator.raiseClaw();
   }
 }
