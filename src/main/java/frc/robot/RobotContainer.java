@@ -47,6 +47,7 @@ public class RobotContainer {
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
+    private final JoystickButton testTrajectory = new JoystickButton(driver, 1);
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
@@ -133,6 +134,7 @@ public class RobotContainer {
       );
       return com;
     }
+
 
     public void configureMoreButtonBindings(int num) {
         zeroCumulativeGyros.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));

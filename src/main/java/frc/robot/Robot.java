@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.lib.util.Limelight;
 import frc.robot.commands.Drivetrain.BalanceCommand;
 import frc.robot.commands.Vision.VisionAlignLime;
 
@@ -91,7 +92,6 @@ public class Robot extends TimedRobot {
       // End 3 meters straight ahead of where we started, facing forward
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
-
     trajectories.add(exampleTrajectory); // S curve
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
@@ -126,6 +126,25 @@ public class Robot extends TimedRobot {
       m_robotContainer = new RobotContainer();
     }
 
+    private Command loadCommand(Trajectory trajectory) {
+      var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+      thetaController.enableContinuousInput(-Math.PI, Math.PI);
+  
+      SwerveControllerCommand swerveControllerCommand =
+      new SwerveControllerCommand(
+        trajectory, // PUT TRAJECTORY HERE
+        m_robotContainer.s_Swerve::getPose,
+        Constants.Swerve.swerveKinematics,
+        new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
+        new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
+        thetaController,
+        m_robotContainer.s_Swerve::setModuleStates,
+        m_robotContainer.s_Swerve);
+          
+        // return swerveControllerCommand;
+        return new InstantCommand(() -> m_robotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
+    }
+
     private Command chargeCommand() {
         Trajectory trajectory = trajectories.get(pathChooser.getSelected());
         m_autonomousCommand = new SequentialCommandGroup(
@@ -144,28 +163,8 @@ public class Robot extends TimedRobot {
       } catch (IOException ex) {
         DriverStation.reportError("Unable to open trajectory: " + path, ex.getStackTrace());
       }
-      
-    return trajectory;  
-  }
-
-  private Command loadCommand(Trajectory trajectory) {
-    var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand =
-    new SwerveControllerCommand(
-      trajectory, // PUT TRAJECTORY HERE
-      RobotContainer.s_Swerve::getPose,
-      Constants.Swerve.swerveKinematics,
-      new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
-      new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
-      thetaController,
-      RobotContainer.s_Swerve::setModuleStates,
-      RobotContainer.s_Swerve);
-        
-      // return swerveControllerCommand;
-      return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
-  }
+      return trajectory;  
+    }
 
   @Override
   public void robotPeriodic() {

@@ -18,6 +18,7 @@ public class Limelight {
     private static double verticalBoundingSide; // vertical side of rough bounding box
     private static double[] contours;
     private static double[] apriltag_pose; 
+    private static double[] robot_space;
 
     private static int pipeline;
 
@@ -33,7 +34,8 @@ public class Limelight {
         tx = getEntryAsDouble("tx");
         ty = getEntryAsDouble("ty");
         tv = getEntryAsDouble("tv");
-        apriltag_pose = table.getEntry("botpose").getDoubleArray(new double[0]); 
+        apriltag_pose = table.getEntry("t6r_ts").getDoubleArray(new double[0]);
+        robot_space = table.getEntry("t6t_rs").getDoubleArray(new double[0]);
         horizontalBoundingSide = getEntryAsDouble("thor");
         verticalBoundingSide = getEntryAsDouble("tvert");
         
@@ -72,7 +74,11 @@ public class Limelight {
     }
 
     public static Pose2d getApriltagPose() {
-        return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[2])); 
+        return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[5])); 
+    }
+
+    public static Pose2d getRobotSpace() {
+        return new Pose2d(robot_space[0], robot_space[1], new Rotation2d(robot_space[5]));
     }
 
     public static int getPipeline(){
