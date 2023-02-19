@@ -42,7 +42,7 @@ public class RobotContainer {
         this.drivetrain = new Drivetrain();
         this.elevator = new Elevator();
         this.claw = new Claw();
-        this.LED = new LED();
+        this.LED = new LED(60);
 
         configAutonDashboard();
         configureCommands();
@@ -69,7 +69,7 @@ public class RobotContainer {
 
     public void configAutonDashboard() {
         autonChooser.addOption("No Auton", null);
-        autonChooser.addOption("Default Auton", new DefaultAuton(this.drivetrain));
+        autonChooser.addOption("Default Auton", new DefaultAuton(this.drivetrain, this.LED));
 
         SmartDashboard.putData("Autonomous Modes", autonChooser);
     }

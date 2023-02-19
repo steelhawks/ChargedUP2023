@@ -16,12 +16,12 @@ public class LED extends SubsystemBase {
 
     private static int start = 0;
 
-    public LED() {
+    public LED(int LEDLength) {
         this.waveIndex = 0;
         this.currentColor = 0;
 
         this.LEDStrip = new AddressableLED(0);
-        this.LEDBuffer = new AddressableLEDBuffer(60);
+        this.LEDBuffer = new AddressableLEDBuffer(LEDLength);
 
         this.LEDStrip.setLength(this.LEDBuffer.getLength());
         this.LEDStrip.setData(this.LEDBuffer);

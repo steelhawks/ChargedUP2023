@@ -18,8 +18,8 @@ public class Elevator extends SubsystemBase {
   private WPI_TalonFX leftElevatorMotor;
 
   public Elevator() {
-    this.rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
-    this.leftSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 6, 7);
+    this.rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, RobotMap.ELEVATOR.MOTOR_RIGHT_ONE_PORT, RobotMap.ELEVATOR.SOLENOID_RIGHT_REVERSE);
+    this.leftSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, RobotMap.ELEVATOR.MOTOR_LEFT_ONE_PORT, RobotMap.ELEVATOR.SOLENOID_LEFT_REVERSE);
     this.rightElevatorMotor = new WPI_TalonFX(RobotMap.ELEVATOR.MOTOR_RIGHT_ONE_PORT);
     this.leftElevatorMotor = new WPI_TalonFX(RobotMap.ELEVATOR.MOTOR_RIGHT_ONE_PORT);
 
