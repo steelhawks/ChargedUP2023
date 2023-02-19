@@ -44,25 +44,35 @@ public class Elevator extends SubsystemBase {
 
   public void togglePistons() {
     if (pistonVal) {
-      pistonOne.set(Value.kForward);
-      System.out.println("forward");
+      forward();  
     } else if (getEncoderRotations() > Constants.Elevator.minPivotEncoderPos) {
       System.out.println("reverse");
-      pistonOne.set(Value.kReverse);
+      reverse();
     }
     System.out.println("done");
 
     pistonVal = !pistonVal;
   }
 
-  public void moveElevator(double speed) {
+  private void forward() {
+    pistonOne.set(Value.kForward);
+    System.out.println("forward");
+
+  }
+
+  private void reverse() {
+    pistonOne.set(Value.kReverse);
+    System.out.println("reverse");
+  }
+
+  public void moveElevator(double speed, boolean isManual) {
     double encoderVal = getEncoderRotations();
     boolean moveUp = speed < 0;
 
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
       motorOne.set(speed);
       motorTwo.set(speed);
-      if (encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal) {
+      if (!isManual && encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal) {
         togglePistons();
         System.out.println("AUTO TOGGLE WIEFNWEJF");
       }

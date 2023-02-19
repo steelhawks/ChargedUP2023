@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.time.Instant;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
@@ -59,6 +61,7 @@ public class RobotContainer {
     private final JoystickButton toggleElevator = new JoystickButton(operator, 1); // X
     private final JoystickButton requestCone = new JoystickButton(operator, 7); // Left trigger
     private final JoystickButton requestCube = new JoystickButton(operator, 8); //Right trigger
+    private final JoystickButton doubleSubButtion = new JoystickButton(operator, 10); //start button
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
@@ -103,6 +106,20 @@ public class RobotContainer {
         return com;
     }
 
+    // private static Command elevatorRainbowDoubleSubCommand() {
+    //     Command com = new Command();
+    //     return Command();
+    // }
+    
+    private static Command ejectGamePieceCommmand() {
+        Command com = new SequentialCommandGroup(
+            new InstantCommand(() -> s_Claw.toggleClaw()),
+            new WaitCommand(1),
+            new InstantCommand(() -> s_Claw.toggleClaw())
+        );
+        return com;
+    }
+
     private static Command requestPieceCommand(LEDColor color){
         Command com = new SequentialCommandGroup(new Request(color),
         new ToggleClaw(),
@@ -133,14 +150,15 @@ public class RobotContainer {
         /* Operator Buttons */
         homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
-        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
-        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
+        midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID).andThen(ejectGamePieceCommmand()));
+        highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH).andThen(ejectGamePieceCommmand()));
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
         toggleElevator.onTrue(new ToggleElevator());
         requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW));
         requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE));
+        // doubleSubButtion.onTrue(elevatorLevelCommand());
     }
 
     public Command getAutonomousCommand() {

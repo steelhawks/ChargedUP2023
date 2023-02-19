@@ -171,7 +171,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
-    // SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
+    SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
   }
 
   @Override

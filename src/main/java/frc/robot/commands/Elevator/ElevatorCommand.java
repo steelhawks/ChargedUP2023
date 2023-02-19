@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.lib.util.ElevatorLevels;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 import java.util.HashSet;
@@ -18,7 +19,7 @@ public class ElevatorCommand extends CommandBase {
   public ElevatorCommand(ElevatorLevels level) {
     this.level = level;
 
-    setter = new PIDController(0.65, 0, 0);
+    setter = new PIDController(0.7, 0, 0);
     setter.setTolerance(0.1);
     setter.setSetpoint(level.getEncoderVal());
 
@@ -41,10 +42,15 @@ public class ElevatorCommand extends CommandBase {
     double speed = -setter.calculate(RobotContainer.s_Elevator.getEncoderRotations(), level.getEncoderVal());
 
     if (level == ElevatorLevels.HOME) {
-      speed = 0.35;
+      if(RobotContainer.s_Elevator.getEncoderRotations() > Constants.Elevator.minPivotEncoderPos + Constants.Elevator.minPivotTolerance) {
+        speed = 0.5;
+      }
+      else {
+        speed = 0.35;
+      }
     }
 
-    RobotContainer.s_Elevator.moveElevator(speed);
+    RobotContainer.s_Elevator.moveElevator(speed, false);
   }
     
   @Override
