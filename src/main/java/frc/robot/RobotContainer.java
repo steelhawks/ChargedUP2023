@@ -50,18 +50,23 @@ public class RobotContainer {
     // private final POVButton downButton = new POVButton(driver, 180);
     // private final POVButton leftButton = new POVButton(driver, 270);
 
+    /*Operator Joystick */
+    private final double x = operator.getRawAxis(0);
+    private final double y = operator.getRawAxis(1);
+    //TODO: what does the operator joystick do?
+
     /*Operator Buttons*/ 
-    private final JoystickButton homeElevator = new JoystickButton(operator, 2); // A
+    private final JoystickButton homeElevator = new JoystickButton(operator, 4); // A
     private final JoystickButton lowElevator = new JoystickButton(operator, 3); // B
-    private final JoystickButton midElevator = new JoystickButton(operator, 4); // Y
-    private final JoystickButton highElevator = new JoystickButton(operator, 6); // Right bumper
+    private final JoystickButton midElevator = new JoystickButton(operator, 2); // Y
+    private final JoystickButton highElevator = new JoystickButton(operator, 1); // Right bumper
     private final POVButton raiseElevator = new POVButton(operator, 0); // Up
     private final POVButton lowerElevator = new POVButton(operator, 180); // Down
     private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
-    private final JoystickButton toggleElevator = new JoystickButton(operator, 1); // X
+    // private final JoystickButton toggleElevator = new JoystickButton(operator, 2); // X
     private final JoystickButton requestCone = new JoystickButton(operator, 7); // Left trigger
     private final JoystickButton requestCube = new JoystickButton(operator, 8); //Right trigger
-    private final JoystickButton doubleSubButtion = new JoystickButton(operator, 10); //start button
+    private final JoystickButton doubleSubButtion = new JoystickButton(operator, 6); //start button
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
@@ -176,10 +181,10 @@ public class RobotContainer {
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
-        toggleElevator.onTrue(new ToggleElevator());
+        // toggleElevator.onTrue(new ToggleElevator());
         requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW));
         requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE));
-        // doubleSubButtion.onTrue(elevatorLevelCommand());
+        doubleSubButtion.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW)); //change colors 
     }
 
     public static Command getAutonomousCommand() {
