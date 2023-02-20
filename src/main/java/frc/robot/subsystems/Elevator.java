@@ -44,23 +44,23 @@ public class Elevator extends SubsystemBase {
 
   public void togglePistons() {
     if (pistonVal) {
-      forward();  
+      pistonsUp();
     } else if (getEncoderRotations() > Constants.Elevator.minPivotEncoderPos) {
       System.out.println("reverse");
-      reverse();
+      pistonsDown();
     }
     System.out.println("done");
-
+    
     pistonVal = !pistonVal;
   }
 
-  private void forward() {
+  private void pistonsUp() {
     pistonOne.set(Value.kForward);
     System.out.println("forward");
 
   }
 
-  private void reverse() {
+  private void pistonsDown() {
     pistonOne.set(Value.kReverse);
     System.out.println("reverse");
   }
@@ -85,7 +85,7 @@ public class Elevator extends SubsystemBase {
     }
 
     if (!moveUp && encoderVal <= Constants.Elevator.minPivotEncoderPos && pistonVal) {
-      togglePistons();
+      pistonsUp();
       stop();
     }
     // else if (!moveUp && encoderVal <= Constants.Elevator.minEncoderPos) {

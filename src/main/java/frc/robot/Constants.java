@@ -143,11 +143,11 @@ public final class Constants {
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
         public static final double midEncoderPos = 2.73;
-        public static final double highEncoderPos = 3.88;
+        public static final double highEncoderPos = 4.1; // 3.88
         public static final double minPivotEncoderPos = 1.39; // When robot automatically pivots up
         public static final double minPivotTolerance = 0.41;
         public static final double maxPivotEncoderPos = 1.4; // When robot automatically pivots down 1.28
-        public static final double maxEncoderPos = 3.88;
+        public static final double maxEncoderPos = 4.1; // 3.88
         public static final double doubleSubEncoderPos = 2.129;
 
         public static final double elevatorSpeed = 0.4;

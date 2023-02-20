@@ -169,7 +169,7 @@ public class RobotContainer {
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
 
         /* Operator Buttons */
-        homeElevator.onTrue(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME).andThen(new InstantCommand(() -> s_Claw.openClaw())));
+        homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw()).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
         midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
         highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
@@ -183,6 +183,7 @@ public class RobotContainer {
     }
 
     public static Command getAutonomousCommand() {
+        /* AUTON 1: PLACE AND BALANCE */
         // return new exampleAuto(s_Swerve);
         // return new SequentialCommandGroup(
         //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
@@ -197,6 +198,7 @@ public class RobotContainer {
         // );
 
 
+        /* PLACE, MOBILITY, BALANCE */
         // return new SequentialCommandGroup(
         //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
         //     new ParallelCommandGroup(
@@ -210,6 +212,7 @@ public class RobotContainer {
         //     new LedCommand(null, LEDMode.RAINBOW)
         // );
 
+        /* PLACE, MOVE RED SIDE TO CENTER */
         return new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
