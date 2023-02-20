@@ -18,6 +18,7 @@ import frc.lib.util.ClawStatus;
 import frc.lib.util.ElevatorLevels;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
+import frc.lib.util.Limelight;
 import frc.robot.autos.*;
 import frc.robot.commands.Claw.SetClaw;
 import frc.robot.commands.Claw.ToggleClaw;
@@ -25,10 +26,7 @@ import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
 import frc.robot.commands.Led.LedCommand;
 import frc.robot.commands.Led.Request;
-import frc.robot.commands.Vision.VisionAlignLime;
-import frc.robot.commands.Vision.VisionCrabTag1;
-import frc.robot.commands.Vision.VisionCrabTag2;
-import frc.robot.commands.Vision.VisionSquareRobot;
+import frc.robot.commands.Vision.*;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -156,11 +154,15 @@ public class RobotContainer {
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
-        centerToTag.onTrue(new SequentialCommandGroup(new VisionAlignLime(),
+        centerToTag.onTrue(new SequentialCommandGroup(new InstantCommand(() -> Limelight.setPipeline(Vision.ID3_PIPELINE)),
+                                                        new WaitCommand(.2),
+                                                        new VisionTurn(),
+                                                        new VisionCrabTag3(),
+                                                        new VisionAlignLime(),
                                                         new VisionSquareRobot(),
                                                         new WaitCommand(1),
                                                         new VisionCrabTag2(),
-                                                        new WaitCommand(2),
+                                                        new WaitCommand(1),
                                                         new VisionCrabTag1()       
                                                                             ));
         /* Operator Buttons */

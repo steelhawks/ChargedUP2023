@@ -14,11 +14,12 @@ public class VisionAlignLime extends CommandBase {
 
   @Override
   public void initialize() {
-    Limelight.setPipeline(Vision.ID3_PIPELINE);
-  }
 
+  }
+  
   @Override
   public void execute() {
+    
     RobotContainer.s_Vision.goToTag();
   }
 

@@ -45,9 +45,11 @@ public class Vision extends SubsystemBase{
 
             Translation2d velocity = new Translation2d(Constants.Vision.xVelocity, y_vel);
             RobotContainer.s_Swerve.drive(velocity, ang_vel, true, false);
-        } else if (!Limelight.hasValidTarget()) {
-            RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
-        }
+        } 
+    }
+    
+    public void turnRobot(){        
+        RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
     }
 
     public void squareToTag(){
