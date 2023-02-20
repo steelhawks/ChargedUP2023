@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Long.wpilib.json")); // Move 4.09 meters (163 inches)
+    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")); // Move 4.09 meters (163 inches)
 
     moduleChooser.setDefaultOption("None", -1);
     moduleChooser.addOption("Module 0", 0);
@@ -118,6 +119,7 @@ public class Robot extends TimedRobot {
     pathChooser.addOption("Test Spin", 4);
     pathChooser.addOption("Straight", 5);
     pathChooser.addOption("Long Straight", 6);
+    pathChooser.addOption("Score and Balance", 7);
     
     SmartDashboard.putData(moduleChooser);
     SmartDashboard.putData(moduleCumulativeChooser);
@@ -126,7 +128,7 @@ public class Robot extends TimedRobot {
       m_robotContainer = new RobotContainer();
     }
 
-    private Command chargeCommand() {
+    private  Command chargeCommand() {
         Trajectory trajectory = trajectories.get(pathChooser.getSelected());
         m_autonomousCommand = new SequentialCommandGroup(
           loadCommand(trajectory),
@@ -136,7 +138,7 @@ public class Robot extends TimedRobot {
         return m_autonomousCommand;
     }
     
-    private Trajectory loadTrajectory(String path) {
+    public static Trajectory loadTrajectory(String path) {
       Trajectory trajectory = new Trajectory();
       try {
         Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(path);
@@ -148,7 +150,7 @@ public class Robot extends TimedRobot {
     return trajectory;  
   }
 
-  private Command loadCommand(Trajectory trajectory) {
+  public static Command loadCommand(Trajectory trajectory) {
     var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -193,8 +195,9 @@ public class Robot extends TimedRobot {
     // PathPlannerTrajectory path = PathPlanner.loadPath("C:/Users/samis/Code/Steel Hawks/BaseFalconSwerveNEW23/BaseFalconSwerve/src/main/deploy/pathplanner/Test Path", new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
     // m_autonomousCommand = m_robotContainer.s_Swerve.followTrajectoryCommand(path, true);
 
-    m_autonomousCommand = chargeCommand();
+    // m_autonomousCommand = chargeCommand(); ORIGINAL BALANCE 
     // schedule the autonomous command (example)
+    m_autonomousCommand = RobotContainer.getAutonomousCommand();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }

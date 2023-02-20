@@ -15,9 +15,9 @@ public class BalanceCommand implements Command
   
 
   public BalanceCommand() {
-    balancer = new PIDController(0.08, 0.0065, 0.015);
+    balancer = new PIDController(0.05, 0.0038, 0.00595);
     balancer.setSetpoint(-0.7);
-    balancer.setTolerance(0.45);
+    balancer.setTolerance(0.4);
     balancer.enableContinuousInput(0, 360);
   }
 
@@ -36,7 +36,7 @@ public class BalanceCommand implements Command
 
   @Override
   public void execute() {
-    Translation2d translation = new Translation2d(-balancer.calculate(RobotContainer.s_Swerve.getRoll()) * 0.7, 0);
+    Translation2d translation = new Translation2d(-balancer.calculate(RobotContainer.s_Swerve.getRoll()), 0);
     RobotContainer.s_Swerve.drive(translation, 0, true, true);
   }
     
@@ -46,10 +46,7 @@ public class BalanceCommand implements Command
     //Actual Thing
     // return Math.abs(error) > 0 && Math.abs(error) < 0.75; 
     // return balancer.atSetpoint();
-    return true;
-    
-    //Fake test because of stupid gyro.
-    //return Math.abs(error) == 1; 
+    return false;
   }
 
   @Override

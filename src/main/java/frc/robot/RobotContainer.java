@@ -106,6 +106,27 @@ public class RobotContainer {
         return com;
     }
 
+    private static Command autoElevatorLevelCommand(LEDColor color, ElevatorLevels level) {
+        Command com = new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new ElevatorCommand(level),
+                new LedCommand(color, LEDMode.STATIC)
+            ),
+            new ParallelCommandGroup(
+                new ParallelRaceGroup(
+                    new LedCommand(color, LEDMode.PULSE),
+                    new WaitCommand(0.2)
+                ),
+                new InstantCommand(() -> s_Claw.openClaw())
+            ),
+            new LedCommand(LEDColor.OFF, LEDMode.STATIC)
+        );
+
+        return com;
+    }
+
+
+
     // private static Command elevatorRainbowDoubleSubCommand() {
     //     Command com = new Command();
     //     return Command();
@@ -161,7 +182,31 @@ public class RobotContainer {
         // doubleSubButtion.onTrue(elevatorLevelCommand());
     }
 
-    public Command getAutonomousCommand() {
-        return new exampleAuto(s_Swerve);
+    public static Command getAutonomousCommand() {
+        // return new exampleAuto(s_Swerve);
+        // return new SequentialCommandGroup(
+        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+        //     new ParallelCommandGroup(
+        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+        //         new ParallelRaceGroup(
+        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")),
+        //             new WaitCommand(1.5)
+        //         )
+        //     ),
+        //     new BalanceCommand()
+        // );
+
+
+        return new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(7)
+                )
+            ),
+            new BalanceCommand()
+        );
     }
 }
