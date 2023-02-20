@@ -197,16 +197,29 @@ public class RobotContainer {
         // );
 
 
+        // return new SequentialCommandGroup(
+        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+        //     new ParallelCommandGroup(
+        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+        //         new ParallelRaceGroup(
+        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+        //             new WaitCommand(7)
+        //         )
+        //     ),
+        //     new BalanceCommand(),
+        //     new LedCommand(null, LEDMode.RAINBOW)
+        // );
+
         return new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
-                    new WaitCommand(7)
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(9)
                 )
             ),
-            new BalanceCommand()
+            new LedCommand(null, LEDMode.RAINBOW)
         );
     }
 }

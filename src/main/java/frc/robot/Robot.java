@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.lib.util.LEDColor;
 import frc.robot.commands.Drivetrain.BalanceCommand;
 import frc.robot.commands.Vision.VisionAlignLime;
 
@@ -219,6 +220,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     //m_robotContainer.s_Swerve.resetModule(moduleChooser.getSelected());
     m_robotContainer.configureMoreButtonBindings(moduleCumulativeChooser.getSelected());
+    m_robotContainer.s_Led.setColor(LEDColor.OFF);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
