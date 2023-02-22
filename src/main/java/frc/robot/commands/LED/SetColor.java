@@ -5,23 +5,24 @@ import frc.robot.subsystems.LED;
 import frc.util.LEDColor;
 
 public class SetColor extends CommandBase {
-    private LED LED;
-    private LEDColor color;
 
-    public SetColor(LED LED, LEDColor color) {
-        this.LED = LED;
-        this.color = color;
+  private LED LED;
+  private LEDColor color;
 
-        addRequirements(LED);
-    }
+  public SetColor(LED LED, LEDColor color) {
+    this.LED = LED;
+    this.color = color;
 
-    @Override
-    public void execute() {
-        this.LED.setColor(color);
-    }
+    addRequirements(LED);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        this.LED.setColor(new LEDColor(0, 0, 0));
-    }
+  @Override
+  public void execute() {
+    this.LED.setColor(color);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    this.LED.setColor(new LEDColor(0, 0, 0));
+  }
 }

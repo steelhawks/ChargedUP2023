@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+
   private RobotContainer robot;
   private Command autonCommand;
   private Timer timer;
@@ -46,7 +47,7 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() { 
+  public void robotPeriodic() {
     this.robot.getSmartDashboardValues();
     CommandScheduler.getInstance().run();
   }
@@ -59,14 +60,14 @@ public class Robot extends TimedRobot {
       autonCommand.schedule();
     }
   }
+
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {  
+  public void teleopInit() {
     if (autonCommand != null) {
       autonCommand.cancel();
     }
@@ -78,35 +79,28 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     this.robot.endgameLED(this.timer.get());
   }
-  
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {
-  }
+  public void disabledInit() {}
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-  }
+  public void disabledPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {
-  }
+  public void testInit() {}
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {
-  }
+  public void simulationInit() {}
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 }

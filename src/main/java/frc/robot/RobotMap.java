@@ -6,6 +6,7 @@ public final class RobotMap {
         int MOTOR_LEFT_ONE_PORT = 25;
 
         int VELOCITY_CONVERSION = 6250;
+        double TICK_TO_FEET_CONVERSION = 1.0 / 2048 * 6 * Math.PI / 12 * 1 / 12.75;
     }
 
     public static interface ELEVATOR {

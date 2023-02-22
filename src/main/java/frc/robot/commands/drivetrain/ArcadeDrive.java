@@ -5,17 +5,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 
 public class ArcadeDrive extends CommandBase {
-    private Drivetrain drivetrain;
-    private Joystick joystick;
 
-    public ArcadeDrive(Drivetrain drivetrain, Joystick joystick) {
-        this.drivetrain = drivetrain;
-        this.joystick = joystick;
+  private Drivetrain drivetrain;
+  private Joystick joystick;
 
-        addRequirements(drivetrain);
-    }
+  public ArcadeDrive(Drivetrain drivetrain, Joystick joystick) {
+    this.drivetrain = drivetrain;
+    this.joystick = joystick;
 
-    public void execute() {
-        this.drivetrain.arcadeDrive(this.joystick);
-    }
+    addRequirements(drivetrain);
+  }
+
+  public void execute() {
+    this.drivetrain.arcadeDrive(this.joystick);
+  }
 }
