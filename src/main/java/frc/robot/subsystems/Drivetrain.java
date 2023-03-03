@@ -10,6 +10,9 @@ import frc.robot.RobotMap;
 
 public class Drivetrain extends SubsystemBase {
 
+  private double errorSum = 0;
+  private double error = 0;
+
   private final WPI_TalonSRX rightMotor;
   private final WPI_TalonSRX leftMotor;
 
@@ -38,19 +41,8 @@ public class Drivetrain extends SubsystemBase {
     this.leftMotor.setSelectedSensorPosition(0, 0, 10);
   }
 
-  public double getPIDControlError(double distance) {
-    double distanceDriven =
-      (
-        this.rightMotor.getSelectedSensorPosition() *
-        RobotMap.DRIVETRAIN.TICK_TO_FEET_CONVERSION +
-        this.leftMotor.getSelectedSensorPosition() *
-        RobotMap.DRIVETRAIN.TICK_TO_FEET_CONVERSION
-      ) /
-      2;
-    return distance - distanceDriven;
-  }
-
   public void driveDistance(double distance) {
+    double integralLimit = 1;
     double distanceDriven =
       (
         this.rightMotor.getSelectedSensorPosition() *
@@ -60,10 +52,15 @@ public class Drivetrain extends SubsystemBase {
       ) /
       2;
     double error = distance - distanceDriven;
-    double velocity = 0.5 * error;
+    this.error = error;
+
+    if (integralLimit > error) this.errorSum = this.errorSum + error;
+
+    double velocity = 0.5 * error + 0.1 * this.errorSum;
 
     SmartDashboard.putNumber("Error", error);
-    SmartDashboard.putNumber("Velocity", velocity);
+    SmartDashboard.putNumber("Error Sum", this.errorSum);
+    SmartDashboard.putNumber("Distance Driven", distanceDriven);
 
     this.rightMotor.set(velocity);
     this.leftMotor.set(velocity);
@@ -84,31 +81,24 @@ public class Drivetrain extends SubsystemBase {
     this.rightMotor.setInverted(true);
   }
 
-  public void getSmartDashboardValues() {
-    SmartDashboard.putNumber(
-      "Distance Traveled",
-      this.rightMotor.getSelectedSensorPosition() *
-      RobotMap.DRIVETRAIN.TICK_TO_FEET_CONVERSION
-    );
+  public void getDashboard() {
     SmartDashboard.putNumber(
       "Velocity",
       (
-        this.rightMotor.getSelectedSensorVelocity() /
-        RobotMap.DRIVETRAIN.VELOCITY_CONVERSION +
-        this.leftMotor.getSelectedSensorVelocity() /
-        RobotMap.DRIVETRAIN.VELOCITY_CONVERSION
+        this.rightMotor.getSelectedSensorVelocity() *
+        RobotMap.DRIVETRAIN.TICK_TO_FEET_CONVERSION +
+        this.leftMotor.getSelectedSensorVelocity() *
+        RobotMap.DRIVETRAIN.TICK_TO_FEET_CONVERSION
       ) /
       2
     );
-    SmartDashboard.putNumber(
-      "Right Enc Vel.",
-      this.rightMotor.getSelectedSensorVelocity() /
-      RobotMap.DRIVETRAIN.VELOCITY_CONVERSION
-    );
-    SmartDashboard.putNumber(
-      "Left Enc Vel.",
-      this.leftMotor.getSelectedSensorVelocity() /
-      RobotMap.DRIVETRAIN.VELOCITY_CONVERSION
-    );
+  }
+
+  public double getPIDControlError() {
+    return this.error;
+  }
+
+  public void resetErrorSum() {
+    this.errorSum = 0;
   }
 }

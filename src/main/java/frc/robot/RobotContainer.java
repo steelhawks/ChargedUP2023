@@ -98,8 +98,8 @@ public class RobotContainer {
     SmartDashboard.putData("Autonomous Modes", autonChooser);
   }
 
-  public void getSmartDashboardValues() {
-    this.drivetrain.getSmartDashboardValues();
+  public void getDashboard() {
+    this.drivetrain.getDashboard();
   }
 
   public void endgameLED(double timer) {

@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    this.robot.getSmartDashboardValues();
     CommandScheduler.getInstance().run();
   }
 
@@ -77,6 +76,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    this.robot.getDashboard();
     this.robot.endgameLED(this.timer.get());
   }
 
