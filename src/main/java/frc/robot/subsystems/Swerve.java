@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +36,8 @@ public class Swerve extends SubsystemBase {
 
     private double speedMultiplier;
     private boolean isShifted; 
+
+    private static final Field2d field = new Field2d();
 
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -248,6 +251,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
         swerveOdometry.update(getYaw(), getModulePositions());  
+        field.setRobotPose(getPose());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -258,12 +262,14 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Percent", mod.getAngleOutput());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Percent", mod.getDriveOutput()); 
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Volt", mod.getVoltage()); 
-            SmartDashboard.putBoolean("Is Shifted", isShifted);
         }
 
         SmartDashboard.putNumber("Yaw", gyro.getYaw()); // Math.abs(gyro.getYaw() % 360)
-        // SmartDashboard.putNumber("Yaw", gyro.getYaw());
         SmartDashboard.putNumber("Pitch", gyro.getPitch());
         SmartDashboard.putNumber("Roll", gyro.getRoll());
+
+        SmartDashboard.putBoolean("Is Shifted", isShifted);
+
+        SmartDashboard.putData("field", field);
     }
 }

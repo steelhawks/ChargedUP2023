@@ -14,9 +14,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.lib.util.AlignType;
 import frc.lib.util.ElevatorLevels;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
+import frc.lib.util.LimelightTrajectory;
 import frc.robot.autos.*;
 import frc.robot.commands.ToggleClaw;
 import frc.robot.commands.Drivetrain.*;
@@ -45,6 +47,8 @@ public class RobotContainer {
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
+    private final JoystickButton alignCone = new JoystickButton(driver, 7); // Left trigger
+    private final JoystickButton alignCube = new JoystickButton(driver, 6);
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
@@ -72,7 +76,11 @@ public class RobotContainer {
     public static final Vision s_Vision = new Vision();
     public static final Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
 
+    // Vision Test
+    public static LimelightTrajectory limeTraj;
+
     public RobotContainer() {
+        limeTraj = new LimelightTrajectory();
         // compressor.disable();
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
@@ -167,6 +175,8 @@ public class RobotContainer {
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
         push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
+        alignCone.whileTrue(new NodeAlign(AlignType.CONE));
+        alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
 
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw()).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
@@ -224,5 +234,7 @@ public class RobotContainer {
             ),
             new LedCommand(null, LEDMode.RAINBOW)
         );
+
+
     }
 }

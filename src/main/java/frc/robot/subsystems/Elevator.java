@@ -50,19 +50,19 @@ public class Elevator extends SubsystemBase {
       pistonsDown();
     }
     System.out.println("done");
-    
-    pistonVal = !pistonVal;
   }
 
   private void pistonsUp() {
     pistonOne.set(Value.kForward);
     System.out.println("forward");
+    pistonVal = false;
 
   }
 
   private void pistonsDown() {
     pistonOne.set(Value.kReverse);
     System.out.println("reverse");
+    pistonVal = true;
   }
 
   public void moveElevator(double speed, boolean isManual) {
@@ -88,9 +88,6 @@ public class Elevator extends SubsystemBase {
       pistonsUp();
       stop();
     }
-    // else if (!moveUp && encoderVal <= Constants.Elevator.minEncoderPos) {
-    //   stop();
-    // }
   }
 
   public double getEncoderRotations() {

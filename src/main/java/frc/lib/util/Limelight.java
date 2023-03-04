@@ -44,31 +44,31 @@ public class Limelight {
     }
 
     public static double getArea(){
-        return ta;
+        return getEntryAsDouble("ta");
     }
 
     public static double getXOffset(){
-        return tx;
+        return getEntryAsDouble("tx");
     }
 
     public static double getYOffset(){
-        return ty;
+        return getEntryAsDouble("ty");
     }
 
     public static boolean hasValidTarget(){
-        return tv == 1;
+        return getEntryAsDouble("tv") == 1;
     }
 
     public static double getHorizontalSide(){
-        return horizontalBoundingSide;
+        return getEntryAsDouble("thor");
     }
 
     public static double getVerticalSide(){
-        return verticalBoundingSide;
+        return getEntryAsDouble("tvert");
     }
 
     public static double[] getContours(){
-        return contours;
+        return table.getEntry("tcornxy").getDoubleArray(new double[0]);
     }
 
     public static Pose2d getApriltagPose() {
@@ -76,17 +76,14 @@ public class Limelight {
     }
 
     public static int getPipeline(){
-        return pipeline;
+        return (int)getEntryAsDouble("getpipe");
     }
 
-    public static void setPipeline(int pipeline){
+    public static void setPipeline(int pipeline) {
         table.getEntry("pipeline").setNumber(pipeline);
     }
 
-    public static double getEntryAsDouble(String key){
+    public static double getEntryAsDouble(String key) {
         return table.getEntry(key).getDouble(0);
     }
-
-    
-
 }

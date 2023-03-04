@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.lib.util.LEDColor;
+import frc.lib.util.Limelight;
+import frc.lib.util.LimelightTrajectory;
 import frc.robot.commands.Drivetrain.BalanceCommand;
 import frc.robot.commands.Vision.VisionAlignLime;
 
@@ -47,6 +49,8 @@ public class Robot extends TimedRobot {
 
   private TrajectoryConfig config;
   private List<Trajectory> trajectories = new ArrayList<>();
+
+  private LimelightTrajectory traj = new LimelightTrajectory();
 
    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
@@ -138,6 +142,14 @@ public class Robot extends TimedRobot {
 
         return m_autonomousCommand;
     }
+
+    private Command runVisionTrajectory(Trajectory traj) {
+      m_autonomousCommand = new SequentialCommandGroup(
+          loadCommand(traj)
+        );
+
+      return m_autonomousCommand;
+    }
     
     public static Trajectory loadTrajectory(String path) {
       Trajectory trajectory = new Trajectory();
@@ -181,13 +193,26 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    boolean areaThresh = Math.abs(Limelight.getArea() - 0.45) <= 0.02; // 0.45 goal
+    boolean xOffsetThreshold = Math.abs(Limelight.getXOffset()) <= 1;
+
+    if (areaThresh && xOffsetThreshold) {
+      RobotContainer.s_Led.setColor(LEDColor.GREEN);
+    }
+    else {
+      RobotContainer.s_Led.setColor(LEDColor.RED);
+    }
+  }
 
   @Override
   public void autonomousInit() {
     // PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
     // PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
+    Trajectory trajectory = traj.generateTargetTrajectory(config);
+    m_autonomousCommand = loadCommand(trajectory);
+    
     // Trajectory trajectory = trajectories.get(pathChooser.getSelected());
     //m_autonomousCommand = loadCommand(trajectory);
     // m_autonomousCommand = followTrajectoryCommand(traj, true);
@@ -198,10 +223,6 @@ public class Robot extends TimedRobot {
 
     // m_autonomousCommand = chargeCommand(); ORIGINAL BALANCE 
     // schedule the autonomous command (example)
-    m_autonomousCommand = RobotContainer.getAutonomousCommand();
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
 
     /* VISION STUFF */
     // if (RobotContainer.s_Swerve.isLowGear()) {
@@ -214,7 +235,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // m_autonomousCommand = RobotContainer.getAutonomousCommand();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
+  }
 
   @Override
   public void teleopInit() {

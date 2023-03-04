@@ -43,10 +43,10 @@ public class ElevatorCommand extends CommandBase {
 
     if (level == ElevatorLevels.HOME) {
       if(RobotContainer.s_Elevator.getEncoderRotations() > Constants.Elevator.minPivotEncoderPos + Constants.Elevator.minPivotTolerance) {
-        speed = 0.5;
+        speed = 0.6; // 0.5
       }
       else {
-        speed = 0.35;
+        speed = 0.5; // 0.35
       }
     }
 
