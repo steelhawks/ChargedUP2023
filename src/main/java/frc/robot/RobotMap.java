@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.util.Color;
+
 public final class RobotMap {
 
   public static interface DRIVETRAIN {
@@ -21,5 +23,8 @@ public final class RobotMap {
   public static interface CLAW {
     int SOLENOID_FORWARD = 0;
     int SOLENOID_REVERSE = 1;
+
+    Color CONE_COLOR = new Color(0.361, 0.524, 0.113);
+    Color CUBE_COLOR = new Color(0.245, 0.411, 0.343);
   }
 }

@@ -30,7 +30,6 @@ public class LED extends SubsystemBase {
 
   public void setColor(LEDColor color) {
     for (byte i = 0; i < this.LEDBuffer.getLength(); i++) {
-      System.out.println();
       this.LEDBuffer.setRGB(
           i,
           color.getRed(),
@@ -42,50 +41,55 @@ public class LED extends SubsystemBase {
     this.LEDStrip.setData(this.LEDBuffer);
   }
 
-  public void wave(int waveLength, ArrayList<LEDColor> colors) {
+  public void waveLoop(int waveLength, ArrayList<LEDColor> colors) {
     int red = colors.get(this.currentColor).getRed();
     int green = colors.get(this.currentColor).getGreen();
     int blue = colors.get(this.currentColor).getBlue();
 
-    if (this.waveIndex == 0) {
+    if (waveIndex == 0) {
       for (byte i = 0; i <= waveLength; i++) {
         this.LEDBuffer.setRGB(i, red, green, blue);
       }
     } else {
-      for (byte i = 0; i < this.LEDBuffer.getLength() - 1; i++) {
-        if (this.waveIndex > 0) this.LEDBuffer.setRGB(
-            this.waveIndex - 1,
-            0,
-            0,
-            0
-          );
+      if (this.waveIndex > 0) this.LEDBuffer.setRGB(
+          this.waveIndex - 1,
+          0,
+          0,
+          0
+        );
 
-        if (this.waveIndex + waveLength < LEDBuffer.getLength() - 1) {
-          this.LEDBuffer.setRGB(this.waveIndex + waveLength, red, green, blue);
-        } else {
-          LEDColor nextColor = colors.get(
-            this.currentColor + 1 > colors.size() - 1
-              ? 0
-              : this.currentColor + 1
+      if (this.waveIndex + waveLength < LEDBuffer.getLength() - 1) {
+        this.LEDBuffer.setRGB(this.waveIndex + waveLength, red, green, blue);
+      } else {
+        LEDColor nextColor = colors.get(
+          this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1
+        );
+        this.LEDBuffer.setRGB(
+            this.waveIndex + waveLength - this.LEDBuffer.getLength() + 1,
+            nextColor.getRed(),
+            nextColor.getGreen(),
+            nextColor.getBlue()
           );
-          this.LEDBuffer.setRGB(
-              this.waveIndex + waveLength - this.LEDBuffer.getLength() + 1,
-              nextColor.getRed(),
-              nextColor.getGreen(),
-              nextColor.getBlue()
-            );
-        }
+      }
 
-        if (this.waveIndex > LEDBuffer.getLength() - 1) {
-          this.waveIndex = -1;
-          this.currentColor =
-            this.currentColor + 1 > colors.size() - 1
-              ? 0
-              : this.currentColor + 1;
-        }
+      if (this.waveIndex > LEDBuffer.getLength() - 1) {
+        this.waveIndex = -1;
+        this.currentColor =
+          this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1;
       }
     }
     waveIndex += 1;
+
+    this.LEDStrip.setData(this.LEDBuffer);
+  }
+
+  public void waveIn(LEDColor color) {
+    int red = color.getRed();
+    int green = color.getGreen();
+    int blue = color.getBlue();
+
+    this.LEDBuffer.setRGB(waveIndex, red, green, blue);
+    this.waveIndex += this.waveIndex + 1 < this.LEDBuffer.getLength() ? 1 : 0;
 
     this.LEDStrip.setData(this.LEDBuffer);
   }
@@ -107,5 +111,9 @@ public class LED extends SubsystemBase {
     if (time > 110 && time < 110.05) {
       this.setColor(new LEDColor(0, 0, 0));
     }
+  }
+
+  public void zeroWaveIndex() {
+    this.waveIndex = 0;
   }
 }

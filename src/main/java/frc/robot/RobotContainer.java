@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.LED.SetColor;
 import frc.robot.commands.LED.Wave;
+import frc.robot.commands.LED.WaveIn;
 import frc.robot.commands.auton.DefaultAuton;
 import frc.robot.commands.claw.CloseClaw;
 import frc.robot.commands.claw.OpenClaw;
@@ -76,6 +77,8 @@ public class RobotContainer {
           )
         )
       );
+    new JoystickButton(this.LEDJoystick, 4)
+      .onTrue(new WaveIn(this.LED, new LEDColor(0, 255, 0)));
     new JoystickButton(this.joystick, 7)
       .onTrue(new RaiseElevator(this.elevator));
     new JoystickButton(this.joystick, 8)
