@@ -60,8 +60,8 @@ public class Swerve extends SubsystemBase {
         isShifted = false;
     }
 
-    public void setYaw() {
-
+    public void setYaw(int yaw) {
+        gyro.setYaw(yaw);
     }
 
     public void rotateToAngle(int angle) {

@@ -46,7 +46,7 @@ public class ElevatorCommand extends CommandBase {
         speed = 0.6; // 0.5
       }
       else {
-        speed = 0.5; // 0.35
+        speed = 0.45; // 0.35
       }
     }
 

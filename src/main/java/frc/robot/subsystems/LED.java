@@ -15,6 +15,7 @@ public class LED extends SubsystemBase {
   private boolean isOn;
   private static int waveIndex = 0;
   private static final int waveLength = 15;
+  private static LEDColor currentColor = LEDColor.OFF;
 
   public LED(int port, int length) {
     LEDStrip = new AddressableLED(port);
@@ -31,6 +32,7 @@ public class LED extends SubsystemBase {
       LEDBuffer.setRGB(i, color.r, color.g, color.b);
     }
 
+    currentColor = color;
     LEDStrip.setData(LEDBuffer);
   }
 
@@ -70,6 +72,7 @@ public class LED extends SubsystemBase {
     }
     waveIndex += 1;
 
+    currentColor = LEDColor.OFF;
     this.LEDStrip.setData(this.LEDBuffer);
 }
 
@@ -81,10 +84,15 @@ public class LED extends SubsystemBase {
       LEDBuffer.setHSV(i, hue, 255, 128);
     }
 
+    currentColor = LEDColor.OFF;
     LEDStrip.setData(LEDBuffer);
 
     rainbowStart += 3;
     rainbowStart %= 180;
+  }
+
+  public LEDColor getCurrentColor() {
+    return currentColor;
   }
 
   public void stop() {

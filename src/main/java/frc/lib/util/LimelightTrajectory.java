@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.wpi.first.apriltag.AprilTagPoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -26,7 +27,8 @@ public class LimelightTrajectory {
     private NetworkTableEntry ty;
     private NetworkTableEntry tx; 
     private NetworkTableEntry tid; 
-    private double[] tagpose, botpose; 
+    private NetworkTableEntry tagpose;
+    private NetworkTableEntry botpose; 
     private int pipeline; 
 
     //trajectory fields
@@ -43,24 +45,21 @@ public class LimelightTrajectory {
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         tid = table.getEntry("tid");
-        tagpose = table.getEntry("targetpose_robotspace").getDoubleArray(new double[6]); 
-        botpose = table.getEntry("robotpose_targetspace").getDoubleArray(new double[6]); 
-
+        tagpose = table.getEntry("targetpose_camerapose");
+        botpose = table.getEntry("botpose_targetspace");
         poses = new HashMap<Double, Pose2d>(); 
-
+        this.setPipeline(0);
     
     }
 
-    public Pose2d getTagPose() { 
-        return new Pose2d(tagpose[0], tagpose[1], new Rotation2d(tagpose[5]));
-    }
-
-    public Pose2d getBotPose() {  //limelight bot pose 
-        return new Pose2d(botpose[0], botpose[1], new Rotation2d(botpose[5]));
+    public Pose2d getTagPose() {
+        double[] botposeEntry = botpose.getDoubleArray(new double[6]);
+        double[] tagposeEntry = tagpose.getDoubleArray(new double[6]);  
+        return new Pose2d(botposeEntry[0], botposeEntry[1], new Rotation2d(180));
     }
 
     public void printTargetPoses() {
-        // System.out.println(Arrays.asList(poses));
+        System.out.println(Arrays.asList(poses));
     }
 
     public double getTa() {
@@ -108,11 +107,10 @@ public class LimelightTrajectory {
 
     public Trajectory generateTargetTrajectory(TrajectoryConfig config) {
         System.out.println("Trajectory generated successfully"); 
-        this.setPipeline(0);
         //set tag pose as the current origin 
         //origin = this.getTagPose();
         if (this.getTv() == 1) {
-            RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
+            RobotContainer.s_Swerve.resetOdometry(new Pose2d(0,0, new Rotation2d(0))); //sets origin to tag pose 
     
             trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
@@ -122,9 +120,9 @@ public class LimelightTrajectory {
                 // End at apriltag pose 
                 this.getTagPose(),
                 config);
+
         }
         
-
         return trajectory; 
     
     }

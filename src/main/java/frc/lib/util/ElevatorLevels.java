@@ -8,6 +8,7 @@ public enum ElevatorLevels {
     MID(Constants.Elevator.midEncoderPos),
     HIGH(Constants.Elevator.highEncoderPos),
     DOUBLE_STATION(Constants.Elevator.doubleSubEncoderPos);
+    // SINGLE_STATION(Constants.Elevator.singleSubEncoderPos);
 
     private double encoderVal;
 

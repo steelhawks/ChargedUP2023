@@ -194,8 +194,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    boolean areaThresh = Math.abs(Limelight.getArea() - 0.45) <= 0.02; // 0.45 goal
-    boolean xOffsetThreshold = Math.abs(Limelight.getXOffset()) <= 1;
+    boolean areaThresh = Math.abs(Limelight.getArea() - 1.2) <= 0.1; // 0.45 goal
+    boolean xOffsetThreshold = Math.abs(Limelight.getXOffset() - 10.8) <= 2;
 
     if (areaThresh && xOffsetThreshold) {
       RobotContainer.s_Led.setColor(LEDColor.GREEN);
@@ -210,9 +210,15 @@ public class Robot extends TimedRobot {
     // PathPlannerTrajectory traj = loadPlannerTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json");
     // PathPlannerTrajectory traj = PathPlanner.loadPath("Straight Path", new PathConstraints(3, 3));
 
-    Trajectory trajectory = traj.generateTargetTrajectory(config);
-    m_autonomousCommand = loadCommand(trajectory);
+    // SATHYA, RUN THIS FOR YOUR AUTON WITH LIMELIGHT
+    // Trajectory trajectory = traj.generateTargetTrajectory(config);
+    // m_autonomousCommand = loadCommand(trajectory);
+
+    m_autonomousCommand = RobotContainer.getAutonomousCommand();
     
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
     // Trajectory trajectory = trajectories.get(pathChooser.getSelected());
     //m_autonomousCommand = loadCommand(trajectory);
     // m_autonomousCommand = followTrajectoryCommand(traj, true);
@@ -237,9 +243,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // m_autonomousCommand = RobotContainer.getAutonomousCommand();
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
   }
 
   @Override

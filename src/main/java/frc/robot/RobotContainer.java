@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.AlignType;
 import frc.lib.util.ElevatorLevels;
+import frc.lib.util.GamepadAxisButton;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
 import frc.lib.util.LimelightTrajectory;
@@ -55,17 +57,30 @@ public class RobotContainer {
     // private final POVButton leftButton = new POVButton(driver, 270);
 
     /*Operator Buttons*/ 
-    private final JoystickButton homeElevator = new JoystickButton(operator, 2); // A
-    private final JoystickButton lowElevator = new JoystickButton(operator, 3); // B
-    private final JoystickButton midElevator = new JoystickButton(operator, 4); // Y
-    private final JoystickButton highElevator = new JoystickButton(operator, 6); // Right bumper
-    private final POVButton raiseElevator = new POVButton(operator, 0); // Up
-    private final POVButton lowerElevator = new POVButton(operator, 180); // Down
-    private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
-    private final JoystickButton toggleElevator = new JoystickButton(operator, 1); // X
-    private final JoystickButton requestCone = new JoystickButton(operator, 7); // Left trigger
-    private final JoystickButton requestCube = new JoystickButton(operator, 8); //Right trigger
-    private final JoystickButton doubleSubButtion = new JoystickButton(operator, 10); //start button
+    // private final JoystickButton homeElevator = new JoystickButton(operator, 2); // A
+    // private final JoystickButton lowElevator = new JoystickButton(operator, 3); // B
+    // private final JoystickButton midElevator = new JoystickButton(operator, 4); // Y
+    // private final JoystickButton highElevator = new JoystickButton(operator, 6); // Right bumper
+    // private final POVButton raiseElevator = new POVButton(operator, 0); // Up
+    // private final POVButton lowerElevator = new POVButton(operator, 180); // Down
+    // private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
+    // private final JoystickButton toggleElevator = new JoystickButton(operator, 1); // X
+    // private final JoystickButton requestCone = new JoystickButton(operator, 7); // Left trigger
+    // private final JoystickButton requestCube = new JoystickButton(operator, 8); //Right trigger
+    // private final JoystickButton doubleSubButtion = new JoystickButton(operator, 10); //start button
+    // private final JoystickButton singleSubButton = new JoystickButton(operator, 9);
+
+    /* Operator Button Board Buttons */
+    private final JoystickButton homeElevator = new JoystickButton(operator, 5);
+    private final JoystickButton lowElevator = new JoystickButton(operator, 2);
+    private final JoystickButton midElevator = new JoystickButton(operator, 1);
+    private final JoystickButton highElevator = new JoystickButton(operator, 3);
+    private final JoystickButton toggleClaw = new JoystickButton(operator, 6);
+    private final JoystickButton doubleSubButton = new JoystickButton(operator, 4);
+    private final JoystickButton requestCone = new JoystickButton(operator, 9);
+    private final JoystickButton requestCube = new JoystickButton(operator, 8);
+    private final GamepadAxisButton raiseElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == -1); // Up
+    private final GamepadAxisButton lowerElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == 1); // down
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
@@ -183,13 +198,14 @@ public class RobotContainer {
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
         midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
         highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
+        // singleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.SINGLE_STATION));
+        doubleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.DOUBLE_STATION));
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
-        toggleElevator.onTrue(new ToggleElevator());
+        // toggleElevator.onTrue(new ToggleElevator());
         requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW));
         requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE));
-        // doubleSubButtion.onTrue(elevatorLevelCommand());
     }
 
     public static Command getAutonomousCommand() {
@@ -223,18 +239,30 @@ public class RobotContainer {
         // );
 
         /* PLACE, MOVE RED SIDE TO CENTER */
+        // return new SequentialCommandGroup(
+        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+        //     new ParallelCommandGroup(
+        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+        //         new ParallelRaceGroup(
+        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+        //             new WaitCommand(9)
+        //         )
+        //     ),
+        //     new LedCommand(null, LEDMode.RAINBOW)
+        // );
+
+        /* PLACE, MOBILITY RED 1 */
         return new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
-                    new WaitCommand(9)
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/jxt Copy.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(4)
                 )
-            ),
-            new LedCommand(null, LEDMode.RAINBOW)
+            )
+            // new LedCommand(null, LEDMode.RAINBOW)
         );
-
 
     }
 }

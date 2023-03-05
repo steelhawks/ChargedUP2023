@@ -8,6 +8,7 @@ public enum LEDColor {
     GREEN(0, 255, 0),
     WHITE(255, 255, 255),
     CYAN(0, 255, 255),
+    ORANGE(252, 144, 3),
     OFF(0, 0, 0); 
 
     public int r;

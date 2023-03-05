@@ -10,7 +10,7 @@ import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
-public final class Constants {
+public final class PoseConstants {
     public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
@@ -142,13 +142,12 @@ public final class Constants {
 
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
-        public static final double midEncoderPos = 3.1;
-        public static final double highEncoderPos = 4.35; // 3.88
+        public static final double midEncoderPos = 2.73;
+        public static final double highEncoderPos = 4.1; // 3.88
         public static final double minPivotEncoderPos = 1.39; // When robot automatically pivots up
         public static final double minPivotTolerance = 0.41;
         public static final double maxPivotEncoderPos = 1.4; // When robot automatically pivots down 1.28
-        public static final double maxEncoderPos = 4.2; // 3.88
-        // public static final double singleSubEncoderPos = 1.1;
+        public static final double maxEncoderPos = 4.1; // 3.88
         public static final double doubleSubEncoderPos = 2.129;
 
         public static final double elevatorSpeed = 0.4;
@@ -163,6 +162,8 @@ public final class Constants {
     public static final class Claw {
         public static final int SolenoidTopForward = 2;
         public static final int SolenoidTopReverse = 3;
+        public static final int SolenoidBottomForward = 4;
+        public static final int SolenoidBottomReverse = 5;
         public static final int beamPort = 0;
     }
 
@@ -188,8 +189,8 @@ public final class Constants {
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double kMaxSpeedMetersPerSecond = 3; // 3
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kMaxSpeedMetersPerSecond = 1; // 3
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
