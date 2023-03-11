@@ -26,7 +26,7 @@ public class Request extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return !RobotContainer.s_Claw.beamBreaker.get();
+        return RobotContainer.s_Claw.isClosed(); // isClosed() and !beam.get()
     }
 
     @Override

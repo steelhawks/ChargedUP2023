@@ -5,14 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
+import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
@@ -31,14 +34,14 @@ public class LimelightTrajectory {
     private NetworkTableEntry tagpose;
     private NetworkTableEntry botpose; 
     private int pipeline; 
+    private Trajectory trajectory;  
 
     //trajectory fields
-    private Trajectory trajectory;
     HashMap<Double, Pose2d> poses; 
 
     public LimelightTrajectory() {
         System.out.println("Limelight object initialized");
-
+        
         nInstance = NetworkTableInstance.getDefault();
         table = nInstance.getTable("limelight");
         ta = table.getEntry("ta");
@@ -49,14 +52,26 @@ public class LimelightTrajectory {
         tagpose = table.getEntry("targetpose_camerapose");
         botpose = table.getEntry("camerapose_targetspace");
         poses = new HashMap<Double, Pose2d>(); 
+        trajectory = null; 
         this.setPipeline(0);
     
     }
 
     public Pose2d getTagPose() {
         double[] botposeEntry = botpose.getDoubleArray(new double[6]);
-        double[] tagposeEntry = tagpose.getDoubleArray(new double[6]);  
-        return new Pose2d(botposeEntry[2], botposeEntry[1], new Rotation2d(0));
+        //double[] tagposeEntry = tagpose.getDoubleArray(new double[6]);  
+        return new Pose2d(botposeEntry[2], botposeEntry[1], new Rotation2d(0)); //if going backwards, negate whatever the pose values are 
+        
+        //botposeEntry[2] -> z 
+        //botposeEntry[1] -> Y
+
+        /* The z coordinate of the limelight coordinate system represents the x coordinate of the actual field
+         * The y coordinate of the limelight coordinate system represents the y coordinate of the actual field 
+         * The actual logic should negative the limelight z and y values because we are using robot space. 
+         * However negating them makes the robot move backwards. 
+         */
+
+
     }
 
     public void printTargetPoses() {
@@ -107,15 +122,20 @@ public class LimelightTrajectory {
     }
 
     public Trajectory generateTargetTrajectory(TrajectoryConfig config) {
+       
+        System.out.println("resetting trajectory relative to target pose");
+         //adding relative coordinate pathing for now delete later 
         System.out.println("Trajectory generated successfully"); 
-        //set tag pose as the current origin 
-        //origin = this.getTagPose();
+        RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose());
+
         if (this.getTv() == 1) {
-            RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
-    
+            
+            System.out.println("Valid target exists"); 
+
+            //RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
             trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
-                RobotContainer.s_Swerve.getPose(),
+                new Pose2d(0,0, new Rotation2d(0)),
                 // Pass through no interior points 
                 List.of(),
                 // End at apriltag pose 
@@ -124,7 +144,8 @@ public class LimelightTrajectory {
 
         }
         
-        return trajectory; 
+        
+        return trajectory;
     
     }
 

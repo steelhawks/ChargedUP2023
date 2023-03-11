@@ -57,9 +57,7 @@ public class Claw extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("Beam", beamBreaker.get());
     SmartDashboard.putBoolean("Has Piece", hasCone);
-    // Has game piece
-    // System.out.println(isClosed);
-    // System.out.println(breakCount);
+    
     if (!beamBreaker.get()) {   // if the beam is broken
       breakCount++;             // increase breakCount by 1
     }
@@ -67,24 +65,18 @@ public class Claw extends SubsystemBase {
       breakCount = 0;           // reset breakCount
     }
 
-    if(beamBreaker.get() && hasCone) hasCone = false;
 
-    if (!beamBreaker.get() && !isClosed && breakCount > 20 && !hasCone) {
+    if (!beamBreaker.get() && !isClosed && breakCount > 50 && !hasCone) {
       closeClaw();
       hasCone = true;
     }
 
-    
+    if(beamBreaker.get() && hasCone) {
+      hasCone = false;
+    }
+  }
 
- 
-
-    
-    // if (!beamBreaker.get() && !isClosed) {
-    //   closeClaw();
-    //   System.out.println("Close");
-    // }
-
-    // If beam broken and the claw is 
-    // Doesn't work because 
+  public boolean isClosed() {
+    return isClosed;
   }
 }

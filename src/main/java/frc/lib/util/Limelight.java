@@ -73,7 +73,7 @@ public class Limelight {
         return table.getEntry("tcornxy").getDoubleArray(new double[0]);
     }
 
-    public static double[] getApriTagPose(){
+    public static double[] getAprilTagPose(){
         return apriltag_pose;
     }
 

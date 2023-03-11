@@ -1,5 +1,11 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -31,11 +37,13 @@ import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
 import frc.robot.commands.Led.LedCommand;
 import frc.robot.commands.Led.Request;
+import frc.robot.commands.Vision.GoCone;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
 
-    private SendableChooser<Integer> autonChooser;
+    private SendableChooser<Command> autonChooser = new SendableChooser<>();
+    // private List<Command> autonCommands = new ArrayList<Command>();
 
     /* Controllers */
     private final Joystick driver = new Joystick(0);
@@ -94,6 +102,7 @@ public class RobotContainer {
     public static final Claw s_Claw = new Claw();
     public static final Vision s_Vision = new Vision();
     public static final Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
+    
 
     // Vision Test
     public static LimelightTrajectory limeTraj;
@@ -115,6 +124,18 @@ public class RobotContainer {
         CameraServer.startAutomaticCapture();
 
         configureButtonBindings();
+
+        autonChooser.addOption("Place Balance", autons.auto1);
+        autonChooser.addOption("Place Mobility Balance", autons.auto2);
+        autonChooser.addOption("Place Red Right Side", autons.auto3);
+        autonChooser.addOption("Place Mobility Red 1", autons.auto4);
+        // autonChooser.addOption("Vision Test", 4);
+
+        // autonCommands.add(autons.auto1);
+        // autonCommands.add(autons.auto2);
+        // autonCommands.add(autons.auto3);
+        // autonCommands.add(autons.auto4);
+        // autonCommands.add(autons.auto5);
     }
 
     private static Command elevatorLevelCommand(LEDColor color, ElevatorLevels level) {
@@ -151,13 +172,6 @@ public class RobotContainer {
 
         return com;
     }
-
-
-
-    // private static Command elevatorRainbowDoubleSubCommand() {
-    //     Command com = new Command();
-    //     return Command();
-    // }
     
     private static Command ejectGamePieceCommmand() {
         Command com = new SequentialCommandGroup(
@@ -196,23 +210,36 @@ public class RobotContainer {
         // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
-        alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-
+        // alignCube.onTrue(loadCommand(new LimelightTrajectory().generateTargetTrajectory(Robot.config)));
+        alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw()).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
         midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
         highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
-        // singleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.SINGLE_STATION));
         doubleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.DOUBLE_STATION));
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
         // toggleElevator.onTrue(new ToggleElevator());
-        requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW));
-        requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE));
+        requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW).andThen(
+            new ParallelRaceGroup(
+                new WaitCommand(0.5),
+                new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+            ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
+        ));
+        requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE).andThen(
+            new ParallelRaceGroup(
+                new WaitCommand(0.5),
+                new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+            ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
+        ));
     }
 
+    private static Command loadSathya(Supplier<Command> com) {
+        return com.get();
+    }
+    
     private static Command loadCommand(Trajectory trajectory) {
         var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -235,7 +262,7 @@ public class RobotContainer {
     private static class autons {
         
         /* AUTON 1: PLACE AND BALANCE */
-        Command auto1 = new SequentialCommandGroup(
+        private static final Command auto1 = new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
@@ -248,7 +275,7 @@ public class RobotContainer {
         );
 
         /* AUTON 2: PLACE, MOBILITY, BALANCE */
-        Command auto2 = new SequentialCommandGroup(
+        private static final Command auto2 = new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
@@ -262,7 +289,7 @@ public class RobotContainer {
         );
 
         /* PLACE, MOVE RED SIDE TO CENTER */
-        Command auto3 = new SequentialCommandGroup(
+        private static final Command auto3 = new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
@@ -275,7 +302,7 @@ public class RobotContainer {
         );
 
         /* PLACE, MOBILITY RED 1, DOESN'T WORK RIGHT NOW */
-        Command auto4 = new SequentialCommandGroup(
+        private static final Command auto4 = new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
@@ -288,12 +315,16 @@ public class RobotContainer {
         );
 
         /* Vision Test */
-        LimelightTrajectory trajectory = new LimelightTrajectory();
-        Trajectory auto5 = trajectory.generateTargetTrajectory(Robot.config);
+        // private static final LimelightTrajectory trajectory = new LimelightTrajectory();
+        // private static final Command auto5 = loadCommand(trajectory.generateTargetTrajectory(Robot.config));
     }
 
-    // public static SendableChooser<Integer> getAutonomousCommand() {
-    //     // return new exampleAuto(s_Swerve);
+    public SendableChooser<Command> getAutonChooser() {
+        return autonChooser;
+    }
 
-    // }
+    public Command getAutonomousCommand() {
+        // return autonCommands.get(autonChooser.getSelected());
+        return autonChooser.getSelected();
+    }
 }

@@ -106,40 +106,41 @@ public class Robot extends TimedRobot {
     //   List.of(),
     //   new Pose2d(Limelight.getApriTagPose()[0], Limelight.getApriTagPose()[2] + Constants.Vision.NodeDistance, new Rotation2d(0)), config);
 
-    trajectories.add(exampleTrajectory); // S curve
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path Holonomic.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Long.wpilib.json")); // Move 4.09 meters (163 inches)
-    trajectories.add(loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")); // Move 4.09 meters (163 inches)
+      trajectories.add(exampleTrajectory); // S curve
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Red Bump Side.wpilib.json")); // Tank (Doesn't work)
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path Holonomic.wpilib.json")); // TEST PATH HOLONOMIC IN PATHPLANNER
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Spin.wpilib.json")); 
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Path.wpilib.json")); // Move 4 meters (157 inches)
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Straight Long.wpilib.json")); // Move 4.09 meters (163 inches)
+      trajectories.add(loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")); // Move 4.09 meters (163 inches)
 
-    moduleChooser.setDefaultOption("None", -1);
-    moduleChooser.addOption("Module 0", 0);
-    moduleChooser.addOption("Module 1", 1);
-    moduleChooser.addOption("Module 2",2);
-    moduleChooser.addOption("Module 3",3);
-    
-    moduleCumulativeChooser.setDefaultOption("1 Module", 1);
-    moduleCumulativeChooser.addOption("2 Modules", 2);
-    moduleCumulativeChooser.addOption("3 Modules", 3);
-    moduleCumulativeChooser.addOption("4 Modules", 4);
+      moduleChooser.setDefaultOption("None", -1);
+      moduleChooser.addOption("Module 0", 0);
+      moduleChooser.addOption("Module 1", 1);
+      moduleChooser.addOption("Module 2",2);
+      moduleChooser.addOption("Module 3",3);
+      
+      moduleCumulativeChooser.setDefaultOption("1 Module", 1);
+      moduleCumulativeChooser.addOption("2 Modules", 2);
+      moduleCumulativeChooser.addOption("3 Modules", 3);
+      moduleCumulativeChooser.addOption("4 Modules", 4);
 
-    pathChooser.setDefaultOption("S Curve", 0);
-    pathChooser.setDefaultOption("Test Path", 1);
-    pathChooser.addOption("Red Bump Tank", 2);
-    pathChooser.addOption("Charge Station", 3);
-    pathChooser.addOption("Test Spin", 4);
-    pathChooser.addOption("Straight", 5);
-    pathChooser.addOption("Long Straight", 6);
-    pathChooser.addOption("Score and Balance", 7);
-    
-    SmartDashboard.putData(moduleChooser);
-    SmartDashboard.putData(moduleCumulativeChooser);
-    SmartDashboard.putData(pathChooser);
+      pathChooser.setDefaultOption("S Curve", 0);
+      pathChooser.setDefaultOption("Test Path", 1);
+      pathChooser.addOption("Red Bump Tank", 2);
+      pathChooser.addOption("Charge Station", 3);
+      pathChooser.addOption("Test Spin", 4);
+      pathChooser.addOption("Straight", 5);
+      pathChooser.addOption("Long Straight", 6);
+      pathChooser.addOption("Score and Balance", 7);
+      
+      SmartDashboard.putData(moduleChooser);
+      SmartDashboard.putData(moduleCumulativeChooser);
+      SmartDashboard.putData(pathChooser);
     
       m_robotContainer = new RobotContainer();
+      SmartDashboard.putData(m_robotContainer.getAutonChooser());
     }
 
     private  Command chargeCommand() {
@@ -195,7 +196,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     //SmartDashboard.putBoolean("plate beam", plateBeam.get()); 
- 
+    Limelight.updateValues();
     SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
   }
 
@@ -225,8 +226,10 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config));
     // m_autonomousCommand = loadCommand(RobotContainer.getAutonomousCommand());
     LimelightTrajectory traj = new LimelightTrajectory();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config));
+    // m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config)); RUN THIS FOR VISION
+    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
