@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.ColorSensorV3;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +25,7 @@ public class Robot extends TimedRobot {
   private RobotContainer robot;
   private Command autonCommand;
   private Timer timer;
+  private ColorSensorV3 colorSensor;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -32,6 +35,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Initialize Robot (Robot Container)
+    this.colorSensor = new ColorSensorV3(I2C.Port.kMXP);
     this.timer = new Timer();
     this.robot = new RobotContainer();
   }
@@ -48,6 +52,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println(
+      1.658006 +
+      (21076420 - 1.658006) /
+      Math.pow((1 + (colorSensor.getProximity() / 0.00476134)), 1.509449)
+    );
     CommandScheduler.getInstance().run();
   }
 
