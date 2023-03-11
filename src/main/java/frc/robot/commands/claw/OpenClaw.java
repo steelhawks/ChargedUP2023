@@ -14,7 +14,7 @@ public class OpenClaw extends CommandBase {
   }
 
   @Override
-  public void execute() {
+  public void initialize() {
     this.claw.openClaw();
   }
 }

@@ -16,7 +16,7 @@ public class ArcadeDrive extends CommandBase {
     addRequirements(drivetrain);
   }
 
-  public void execute() {
+  public void initialize() {
     this.drivetrain.arcadeDrive(this.joystick);
   }
 }

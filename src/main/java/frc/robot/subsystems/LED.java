@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.util.LEDColor;
-import java.util.ArrayList;
 
 public class LED extends SubsystemBase {
 
@@ -41,10 +40,10 @@ public class LED extends SubsystemBase {
     this.LEDStrip.setData(this.LEDBuffer);
   }
 
-  public void waveLoop(int waveLength, ArrayList<LEDColor> colors) {
-    int red = colors.get(this.currentColor).getRed();
-    int green = colors.get(this.currentColor).getGreen();
-    int blue = colors.get(this.currentColor).getBlue();
+  public void waveLoop(int waveLength, LEDColor[] colors) {
+    int red = colors[this.currentColor].getRed();
+    int green = colors[this.currentColor].getGreen();
+    int blue = colors[this.currentColor].getBlue();
 
     if (waveIndex == 0) {
       for (byte i = 0; i <= waveLength; i++) {
@@ -58,12 +57,13 @@ public class LED extends SubsystemBase {
           0
         );
 
-      if (this.waveIndex + waveLength < LEDBuffer.getLength() - 1) {
+      if (this.waveIndex + waveLength < this.LEDBuffer.getLength() - 1) {
         this.LEDBuffer.setRGB(this.waveIndex + waveLength, red, green, blue);
       } else {
-        LEDColor nextColor = colors.get(
-          this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1
-        );
+        LEDColor nextColor =
+          colors[this.currentColor + 1 > colors.length - 1
+              ? 0
+              : this.currentColor + 1];
         this.LEDBuffer.setRGB(
             this.waveIndex + waveLength - this.LEDBuffer.getLength() + 1,
             nextColor.getRed(),
@@ -72,10 +72,10 @@ public class LED extends SubsystemBase {
           );
       }
 
-      if (this.waveIndex > LEDBuffer.getLength() - 1) {
+      if (this.waveIndex > this.LEDBuffer.getLength() - 1) {
         this.waveIndex = -1;
         this.currentColor =
-          this.currentColor + 1 > colors.size() - 1 ? 0 : this.currentColor + 1;
+          this.currentColor + 1 > colors.length - 1 ? 0 : this.currentColor + 1;
       }
     }
     waveIndex += 1;
@@ -95,11 +95,11 @@ public class LED extends SubsystemBase {
   }
 
   public void rainbow() {
-    for (int i = 0; i < LEDBuffer.getLength(); i++) {
-      final var hue = (start + (i * 180 / LEDBuffer.getLength())) % 180;
-      LEDBuffer.setHSV(i, hue, 255, 128);
+    for (int i = 0; i < this.LEDBuffer.getLength(); i++) {
+      final var hue = (start + (i * 180 / this.LEDBuffer.getLength())) % 180;
+      this.LEDBuffer.setHSV(i, hue, 255, 128);
     }
-    LEDStrip.setData(LEDBuffer);
+    this.LEDStrip.setData(this.LEDBuffer);
     start %= 180;
     start += 5;
   }

@@ -10,6 +10,7 @@ import frc.robot.commands.LED.Wave;
 import frc.robot.commands.LED.WaveIn;
 import frc.robot.commands.auton.DefaultAuton;
 import frc.robot.commands.claw.CloseClaw;
+import frc.robot.commands.claw.DetectPiece;
 import frc.robot.commands.claw.OpenClaw;
 import frc.robot.commands.drivetrain.ArcadeDrive;
 import frc.robot.commands.elevator.LowerClaw;
@@ -21,8 +22,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LED;
 import frc.util.LEDColor;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class RobotContainer {
 
@@ -34,9 +33,11 @@ public class RobotContainer {
   private final Claw claw;
   private final LED LED;
 
-  public final SendableChooser<Command> autonChooser = new SendableChooser<>();
+  public final SendableChooser<Command> autonChooser;
 
   public RobotContainer() {
+    this.autonChooser = new SendableChooser<>();
+
     this.joystick = new Joystick(0);
     this.LEDJoystick = new Joystick(1);
 
@@ -58,6 +59,7 @@ public class RobotContainer {
     this.drivetrain.setDefaultCommand(
         new ArcadeDrive(this.drivetrain, this.joystick)
       );
+    this.claw.setDefaultCommand(new DetectPiece(this.claw));
 
     new JoystickButton(this.LEDJoystick, 1)
       .onTrue(new SetColor(this.LED, new LEDColor(0, 0, 0)));
@@ -68,17 +70,17 @@ public class RobotContainer {
         new Wave(
           this.LED,
           30,
-          new ArrayList<LEDColor>(
-            Arrays.asList(
-              new LEDColor(0, 255, 0),
-              new LEDColor(255, 0, 0),
-              new LEDColor(0, 0, 255)
-            )
-          )
+          new LEDColor[] {
+            new LEDColor(0, 255, 0),
+            new LEDColor(0, 0, 255),
+            new LEDColor(255, 0, 0),
+          }
         )
       );
     new JoystickButton(this.LEDJoystick, 4)
       .onTrue(new WaveIn(this.LED, new LEDColor(0, 255, 0)));
+    new JoystickButton(this.LEDJoystick, 5)
+      .onTrue(new SetColor(this.LED, new LEDColor(0, 0, 255)));
     new JoystickButton(this.joystick, 7)
       .onTrue(new RaiseElevator(this.elevator));
     new JoystickButton(this.joystick, 8)
@@ -92,11 +94,11 @@ public class RobotContainer {
   }
 
   public void configAutonDashboard() {
-    autonChooser.addOption("No Auton", null);
-    autonChooser.addOption(
-      "Default Auton",
-      new DefaultAuton(this.drivetrain, this.LED)
-    );
+    this.autonChooser.addOption("No Auton", null);
+    this.autonChooser.addOption(
+        "Default Auton",
+        new DefaultAuton(this.drivetrain, this.LED)
+      );
 
     SmartDashboard.putData("Autonomous Modes", autonChooser);
   }
