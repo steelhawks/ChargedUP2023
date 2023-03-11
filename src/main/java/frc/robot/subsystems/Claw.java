@@ -11,8 +11,10 @@ import frc.robot.Constants;
 public class Claw extends SubsystemBase {
 
   private DoubleSolenoid clawPistonTop; 
+  private boolean isClosed = true;
   // private DoubleSolenoid clawPistonBottom; 
   public DigitalInput beamBreaker;
+  
 
   private static final PneumaticsModuleType PNEUMATICS_MODULE_TYPE = PneumaticsModuleType.REVPH;
 
@@ -34,6 +36,8 @@ public class Claw extends SubsystemBase {
   public void closeClaw() {
     // clawPistonBottom.set(Value.kForward);
     clawPistonTop.set(Value.kForward);
+    isClosed = false;
+    
     // System.out.println("forward");
 
   }
@@ -41,11 +45,19 @@ public class Claw extends SubsystemBase {
   public void openClaw() {
     // clawPistonBottom.set(Value.kReverse);
     clawPistonTop.set(Value.kReverse);
+    isClosed = true;
+    
     // System.out.println("reverse");
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Has Piece", beamBreaker.get());
+    // Has game piece
+    System.out.println(isClosed);
+    if (!beamBreaker.get() && isClosed) {
+      closeClaw();
+      System.out.println("Close");
+    }
   }
 }

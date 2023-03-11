@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.TransferHandler;
+
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
@@ -21,6 +23,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -46,11 +49,12 @@ public class Robot extends TimedRobot {
   private SendableChooser<Integer> pathChooser;
 
   private RobotContainer m_robotContainer;
+  public DigitalInput plateBeam; 
 
-  private TrajectoryConfig config;
+  public static TrajectoryConfig config;
   private List<Trajectory> trajectories = new ArrayList<>();
 
-  private LimelightTrajectory traj = new LimelightTrajectory();
+  // private LimelightTrajectory traj = new LimelightTrajectory();
 
    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
@@ -78,11 +82,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
-
+ 
     moduleChooser = new SendableChooser<>();
     moduleCumulativeChooser = new SendableChooser<>();
     pathChooser = new SendableChooser<>();
-
+    //plateBeam = new DigitalInput(3); 
     config = new TrajectoryConfig(
       Constants.AutoConstants.kMaxSpeedMetersPerSecond,
       Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -96,6 +100,11 @@ public class Robot extends TimedRobot {
       // End 3 meters straight ahead of where we started, facing forward
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
+
+    // Trajectory rightCode = TrajectoryGenerator.generateTrajectory(
+    //   new Pose2d(0, 0, new Rotation2d(0)),
+    //   List.of(),
+    //   new Pose2d(Limelight.getApriTagPose()[0], Limelight.getApriTagPose()[2] + Constants.Vision.NodeDistance, new Rotation2d(0)), config);
 
     trajectories.add(exampleTrajectory); // S curve
     trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
@@ -178,14 +187,15 @@ public class Robot extends TimedRobot {
       RobotContainer.s_Swerve::setModuleStates,
       RobotContainer.s_Swerve);
         
-      // return swerveControllerCommand;
-      return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
+      return swerveControllerCommand;
+      //return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
+    //SmartDashboard.putBoolean("plate beam", plateBeam.get()); 
+ 
     SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
   }
 
@@ -212,10 +222,12 @@ public class Robot extends TimedRobot {
 
     // SATHYA, RUN THIS FOR YOUR AUTON WITH LIMELIGHT
     // Trajectory trajectory = traj.generateTargetTrajectory(config);
-    // m_autonomousCommand = loadCommand(trajectory);
+    // m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config));
+    // m_autonomousCommand = loadCommand(RobotContainer.getAutonomousCommand());
+    LimelightTrajectory traj = new LimelightTrajectory();
 
-    m_autonomousCommand = RobotContainer.getAutonomousCommand();
-    
+    m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config));
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -259,7 +271,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    //SmartDashboard.putBoolean("Plate Beam", plateBeam.get());
+
+  }
 
   @Override
   public void testInit() {

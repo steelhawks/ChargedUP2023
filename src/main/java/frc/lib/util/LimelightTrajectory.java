@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class LimelightTrajectory {
@@ -46,7 +47,7 @@ public class LimelightTrajectory {
         ty = table.getEntry("ty");
         tid = table.getEntry("tid");
         tagpose = table.getEntry("targetpose_camerapose");
-        botpose = table.getEntry("botpose_targetspace");
+        botpose = table.getEntry("camerapose_targetspace");
         poses = new HashMap<Double, Pose2d>(); 
         this.setPipeline(0);
     
@@ -55,7 +56,7 @@ public class LimelightTrajectory {
     public Pose2d getTagPose() {
         double[] botposeEntry = botpose.getDoubleArray(new double[6]);
         double[] tagposeEntry = tagpose.getDoubleArray(new double[6]);  
-        return new Pose2d(botposeEntry[0], botposeEntry[1], new Rotation2d(180));
+        return new Pose2d(botposeEntry[2], botposeEntry[1], new Rotation2d(0));
     }
 
     public void printTargetPoses() {
@@ -110,7 +111,7 @@ public class LimelightTrajectory {
         //set tag pose as the current origin 
         //origin = this.getTagPose();
         if (this.getTv() == 1) {
-            RobotContainer.s_Swerve.resetOdometry(new Pose2d(0,0, new Rotation2d(0))); //sets origin to tag pose 
+            RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
     
             trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 

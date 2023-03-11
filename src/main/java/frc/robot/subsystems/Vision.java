@@ -15,6 +15,8 @@ public class Vision extends SubsystemBase{
     private static final int CUBE_PIPELINE = 4;
     private static final int REFLECTIVE_TAPE_PIPELINE = 5;
 
+
+    
     public Vision(){
         Limelight.init();
     }
@@ -33,6 +35,10 @@ public class Vision extends SubsystemBase{
         } else if (!Limelight.hasValidTarget()) {
             RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
         }
+    }
+
+    public void squareToTag(){
+        
     }
 
 }

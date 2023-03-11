@@ -41,6 +41,8 @@ public class Limelight {
 
         contours = table.getEntry("tcornxy").getDoubleArray(new double[0]);
 
+        // TODO fix entry key
+        apriltag_pose = table.getEntry("targetpose_cameraspace").getDoubleArray(new double[0]);
     }
 
     public static double getArea(){
@@ -71,9 +73,13 @@ public class Limelight {
         return table.getEntry("tcornxy").getDoubleArray(new double[0]);
     }
 
-    public static Pose2d getApriltagPose() {
-        return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[2])); 
+    public static double[] getApriTagPose(){
+        return apriltag_pose;
     }
+
+    // public static Pose2d getApriltagPose() {
+    //     return new Pose2d(apriltag_pose[0], apriltag_pose[1], new Rotation2d(apriltag_pose[2])); 
+    // }
 
     public static int getPipeline(){
         return (int)getEntryAsDouble("getpipe");

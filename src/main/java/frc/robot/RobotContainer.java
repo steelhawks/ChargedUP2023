@@ -1,16 +1,19 @@
 package frc.robot;
 
-import java.time.Instant;
-
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -20,6 +23,7 @@ import frc.lib.util.ElevatorLevels;
 import frc.lib.util.GamepadAxisButton;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
+import frc.lib.util.Limelight;
 import frc.lib.util.LimelightTrajectory;
 import frc.robot.autos.*;
 import frc.robot.commands.ToggleClaw;
@@ -30,14 +34,14 @@ import frc.robot.commands.Led.Request;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
+
+    private SendableChooser<Integer> autonChooser;
+
     /* Controllers */
     private final Joystick driver = new Joystick(0);
     private final Joystick operator = new Joystick(1);
 
     /* Drive Controls */
-    // private final int translationAxis = XboxController.Axis.kLeftY.value;
-    // private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    // private final int rotationAxis = XboxController.Axis.kRightX.value;
     private final int translationAxis = 1;
     private final int strafeAxis = 0;
     private final int rotationAxis = 2;
@@ -189,7 +193,8 @@ public class RobotContainer {
         // rightButton.whileTrue(new RotateToAngle(90));
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
-        push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
+        // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
+        push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
         alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
 
@@ -208,51 +213,69 @@ public class RobotContainer {
         requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE));
     }
 
-    public static Command getAutonomousCommand() {
+    private static Command loadCommand(Trajectory trajectory) {
+        var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
+        SwerveControllerCommand swerveControllerCommand =
+        new SwerveControllerCommand(
+          trajectory, // PUT TRAJECTORY HERE
+          RobotContainer.s_Swerve::getPose,
+          Constants.Swerve.swerveKinematics,
+          new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
+          new PIDController(Constants.AutoConstants.kPController, Constants.AutoConstants.kIController, Constants.AutoConstants.kDController),
+          thetaController,
+          RobotContainer.s_Swerve::setModuleStates,
+          RobotContainer.s_Swerve);
+            
+          // return swerveControllerCommand;
+          return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
+      }
+
+    private static class autons {
+        
         /* AUTON 1: PLACE AND BALANCE */
-        // return new exampleAuto(s_Swerve);
-        // return new SequentialCommandGroup(
-        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
-        //     new ParallelCommandGroup(
-        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
-        //         new ParallelRaceGroup(
-        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")),
-        //             new WaitCommand(1.5)
-        //         )
-        //     ),
-        //     new BalanceCommand()
-        // );
+        Command auto1 = new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Middle Charge Station.wpilib.json")),
+                    new WaitCommand(1.5)
+                )
+            ),
+            new BalanceCommand()
+        );
 
-
-        /* PLACE, MOBILITY, BALANCE */
-        // return new SequentialCommandGroup(
-        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
-        //     new ParallelCommandGroup(
-        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
-        //         new ParallelRaceGroup(
-        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
-        //             new WaitCommand(7)
-        //         )
-        //     ),
-        //     new BalanceCommand(),
-        //     new LedCommand(null, LEDMode.RAINBOW)
-        // );
+        /* AUTON 2: PLACE, MOBILITY, BALANCE */
+        Command auto2 = new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(7)
+                )
+            ),
+            new BalanceCommand(),
+            new LedCommand(null, LEDMode.RAINBOW)
+        );
 
         /* PLACE, MOVE RED SIDE TO CENTER */
-        // return new SequentialCommandGroup(
-        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
-        //     new ParallelCommandGroup(
-        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
-        //         new ParallelRaceGroup(
-        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
-        //             new WaitCommand(9)
-        //         )
-        //     ),
-        //     new LedCommand(null, LEDMode.RAINBOW)
-        // );
+        Command auto3 = new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(9)
+                )
+            ),
+            new LedCommand(null, LEDMode.RAINBOW)
+        );
 
-        /* PLACE, MOBILITY RED 1 */
-        return new SequentialCommandGroup(
+        /* PLACE, MOBILITY RED 1, DOESN'T WORK RIGHT NOW */
+        Command auto4 = new SequentialCommandGroup(
             autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
@@ -264,5 +287,13 @@ public class RobotContainer {
             // new LedCommand(null, LEDMode.RAINBOW)
         );
 
+        /* Vision Test */
+        LimelightTrajectory trajectory = new LimelightTrajectory();
+        Trajectory auto5 = trajectory.generateTargetTrajectory(Robot.config);
     }
+
+    // public static SendableChooser<Integer> getAutonomousCommand() {
+    //     // return new exampleAuto(s_Swerve);
+
+    // }
 }
