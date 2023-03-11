@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
   private Timer timer;
   private ColorSensorV3 colorSensor;
 
+  // private RevColorSensorV3 revColorSensor;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any
@@ -52,10 +54,42 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    //4pl: y = 1.658006 + (21076420 - 1.658006)/(1 + (x/0.00476134)^1.509449)
+    //5pl: y = 1.658006 + (145.6417 - 1.658006)/(1 + (x/12.58427)^9.809596)^0.1538747
+    // System.out.println(
+    //   (21076420 - 1.658006) /
+    //   Math.pow((1 + (colorSensor.getProximity() / 0.00476134)), 1.509449)
+    // );
+    // System.out.println(
+    //   (145.6417 - 1.658006) /
+    //   Math.pow(
+    //     1 + Math.pow((colorSensor.getProximity() / 12.58427), 9.809596),
+    //     0.1538747
+    //   )
+    // );
+    // System.out.println(
+    //   (4288.3069 - 10.375) /
+    //   (1 + Math.pow(colorSensor.getProximity() / 7.027, 1.4889))
+    // );
+    // System.out.println(
+    //   5.3874 +
+    //   (3419.831 - 5.3874) /
+    //   (1 + Math.pow(colorSensor.getProximity() / 8.8838, 1.509449))
+    // );
+    // System.out.println(
+    //   2.9385 +
+    //   (2798.5671 - 2.9385) /
+    //   (1 + Math.pow(colorSensor.getProximity() / 6.5398, 1.3882))
+    // );
+    // System.out.println(
+    //   2.9354 +
+    //   (2947.8981 - 2.9354) /
+    //   (1 + Math.pow(colorSensor.getProximity() / 7.1801, 1.4563))
+    // );
     System.out.println(
-      1.658006 +
-      (21076420 - 1.658006) /
-      Math.pow((1 + (colorSensor.getProximity() / 0.00476134)), 1.509449)
+      7.4814 +
+      (3365.1329 - 7.4814) /
+      (1 + Math.pow(colorSensor.getProximity() / 6.7177, 1.4908))
     );
     CommandScheduler.getInstance().run();
   }
