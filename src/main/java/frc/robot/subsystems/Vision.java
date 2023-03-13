@@ -9,7 +9,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.Limelight;
-import frc.lib.util.LimelightTrajectory;
+// import frc.lib.util.LimelightTrajectory;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -22,9 +22,9 @@ public class Vision extends SubsystemBase{
     private static final int RED_SUBSTATION_PIPELINE = 3;
     private static final int CUBE_PIPELINE = 4;
     private static final int REFLECTIVE_TAPE_PIPELINE = 5;
-    public final LimelightTrajectory sathya = new LimelightTrajectory();
+    // public final LimelightTrajectory sathya = new LimelightTrajectory();
 
-    public Trajectory traj = sathya.generateTargetTrajectory(Robot.config);
+    // public Trajectory traj = sathya.generateTargetTrajectory(Robot.config);
 
 
     
@@ -52,15 +52,15 @@ public class Vision extends SubsystemBase{
         
     }
 
-    public Trajectory getSathya() {
-        if(traj == null) return TrajectoryGenerator.generateTrajectory(
-                // robot pose -> target space 
-                new Pose2d(0,0, new Rotation2d(0)),
-                // Pass through no interior points 
-                List.of(),
-                // End at apriltag pose 
-                new Pose2d(0, 1, new Rotation2d(0)),
-                Robot.config);
-        else return traj;
-    }
+    // public Trajectory getSathya() {
+    //     if(traj == null) return TrajectoryGenerator.generateTrajectory(
+    //             // robot pose -> target space 
+    //             new Pose2d(0,0, new Rotation2d(0)),
+    //             // Pass through no interior points 
+    //             List.of(),
+    //             // End at apriltag pose 
+    //             new Pose2d(0, 1, new Rotation2d(0)),
+    //             Robot.config);
+    //     else return traj;
+    // }
 }

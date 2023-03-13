@@ -50,7 +50,7 @@ public class GoCone extends CommandBase {
       //chris
 
       //sathya
-      RobotContainer.s_Vision.traj = RobotContainer.s_Vision.sathya.generateTargetTrajectory(Robot.config);
+      // RobotContainer.s_Vision.traj = RobotContainer.s_Vision.sathya.generateTargetTrajectory(Robot.config);
     
       System.out.println("generated new");
   }

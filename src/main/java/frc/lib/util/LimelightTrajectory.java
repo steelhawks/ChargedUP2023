@@ -15,11 +15,13 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class LimelightTrajectory {
+public class LimelightTrajectory extends SubsystemBase {
 
     //create NetworkTable objects
     NetworkTableInstance nInstance;
@@ -49,18 +51,20 @@ public class LimelightTrajectory {
         tx = table.getEntry("tx");
         ty = table.getEntry("ty");
         tid = table.getEntry("tid");
-        tagpose = table.getEntry("targetpose_camerapose");
+        // tagpose = table.getEntry("targetpose_camerapose");
         botpose = table.getEntry("camerapose_targetspace");
         poses = new HashMap<Double, Pose2d>(); 
-        trajectory = null; 
         this.setPipeline(0);
     
     }
 
     public Pose2d getTagPose() {
-        double[] botposeEntry = botpose.getDoubleArray(new double[6]);
+        // double[] botposeEntry = botpose.getDoubleArray(new double[6]);
+        // System.out.println(botposeEntry[2] + " " + botposeEntry[1] + " " + new Rotation2d(0));
+
+        // SmartDashboard.updateValues(); 
         //double[] tagposeEntry = tagpose.getDoubleArray(new double[6]);  
-        return new Pose2d(botposeEntry[2], botposeEntry[1], new Rotation2d(0)); //if going backwards, negate whatever the pose values are 
+        return new Pose2d(botpose.getDoubleArray(new double[6])[2], botpose.getDoubleArray(new double[6])[1], new Rotation2d(0)); //if going backwards, negate whatever the pose values are 
         
         //botposeEntry[2] -> z 
         //botposeEntry[1] -> Y
@@ -126,16 +130,17 @@ public class LimelightTrajectory {
         System.out.println("resetting trajectory relative to target pose");
          //adding relative coordinate pathing for now delete later 
         System.out.println("Trajectory generated successfully"); 
-        RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose());
+        // RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose());
 
         if (this.getTv() == 1) {
+
             
             System.out.println("Valid target exists"); 
 
             //RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
-            trajectory = TrajectoryGenerator.generateTrajectory(
+            this.trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
-                new Pose2d(0,0, new Rotation2d(0)),
+                RobotContainer.s_Swerve.getPose(),
                 // Pass through no interior points 
                 List.of(),
                 // End at apriltag pose 
@@ -143,11 +148,26 @@ public class LimelightTrajectory {
                 config);
 
         }
+
+        else {
+            this.trajectory = TrajectoryGenerator.generateTrajectory(
+                // robot pose -> target space 
+                RobotContainer.s_Swerve.getPose(),
+                // Pass through no interior points 
+                List.of(),
+                // End at apriltag pose 
+                RobotContainer.s_Swerve.getPose(),
+                config);
+        }
         
         
-        return trajectory;
+        return this.trajectory;
     
     }
 
-
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Z-Value", botpose.getDoubleArray(new double[6])[2]);
+        SmartDashboard.putNumber("Tv Test", getTv());
+    }
 }

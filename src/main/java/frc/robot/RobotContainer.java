@@ -62,17 +62,17 @@ public class RobotContainer {
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
     private final JoystickButton alignCone = new JoystickButton(driver, 7); // Left trigger
-    private final JoystickButton alignCube = new JoystickButton(driver, 6);
+    private final JoystickButton alignCube = new JoystickButton(driver, 6); // Right bumper
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
     // private final POVButton leftButton = new POVButton(driver, 270);
 
     /*Operator Buttons*/ 
-    // private final JoystickButton homeElevator = new JoystickButton(operator, 2); // A
-    // private final JoystickButton lowElevator = new JoystickButton(operator, 3); // B
-    // private final JoystickButton midElevator = new JoystickButton(operator, 4); // Y
-    // private final JoystickButton highElevator = new JoystickButton(operator, 6); // Right bumper
+    // private final JoystickButton homeElevator = new JoystickButton(operator, 6); // RIGHT BUMPER
+    // private final JoystickButton lowElevator = new JoystickButton(operator, 2); // A
+    // private final JoystickButton midElevator = new JoystickButton(operator, 3); // B
+    // private final JoystickButton highElevator = new JoystickButton(operator, 4); // Y
     // private final POVButton raiseElevator = new POVButton(operator, 0); // Up
     // private final POVButton lowerElevator = new POVButton(operator, 180); // Down
     // private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
@@ -84,13 +84,14 @@ public class RobotContainer {
 
     /* Operator Button Board Buttons */
     private final JoystickButton homeElevator = new JoystickButton(operator, 5);
-    private final JoystickButton lowElevator = new JoystickButton(operator, 2);
-    private final JoystickButton midElevator = new JoystickButton(operator, 1);
-    private final JoystickButton highElevator = new JoystickButton(operator, 3);
-    private final JoystickButton toggleClaw = new JoystickButton(operator, 6);
-    private final JoystickButton doubleSubButton = new JoystickButton(operator, 4);
-    private final JoystickButton requestCone = new JoystickButton(operator, 9);
+    private final JoystickButton lowElevator = new JoystickButton(operator, 3);
+    private final JoystickButton midElevator = new JoystickButton(operator, 2);
+    private final JoystickButton highElevator = new JoystickButton(operator, 1);
+    private final JoystickButton toggleClaw = new JoystickButton(operator, 4);
+    private final JoystickButton doubleSubButton = new JoystickButton(operator, 6);
+    private final JoystickButton requestCone = new JoystickButton(operator, 7);
     private final JoystickButton requestCube = new JoystickButton(operator, 8);
+    private final JoystickButton elevatorPivot = new JoystickButton(operator, 10);
     private final GamepadAxisButton raiseElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == -1); // Up
     private final GamepadAxisButton lowerElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == 1); // down
 
@@ -105,10 +106,10 @@ public class RobotContainer {
     
 
     // Vision Test
-    public static LimelightTrajectory limeTraj;
+    // public static LimelightTrajectory limeTraj;
 
     public RobotContainer() {
-        limeTraj = new LimelightTrajectory();
+        // limeTraj = new LimelightTrajectory();
         // compressor.disable();
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
@@ -127,7 +128,7 @@ public class RobotContainer {
 
         autonChooser.addOption("Place Balance", autons.auto1);
         autonChooser.addOption("Place Mobility Balance", autons.auto2);
-        autonChooser.addOption("Place Red Right Side", autons.auto3);
+        autonChooser.addOption("Place Mobility Red 3", autons.auto3);
         autonChooser.addOption("Place Mobility Red 1", autons.auto4);
         // autonChooser.addOption("Vision Test", 4);
 
@@ -210,18 +211,20 @@ public class RobotContainer {
         // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
-        // alignCube.onTrue(loadCommand(new LimelightTrajectory().generateTargetTrajectory(Robot.config)));
-        alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
+        // alignCube.whileTrue(loadCommand(new LimelightTrajectory().generateTargetTrajectory(Robot.config)));
+        // alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
+
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw()).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
         lowElevator.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.LOW));
         midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
         highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
-        doubleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.DOUBLE_STATION));
+        doubleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.DOUBLE_STATION)); // TURN ON WITH BUTTON BOARD
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
-        // toggleElevator.onTrue(new ToggleElevator());
+        // elevatorPivot.onTrue(new ToggleElevator());
+
         requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW).andThen(
             new ParallelRaceGroup(
                 new WaitCommand(0.5),
@@ -307,7 +310,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/jxt Copy.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Side 1 Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
                     new WaitCommand(4)
                 )
             )
@@ -326,5 +329,18 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // return autonCommands.get(autonChooser.getSelected());
         return autonChooser.getSelected();
+        // return new SequentialCommandGroup(
+        //     autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+        //     new ParallelCommandGroup(
+        //         autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+        //         new ParallelRaceGroup(
+        //             Robot.loadCommand(Robot.loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Red Right Center
+        //             new WaitCommand(9)
+        //         )
+        //     ),
+        //     new LedCommand(null, LEDMode.RAINBOW)
+        // );
+
+
     }
 }

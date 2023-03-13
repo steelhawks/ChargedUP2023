@@ -188,8 +188,8 @@ public class Robot extends TimedRobot {
       RobotContainer.s_Swerve::setModuleStates,
       RobotContainer.s_Swerve);
         
-      return swerveControllerCommand;
-      //return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
+      // return swerveControllerCommand; THIS WAS UNCOMMENTED BEFORE
+      return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
   }
 
   @Override
@@ -225,7 +225,7 @@ public class Robot extends TimedRobot {
     // Trajectory trajectory = traj.generateTargetTrajectory(config);
     // m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config));
     // m_autonomousCommand = loadCommand(RobotContainer.getAutonomousCommand());
-    LimelightTrajectory traj = new LimelightTrajectory();
+    // LimelightTrajectory traj = new LimelightTrajectory();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // m_autonomousCommand = loadCommand(traj.generateTargetTrajectory(config)); RUN THIS FOR VISION

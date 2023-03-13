@@ -142,8 +142,8 @@ public final class Constants {
 
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
-        public static final double midEncoderPos = 3.05;
-        public static final double highEncoderPos = 4.3; // 3.88
+        public static final double midEncoderPos = 2.85;
+        public static final double highEncoderPos = 4.1; // 3.88
         public static final double minPivotEncoderPos = 1.39; // When robot automatically pivots up
         public static final double minPivotTolerance = 0.41;
         public static final double maxPivotEncoderPos = 1.4; // When robot automatically pivots down 1.28
@@ -189,8 +189,8 @@ public final class Constants {
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double kMaxSpeedMetersPerSecond = 1; // 3
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1;
+        public static final double kMaxSpeedMetersPerSecond = 3; // 3
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
