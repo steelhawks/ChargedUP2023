@@ -47,7 +47,6 @@ public class Elevator extends SubsystemBase {
     if (pistonVal) {
       pistonsUp();
     } else if (getEncoderRotations() > Constants.Elevator.minPivotEncoderPos) {
-      System.out.println("reverse");
       pistonsDown();
     }
     System.out.println("done");

@@ -19,7 +19,6 @@ public final class CTREConfigs {
         swerveCanCoderConfig = new CANCoderConfiguration();
         elevatorCanCoderConfig = new CANCoderConfiguration();
         
-
         /* Swerve Angle Motor Configurations */
         SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
             Constants.Swerve.angleEnableCurrentLimit, 
@@ -55,7 +54,7 @@ public final class CTREConfigs {
         swerveCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
 
         /* Elevator CANCoder Configuration */
-        swerveCanCoderConfig.sensorDirection = Constants.Elevator.canCoderInvert;
-        
+        swerveCanCoderConfig.sensorDirection = Constants.Elevator.canCoderInvert; 
+        // THE ABOVE LINE WAS A MISTAKE BUT WE HAVE ACCOUNTED FOR IT IN EVERY PART OF THE CODE, SO DO NOT CHANGE IT
     }
 }

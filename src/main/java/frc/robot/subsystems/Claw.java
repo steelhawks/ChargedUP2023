@@ -10,70 +10,76 @@ import frc.robot.Constants;
 
 public class Claw extends SubsystemBase {
 
-  private DoubleSolenoid clawPistonTop; 
-  private boolean isClosed = true;
+  private DoubleSolenoid clawPiston; 
+  private boolean isClosed;
+  private boolean requestClose;
   private int breakCount = 0;
-  // private DoubleSolenoid clawPistonBottom; 
-  public DigitalInput beamBreaker;
-  public boolean hasCone;
+  private DigitalInput beamBreaker;
+  private boolean hasCone;
   
-
   private static final PneumaticsModuleType PNEUMATICS_MODULE_TYPE = PneumaticsModuleType.REVPH;
 
   public Claw() {
-    clawPistonTop = new DoubleSolenoid(PNEUMATICS_MODULE_TYPE, Constants.Claw.SolenoidTopForward, Constants.Claw.SolenoidTopReverse);
-    // clawPistonBottom = new DoubleSolenoid(PNEUMATICS_MODULE_TYPE, Constants.Claw.SolenoidBottomForward, Constants.Claw.SolenoidBottomReverse);
+    clawPiston = new DoubleSolenoid(PNEUMATICS_MODULE_TYPE, Constants.Claw.SolenoidForward, Constants.Claw.SolenoidReverse);
     beamBreaker = new DigitalInput(Constants.Claw.beamPort);
     hasCone = !beamBreaker.get();
+
+    isClosed = true;
+    requestClose = true;
   }
 
   public void toggleClaw() {
-    if (clawPistonTop.get().equals(Value.kReverse)) {
-      closeClaw();
+    if (clawPiston.get().equals(Value.kReverse)) {
+      closeClaw(false);
     }
     else {
-      openClaw();
+      openClaw(false);
     }
   }
 
-  public void closeClaw() {
-    // clawPistonBottom.set(Value.kForward);
-    clawPistonTop.set(Value.kForward);
-    isClosed = true;
-    
-    // System.out.println("forward");
+  public void closeClaw(boolean auto) {
+    // if try to close automatically via beam breaker and claw is set to manually open
+    if (auto && requestClose) return;
 
+    clawPiston.set(Value.kForward);
+    isClosed = true;
+    requestClose = true;
   }
 
-  public void openClaw() {
-    // clawPistonBottom.set(Value.kReverse);
-    clawPistonTop.set(Value.kReverse);
+  public void openClaw(boolean auto) {
+    // if try to open automatically via beam breaker and claw is set to manually close
+    if (auto && !requestClose) return;
+
+    clawPiston.set(Value.kReverse);
     isClosed = false;
-    
-    // System.out.println("reverse");
+    requestClose = false;
+  }
+
+  public DigitalInput getBeam() {
+    return beamBreaker;
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Beam", beamBreaker.get());
+    SmartDashboard.putBoolean("Claw Beam", beamBreaker.get());
     SmartDashboard.putBoolean("Claw Closed", isClosed);
-    SmartDashboard.putBoolean("Has Piece", hasCone);
+    // SmartDashboard.putBoolean("Has Piece", hasCone);
     
-    if (!beamBreaker.get()) {   // if the beam is broken
-      breakCount++;             // increase breakCount by 1
-    }
-    else {                      // elif the beam is solid
-      breakCount = 0;           // reset breakCount
-    }
+    // if (!beamBreaker.get()) {   // if the beam is broken
+    //   breakCount++;             // increase breakCount by 1
+    // }
+    // else {                      // elif the beam is solid
+    //   breakCount = 0;           // reset breakCount
+    // }
 
-    if(beamBreaker.get() && hasCone) {
-      hasCone = false;
-    }
+    // if(beamBreaker.get() && hasCone) {
+    //   hasCone = false;
+    // }
 
-    if (!beamBreaker.get() && !isClosed && breakCount > 20 && !hasCone) {
-      closeClaw();
-      hasCone = true;
-    }
+    // if (!beamBreaker.get() && !isClosed && breakCount > 20 && !hasCone) {
+    //   closeClaw();
+    //   hasCone = true;
+    // }
 
 
   }

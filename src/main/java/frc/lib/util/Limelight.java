@@ -13,7 +13,8 @@ public class Limelight {
     private static double ta; // target area
     private static double tx; // x offset or horizontal angle fromcenter
     private static double ty; // y offset
-    private static double tv; // if target present 1; if not 0
+    private static double tv;
+    private static double id; // if target present 1; if not 0
     private static double horizontalBoundingSide; // horizontal side of rough bounding box
     private static double verticalBoundingSide; // vertical side of rough bounding box
     private static double[] contours;
@@ -33,6 +34,7 @@ public class Limelight {
         tx = getEntryAsDouble("tx");
         ty = getEntryAsDouble("ty");
         tv = getEntryAsDouble("tv");
+        id = getEntryAsDouble("tid");
         apriltag_pose = table.getEntry("botpose").getDoubleArray(new double[0]); 
         horizontalBoundingSide = getEntryAsDouble("thor");
         verticalBoundingSide = getEntryAsDouble("tvert");
@@ -67,6 +69,10 @@ public class Limelight {
 
     public static double getVerticalSide(){
         return getEntryAsDouble("tvert");
+    }
+
+    public static double getID() {
+        return getEntryAsDouble("tid");
     }
 
     public static double[] getContours(){
