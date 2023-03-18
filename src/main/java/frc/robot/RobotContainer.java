@@ -194,14 +194,15 @@ public class RobotContainer {
         // rightButton.whileTrue(new RotateToAngle(90));
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
-        // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
+        // push.onTrue(new InstantCom//mand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
-        alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        // alignCube.whileTrue(new SequentialCommandGroup(
-        //     new VisionAlignLime(), 
-        //     new GoLeftApriltag()
-        // ));
+        //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
+        //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
+        alignCube.whileTrue(new SequentialCommandGroup(
+             new VisionAlignLime(), 
+             new GoLeftApriltag()
+        ));
         // alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
 
         /* Operator Buttons */

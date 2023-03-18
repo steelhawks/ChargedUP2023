@@ -41,6 +41,7 @@ public class Vision extends SubsystemBase{
     }
 
     public void GoToTag(){
+        RobotContainer.s_Swerve.rotateToAngle(BLUE_SUBSTATION_PIPELINE);
         Limelight.setPipeline(0);
         
         if (Limelight.hasValidTarget() && Limelight.getArea() < Constants.Vision.areaThreshold) {
@@ -58,6 +59,10 @@ public class Vision extends SubsystemBase{
         } else if (!Limelight.hasValidTarget()) {
             RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
         }
+
+        
+
+
     }
 
     public Command goLeft() {
@@ -67,7 +72,7 @@ public class Vision extends SubsystemBase{
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(0, 1, new Rotation2d(0)),
+        new Pose2d(0, 5, new Rotation2d(0)),
         Robot.config);
 
         return loadCommand(goL);

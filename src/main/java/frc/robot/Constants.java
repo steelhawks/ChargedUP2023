@@ -129,8 +129,8 @@ public final class Constants {
 
     // Elevator constants
     public static final class Elevator {
-        public static final int motor1ID = 21;
-        public static final int motor2ID = 22;
+        public static final int motor1ID = 22;
+        public static final int motor2ID = 21;
         public static final int SolenoidForward = 0;
         public static final int SolenoidReverse = 1;
 
