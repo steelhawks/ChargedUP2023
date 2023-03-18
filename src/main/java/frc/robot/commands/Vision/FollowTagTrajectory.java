@@ -9,7 +9,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.lib.util.LimelightTrajectory;
 import frc.robot.Constants;
@@ -56,7 +55,7 @@ public class FollowTagTrajectory extends CommandBase {
   }
 
   public Command loadCommand(Trajectory trajectory) {
-    // RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //adding this for now just to reset field position once detected
+    RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //adding this for now just to reset field position once detected
     //the line above is also added in the generateTargetTrajectory nethod in the limelight class. Just added to see if any effect takes place
     var thetaController = new ProfiledPIDController(Constants.AutoConstants.kPThetaController, 0, 0, Constants.AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);

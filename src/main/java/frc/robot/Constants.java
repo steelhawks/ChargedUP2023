@@ -129,8 +129,8 @@ public final class Constants {
 
     // Elevator constants
     public static final class Elevator {
-        public static final int motor1ID = 21;
-        public static final int motor2ID = 22;
+        public static final int motor1ID = 22;
+        public static final int motor2ID = 21;
         public static final int SolenoidForward = 0;
         public static final int SolenoidReverse = 1;
 
@@ -139,7 +139,7 @@ public final class Constants {
         /* Encoder Levels */
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
-        public static final double midEncoderPos = 2.85;
+        public static final double midEncoderPos = 2.8; // 2.85
         public static final double highEncoderPos = 4.1;
         public static final double doubleSubEncoderPos = 2.129;
         public static final double minPivotEncoderPos = 1.39; // When robot automatically pivots up
@@ -179,7 +179,7 @@ public final class Constants {
     public static final class Vision {
         public static final double areaThreshold = 1.6;
         public static final double xOffsetThreshold = 0.3;
-        public static final double xVelocity = 0.8;
+        public static final double xVelocity = 1;
         public static final double spinVelocity = 1;
         public static final int FiftyFour = 54;
         public static final double NodeDistance = 20; // TODO find constant

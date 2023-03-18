@@ -42,7 +42,7 @@ public class Swerve extends SubsystemBase {
     public Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
         gyro.configFactoryDefault();
-        // zeroGyro();
+        zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -67,11 +67,19 @@ public class Swerve extends SubsystemBase {
     public void rotateToAngle(int angle) {
         double goal = getTargetAngle(angle);
 
+        PIDController rotater = new PIDController(0.098, 0, 0);
+        rotater.setSetpoint(goal);
+        rotater.setTolerance(.7);
+        rotater.enableContinuousInput(0, 360);
+
         if (gyro.getYaw() < goal) {
-            drive(new Translation2d(0, 0), -0.3 * Constants.Swerve.maxAngularVelocity, true, true);
+            drive(new Translation2d(0,0), -rotater.calculate(gyro.getYaw()%360), true, true);
+
+            // drive(new Translation2d(0, 0), -0.3 * Constants.Swerve.maxAngularVelocity, true, true);
         }
         else {
-            drive(new Translation2d(0, 0), 0.3 * Constants.Swerve.maxAngularVelocity, true, true);
+            drive(new Translation2d(0,0), rotater.calculate(gyro.getYaw()%360), true, true);
+            // drive(new Translation2d(0, 0), 0.3 * Constants.Swerve.maxAngularVelocity, true, true);
         }
     }
 
@@ -186,39 +194,6 @@ public class Swerve extends SubsystemBase {
     public boolean isLowGear() {
         return isShifted;
     }
-
-    /*
-     * Call after robot is on ramp
-     * Click button to call method
-     * Move all wheels to zero degrees ("tank mode")
-     * If roll positive, move wheels positive
-     * If roll negative, move wheels negative
-     * Speed proportional to roll
-     */
-    // public void autoBalance() {
-    //     double roll = gyro.getRoll();
-    //     double yaw = Math.abs(gyro.getYaw() % 360);
-    //     int multiplier = 1;
-    //     double deadband = 2;
-
-    //     if (yaw > 180) {
-    //         multiplier = -1;
-    //         System.out.println("greater");
-    //     }
-
-    //     Translation2d translation = new Translation2d(0, 0);
-    //     double rotation = multiplier * 0.15 * Constants.Swerve.maxAngularVelocity;
-
-    //     while (yaw < 360 - deadband && yaw > deadband) { //yaw > deadband || 360 - yaw < deadband
-    //         yaw = Math.abs(gyro.getYaw() % 360);
-
-    //         drive(translation, rotation, true, true);
-    //     }
-
-    //     if (Math.abs(roll) <= rollDeadband) return;
-
-        
-    // }
 
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
         return new SequentialCommandGroup(

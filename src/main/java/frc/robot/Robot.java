@@ -1,15 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.TransferHandler;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
@@ -49,7 +43,7 @@ public class Robot extends TimedRobot {
   private SendableChooser<Integer> pathChooser;
 
   private RobotContainer m_robotContainer;
-  public DigitalInput plateBeam; 
+  // public DigitalInput plateBeam; 
 
   public static TrajectoryConfig config;
   private List<Trajectory> trajectories = new ArrayList<>();

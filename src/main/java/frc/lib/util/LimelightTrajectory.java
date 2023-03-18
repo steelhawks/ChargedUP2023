@@ -140,7 +140,7 @@ public class LimelightTrajectory extends SubsystemBase {
             //RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
             this.trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
-                RobotContainer.s_Swerve.getPose(),
+                new Pose2d(),
                 // Pass through no interior points 
                 List.of(),
                 // End at apriltag pose 

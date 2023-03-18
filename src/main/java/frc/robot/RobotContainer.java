@@ -69,6 +69,8 @@ public class RobotContainer {
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
     private final JoystickButton alignCone = new JoystickButton(driver, 7); // Left trigger
     private final JoystickButton alignCube = new JoystickButton(driver, 6); // Right bumper
+    private final JoystickButton alignCubePointLeft = new JoystickButton(operator, 12);
+    private final JoystickButton alignCubePointRight = new JoystickButton(operator, 11);
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
@@ -111,7 +113,7 @@ public class RobotContainer {
     public static final Compressor compressor = new Compressor(PneumaticsModuleType.REVPH);
 
     // Claw Beam
-    Trigger clawBeam = new Trigger(s_Claw.getBeam()::get);
+    Trigger clawBeam = new Trigger(() -> s_Claw.getBeam().get());
 
     // Vision Test
     // public static LimelightTrajectory limeTraj;
@@ -158,8 +160,8 @@ public class RobotContainer {
                 new ParallelRaceGroup(
                     new LedCommand(color, LEDMode.PULSE),
                     new WaitCommand(0.2)
-                ),
-                new InstantCommand(() -> s_Claw.openClaw(true))
+                )
+                // new InstantCommand(() -> s_Claw.openClaw(true))
             ),
             new LedCommand(LEDColor.OFF, LEDMode.STATIC)
         );
@@ -197,12 +199,23 @@ public class RobotContainer {
         // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
-        alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        // alignCube.whileTrue(new SequentialCommandGroup(
-        //     new VisionAlignLime(), 
-        //     new GoLeftApriltag()
-        // ));
-        // alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
+
+        //align to substations 
+        alignCube.whileTrue(new VisionAlignLime(4)); //normal tag pipeline is 4
+
+        //align to imaginary point left of tag
+        alignCubePointLeft.whileTrue(new SequentialCommandGroup(
+            //new RotateToAngle(180)
+            new VisionAlignLime(0) //point to left of tag is pipeline 0
+        ));
+
+        //align to imaginary point right of tag 
+        alignCubePointRight.whileTrue(new SequentialCommandGroup(
+            new VisionAlignLime(3) //point to the right of tag is pipeline 3
+        ));
+
+
+        //alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
 
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw(true)).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
@@ -243,27 +256,45 @@ public class RobotContainer {
     }
 
     private void configureAutons() {
-        autonChooser.addOption("Place Balance", Autons.auto1);
-        autonChooser.addOption("Place Mobility Balance", Autons.auto2);
-        autonChooser.addOption("Place Mobility Red 3", Autons.auto3);
-        autonChooser.addOption("Place Mobility Red 1", Autons.auto4);
+        autonChooser.addOption("Red 2: Place Balance", Autons.auto1);
+        autonChooser.addOption("Red 2: Place Mobility Balance", Autons.auto2);
+        autonChooser.addOption("Red 3: Place Mobility", Autons.auto3);
+        autonChooser.addOption("Red 1: Place Mobility", Autons.auto4);
     }
 
     private void configureSensors() {
-        clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
+        // clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")).andThen(new InstantCommand(s_Claw.isClosed() ? () -> System.out.print("") : () -> s_Claw.droppedCone())));
 
         // Piece dropped OR claw closed
-        clawBeam.onFalse(
-            new SequentialCommandGroup(
-                new WaitCommand(0.4),
-                new CloseClaw(true),
-                new ParallelDeadlineGroup(
-                    new WaitCommand(1),
-                    new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
-                ),
-                new LedCommand(LEDColor.OFF, LEDMode.STATIC)
-            )
-        );
+
+        //Joe Swan Torulu's Beam
+        // clawBeam.onFalse(
+        //     new SequentialCommandGroup(
+        //         new WaitCommand(0.4),
+        //         new CloseClaw(true),
+        //         new ParallelRaceGroup(
+        //             new HasCone(), 
+        //             new ParallelDeadlineGroup(
+        //                 new WaitCommand(1),
+        //                 new LedCommand(LEDColor.GREEN, LEDMode.PULSE),
+        //                 new SequentialCommandGroup(new WaitCommand(0.5), new InstantCommand(() -> s_Claw.gotCone()))
+        //             )),
+        //         new LedCommand(LEDColor.OFF, LEDMode.STATIC)
+        //     )
+        // );
+
+        //Sami's Beam
+        // clawBeam.onFalse(
+        //     new SequentialCommandGroup(
+        //         new WaitCommand(0.4),
+        //         new CloseClaw(true),
+        //         new ParallelDeadlineGroup(
+        //             new WaitCommand(1),
+        //             new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+        //         ),
+        //         new LedCommand(LEDColor.OFF, LEDMode.STATIC)
+        //     )
+        // );
     }
 
     private static Command loadSathya(Supplier<Command> com) {

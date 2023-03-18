@@ -40,9 +40,10 @@ public class Vision extends SubsystemBase{
 
     }
 
-    public void GoToTag(){
-        Limelight.setPipeline(0);
-        
+    public void GoToTag(int pipeline){
+        // RobotContainer.s_Swerve.rotateToAngle(180);
+        Limelight.setPipeline(pipeline);
+
         if (Limelight.hasValidTarget() && Limelight.getArea() < Constants.Vision.areaThreshold) {
             double y_vel;
             if (Math.abs(Limelight.getXOffset()) > Constants.Vision.xOffsetThreshold) {
@@ -55,8 +56,10 @@ public class Vision extends SubsystemBase{
       
             Translation2d velocity = new Translation2d(Constants.Vision.xVelocity, y_vel);
             RobotContainer.s_Swerve.drive(velocity, 0, true, false);
-        } else if (!Limelight.hasValidTarget()) {
-            RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
+        } 
+        
+        else if (!Limelight.hasValidTarget()) {
+            RobotContainer.s_Swerve.drive(new Translation2d(.5, 0), 0, true, false);
         }
     }
 

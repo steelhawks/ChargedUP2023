@@ -87,4 +87,16 @@ public class Claw extends SubsystemBase {
   public boolean isClosed() {
     return isClosed;
   }
+
+  public boolean hasCone() {
+    return hasCone;
+  }
+
+  public void gotCone() {
+    hasCone = true;
+  }
+
+  public void droppedCone() {
+    hasCone = true;
+  }
 }

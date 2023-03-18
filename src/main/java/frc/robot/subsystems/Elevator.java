@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.ElevatorLevels;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class Elevator extends SubsystemBase {
   private DoubleSolenoid pistonOne;
@@ -66,6 +67,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void moveElevator(double speed, boolean isManual) {
+    // RobotContainer.s_Claw.droppedCone();
     double encoderVal = getEncoderRotations();
     boolean moveUp = speed < 0;
 
