@@ -129,9 +129,15 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
 
-    double y = (m_colorSensor.getProximity() - 400) / 4426.56;
-    double proximity = Math.log(y) / Math.log(0.890873);
-    SmartDashboard.putNumber("Intake Proximity", proximity);
+    // double y = (m_colorSensor.getProximity() - 400) / 4426.56;
+    // double proximity = Math.log(y) / Math.log(0.890873);
+    // SmartDashboard.putNumber("Intake Proximity", proximity);
+    
+    System.out.println(
+      1.658006 +
+      (21076420 - 1.658006) /
+      Math.pow((1 + (m_colorSensor.getProximity() / 0.00476134)), 1.509449)
+    );
     
     // SmartDashboard.putNumber("double ultrasonic", ultrasonic.getRangeInches());
     
