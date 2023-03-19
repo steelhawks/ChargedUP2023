@@ -8,9 +8,11 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -35,7 +37,7 @@ import frc.lib.util.ElevatorLevels;
 import frc.lib.util.GamepadAxisButton;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
-
+import frc.lib.util.LimelightTrajectory;
 import frc.robot.commands.Claw.*;
 import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
@@ -63,12 +65,12 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroCumulativeGyros = new JoystickButton(driver, 2); // A
     private final JoystickButton zeroGyro = new JoystickButton(driver, 3); // B
-    private final JoystickButton robotCentric = new JoystickButton(driver, 5); // Left Bumper
     private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
     private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
     private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
-    private final JoystickButton alignCone = new JoystickButton(driver, 7); // Left trigger
-    private final JoystickButton alignCube = new JoystickButton(driver, 6); // Right bumper
+    private final JoystickButton robotCentric = new JoystickButton(driver, 7); // Left trigger
+    private final JoystickButton alignCubePointLeft = new JoystickButton(driver, 5); // Left Bumper
+    private final JoystickButton alignCubePointRight = new JoystickButton(driver, 6); // Right Bumper
     // private final POVButton upButton = new POVButton(driver, 0);
     // private final POVButton rightButton = new POVButton(driver, 90);
     // private final POVButton downButton = new POVButton(driver, 180);
@@ -100,8 +102,16 @@ public class RobotContainer {
     private final JoystickButton elevatorPivot = new JoystickButton(operator, 10);
     private final GamepadAxisButton raiseElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == -1); // Up
     private final GamepadAxisButton lowerElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == 1); // Down
-    private final JoystickButton alignCubePointLeft = new JoystickButton(operator, 12);
-    private final JoystickButton alignCubePointRight = new JoystickButton(operator, 11);
+
+    /* Auton selector */
+    private static final DigitalInput zero = new DigitalInput(10);
+    private static final DigitalInput one = new DigitalInput(11);
+    private static final DigitalInput two = new DigitalInput(12);
+    private static final DigitalInput three = new DigitalInput(13);
+    private static final DigitalInput four = new DigitalInput(18);
+    private static final DigitalInput five = new DigitalInput(19);
+    private static final DigitalInput six = new DigitalInput(20);
+    private static final DigitalInput seven = new DigitalInput(21);
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
@@ -197,19 +207,19 @@ public class RobotContainer {
         // leftButton.whileTrue(new RotateToAngle(270));
         // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
-        alignCone.whileTrue(new NodeAlign(AlignType.CONE));
+        // alignCone.onTrue(new InstantCommand(() ->RobotContainer.s_Vision.scheduleCommand()));
         //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        alignCube.whileTrue(new VisionAlignLime(4)); //normal tag pipeline is 4
+        // alignCube.whileTrue(new VisionAlignLime(4)); //normal tag pipeline is 4
 
          //align to imaginary point left of tag
          alignCubePointLeft.whileTrue(new SequentialCommandGroup(
             //new RotateToAngle(180)
-            new VisionAlignLime(0) //point to left of tag is pipeline 0
+            new VisionAlignLime(3) //point to left of tag is pipeline 0
         ));
 
         //align to imaginary point right of tag 
         alignCubePointRight.whileTrue(new SequentialCommandGroup(
-            new VisionAlignLime(3) //point to the right of tag is pipeline 3
+            new VisionAlignLime(0) //point to the right of tag is pipeline 3
         ));
 
         /* Operator Buttons */
@@ -251,27 +261,30 @@ public class RobotContainer {
     }
 
     private void configureAutons() {
-        autonChooser.addOption("Red 2: Place Balance", Autons.auto1);
-        autonChooser.addOption("Red 2: Place Mobility Balance", Autons.auto2);
+        autonChooser.addOption("Place Balance", Autons.auto1);
+        autonChooser.addOption("Place Mobility Balance", Autons.auto2);
         autonChooser.addOption("Red 3: Place Mobility", Autons.auto3);
-        autonChooser.addOption("REd 1: Place Mobility", Autons.auto4);
+        autonChooser.addOption("Red 1: Place Mobility", Autons.auto4);
+        autonChooser.addOption("Blue 3: Place Mobility", Autons.auto5);
+        autonChooser.addOption("Blue 1: Place Mobility", Autons.auto6);
+        autonChooser.addOption("Nothing", Autons.auto7);
     }
 
     private void configureSensors() {
         // clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
 
         // Piece dropped OR claw closed
-        clawBeam.onFalse(
-            new SequentialCommandGroup(
-                new WaitCommand(0.4),
-                new CloseClaw(true),
-                new ParallelDeadlineGroup(
-                    new WaitCommand(1),
-                    new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
-                ),
-                new LedCommand(LEDColor.OFF, LEDMode.STATIC)
-            )
-        );
+        // clawBeam.onFalse(
+        //     new SequentialCommandGroup(
+        //         new WaitCommand(0.4),
+        //         new CloseClaw(true),
+        //         new ParallelDeadlineGroup(
+        //             new WaitCommand(1),
+        //             new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+        //         ),
+        //         new LedCommand(LEDColor.OFF, LEDMode.STATIC)
+        //     )
+        // );
     }
 
     public static Trajectory loadTrajectory(String path) {
@@ -330,8 +343,8 @@ public class RobotContainer {
                     new WaitCommand(7)
                 )
             ),
-            new BalanceCommand(),
-            new LedCommand(null, LEDMode.RAINBOW)
+            new BalanceCommand()
+            // new LedCommand(null, LEDMode.RAINBOW)
         );
 
         /* RED 3: PLACE, MOVE TO CENTER */
@@ -343,8 +356,8 @@ public class RobotContainer {
                     loadCommand(loadTrajectory("pathplanner/generatedJSON/Red Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
                     new WaitCommand(9)
                 )
-            ),
-            new LedCommand(null, LEDMode.RAINBOW)
+            )
+            // new LedCommand(null, LEDMode.RAINBOW)
         );
 
         /* RED 1: PLACE, MOBILITY */
@@ -356,9 +369,38 @@ public class RobotContainer {
                     loadCommand(loadTrajectory("pathplanner/generatedJSON/Red Side 1 Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
                     new WaitCommand(4)
                 )
-            ),
-            new LedCommand(null, LEDMode.RAINBOW)
+            )
+            // new LedCommand(null, LEDMode.RAINBOW)
         );
+
+        /* BLUE 3: PLACE, MOBILITY */
+        private static final Command auto5 = new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Blue Side 1 Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(4)
+                )
+            )
+            // new LedCommand(null, LEDMode.RAINBOW)
+        );
+
+        /* BLUE 1: PLACE, MOVE TO CENTER */
+        private static final Command auto6 = new SequentialCommandGroup(
+            autoElevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH),
+            new ParallelCommandGroup(
+                autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
+                new ParallelRaceGroup(
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Blue Right Center.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    new WaitCommand(9)
+                )
+            )
+            // new LedCommand(null, LEDMode.RAINBOW)
+        );
+
+        private static final Command auto7 = new InstantCommand();
+
 
         /* Vision Test */
         // private static final LimelightTrajectory trajectory = new LimelightTrajectory();
@@ -369,7 +411,20 @@ public class RobotContainer {
         return autonChooser;
     }
 
+    // public Command getAutonomousCommand() {
+    //     return autonChooser.getSelected();
+    // }
+
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();
+        if (!zero.get()) return Autons.auto6; // blue 1
+        if (!one.get()) return Autons.auto1; // blue 2
+        if (!two.get()) return Autons.auto2; // blue 3
+        if (!three.get()) return Autons.auto5; // blue 4
+        if (!four.get()) return Autons.auto4; // red 1
+        if (!five.get()) return Autons.auto1; // red 2
+        if (!six.get()) return Autons.auto2; // red 3
+        if (!seven.get()) return Autons.auto3; // red 4
+
+        return Autons.auto7;
     }
 }

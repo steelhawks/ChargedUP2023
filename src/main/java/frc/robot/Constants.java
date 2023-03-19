@@ -177,7 +177,7 @@ public final class Constants {
 
     // Vision constants
     public static final class Vision {
-        public static final double areaThreshold = 1.6;
+        public static final double areaThreshold = 4;
         public static final double xOffsetThreshold = 0.3;
         public static final double xVelocity = 0.8;
         public static final double spinVelocity = 1;

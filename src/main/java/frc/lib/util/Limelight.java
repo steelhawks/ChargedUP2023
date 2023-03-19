@@ -80,7 +80,7 @@ public class Limelight {
     }
 
     public static double[] getAprilTagPose(){
-        return apriltag_pose;
+        return table.getEntry("targetpose_cameraspace").getDoubleArray(new double[0]);
     }
 
     // public static Pose2d getApriltagPose() {

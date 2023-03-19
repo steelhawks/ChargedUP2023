@@ -195,7 +195,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    //SmartDashboard.putBoolean("plate beam", plateBeam.get()); 
     Limelight.updateValues();
     SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
   }

@@ -126,13 +126,13 @@ public class LimelightTrajectory extends SubsystemBase {
     }
 
     public Trajectory generateTargetTrajectory(TrajectoryConfig config) {
-       
+        //this.setPipeline(4);
         System.out.println("resetting trajectory relative to target pose");
          //adding relative coordinate pathing for now delete later 
         System.out.println("Trajectory generated successfully"); 
         // RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose());
 
-        if (this.getTv() == 1) {
+        if (Limelight.hasValidTarget()) {
 
             
             System.out.println("Valid target exists"); 
@@ -140,11 +140,11 @@ public class LimelightTrajectory extends SubsystemBase {
             //RobotContainer.s_Swerve.resetOdometry(RobotContainer.s_Swerve.getPose()); //sets origin to tag pose 
             this.trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
-                RobotContainer.s_Swerve.getPose(),
+                new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through no interior points 
                 List.of(),
                 // End at apriltag pose 
-                this.getTagPose(),
+                new Pose2d(Limelight.getAprilTagPose()[2], Limelight.getAprilTagPose()[0], new Rotation2d(0)),
                 config);
 
         }
@@ -152,11 +152,11 @@ public class LimelightTrajectory extends SubsystemBase {
         else {
             this.trajectory = TrajectoryGenerator.generateTrajectory(
                 // robot pose -> target space 
-                RobotContainer.s_Swerve.getPose(),
+                new Pose2d(),
                 // Pass through no interior points 
                 List.of(),
                 // End at apriltag pose 
-                RobotContainer.s_Swerve.getPose(),
+                new Pose2d(),
                 config);
         }
         
@@ -167,7 +167,7 @@ public class LimelightTrajectory extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Z-Value", botpose.getDoubleArray(new double[6])[2]);
+        SmartDashboard.putNumber("Z-Value", Limelight.getAprilTagPose()[2]);
         SmartDashboard.putNumber("Tv Test", getTv());
     }
 }

@@ -34,6 +34,6 @@ public class VisionAlignLime extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Limelight.getArea() > 2.3;
+    return Limelight.getArea() > 4;
   }
 }

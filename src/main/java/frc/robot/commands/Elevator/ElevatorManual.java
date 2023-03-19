@@ -30,7 +30,7 @@ public class ElevatorManual implements Command {
   @Override
   public void execute() {
     double speed = moveUp ? -1 * Constants.Elevator.elevatorSpeed : Constants.Elevator.elevatorSpeed;
-    RobotContainer.s_Elevator.moveElevator(speed, true);
+    RobotContainer.s_Elevator.moveElevator(speed, true, false);
   }
     
   @Override

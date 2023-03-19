@@ -50,7 +50,12 @@ public class ElevatorCommand extends CommandBase {
       }
     }
 
-    RobotContainer.s_Elevator.moveElevator(speed, false);
+    if (level == ElevatorLevels.DOUBLE_STATION) {
+      RobotContainer.s_Elevator.moveElevator(speed, false, true);
+    }
+    else {
+      RobotContainer.s_Elevator.moveElevator(speed, false, false);
+    }
   }
     
   @Override
