@@ -79,6 +79,17 @@ public class Swerve extends SubsystemBase {
         return Conversions.toNearestZero(gyro.getYaw(), angle);
     }
 
+    public void xWheels() {
+        int degrees = -45;
+        Rotation2d angle = new Rotation2d(Math.toRadians(degrees));
+        SwerveModuleState state;
+        for(SwerveModule i : mSwerveMods) {
+            state = new SwerveModuleState(0, angle);
+            i.setDesiredState(state, true);
+            angle = new Rotation2d(Math.toRadians(degrees - 90));
+        }
+    }
+
     public void shiftGear() {
         if (speedMultiplier == 1) {
             speedMultiplier = 0.2;

@@ -199,10 +199,7 @@ public class RobotContainer {
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
         //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
         //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        alignCube.whileTrue(new SequentialCommandGroup(
-             new VisionAlignLime(), 
-             new GoLeftApriltag()
-        ));
+        alignCube.whileTrue(new VisionAlignLime());
         // alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
 
         /* Operator Buttons */
