@@ -1,28 +1,42 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorSensorV3;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.I2C;
+
 
 public class Claw extends SubsystemBase {
 
   private DoubleSolenoid clawPiston; 
   private boolean isClosed;
   private boolean requestClose;
-  private int breakCount = 0;
   private DigitalInput beamBreaker;
-  private boolean hasCone;
+
+  // private final ColorSensorV3 colorSensor;
+  // private final ColorMatch colorMatch;
+
+  // private static final Color CONE_COLOR = new Color(0.361, 0.524, 0.113);
+  // private static final Color CUBE_COLOR = new Color(0.245, 0.411, 0.343);
   
   private static final PneumaticsModuleType PNEUMATICS_MODULE_TYPE = PneumaticsModuleType.REVPH;
 
   public Claw() {
     clawPiston = new DoubleSolenoid(PNEUMATICS_MODULE_TYPE, Constants.Claw.SolenoidForward, Constants.Claw.SolenoidReverse);
     beamBreaker = new DigitalInput(Constants.Claw.beamPort);
-    hasCone = !beamBreaker.get();
+
+    // this.colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+    // this.colorMatch = new ColorMatch();
+    // this.colorMatch.addColorMatch(CUBE_COLOR);
+    // this.colorMatch.addColorMatch(CONE_COLOR);
 
     isClosed = true;
     requestClose = true;
@@ -63,25 +77,6 @@ public class Claw extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("Claw Beam", beamBreaker.get());
     SmartDashboard.putBoolean("Claw Closed", isClosed);
-    // SmartDashboard.putBoolean("Has Piece", hasCone);
-    
-    // if (!beamBreaker.get()) {   // if the beam is broken
-    //   breakCount++;             // increase breakCount by 1
-    // }
-    // else {                      // elif the beam is solid
-    //   breakCount = 0;           // reset breakCount
-    // }
-
-    // if(beamBreaker.get() && hasCone) {
-    //   hasCone = false;
-    // }
-
-    // if (!beamBreaker.get() && !isClosed && breakCount > 20 && !hasCone) {
-    //   closeClaw();
-    //   hasCone = true;
-    // }
-
-
   }
 
   public boolean isClosed() {
