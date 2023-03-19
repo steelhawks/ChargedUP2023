@@ -105,7 +105,6 @@ public class RobotContainer {
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
-    public static final StationPusher s_Pusher = new StationPusher();
     public static final Elevator s_Elevator = new Elevator();
     public static final LED s_Led = new LED(Constants.Led.port, Constants.Led.length);
     public static final Claw s_Claw = new Claw();

@@ -1,6 +1,18 @@
+# Final Alpha Swerve Code
 
-We inverted the CANcoder zeroing function.
-We then inverted drive motor.
-We inverted the rotation of the robot as well. 
+### Subsystems
+- Swerve drivetrain
+- Elevator with preset levels
+- Claw with auto closing functionality
+- LED control to indicate robot status
 
-on the pigeon, y is pointing front, x is pointing right
+### Vision
+- Uses limelight to track april tags
+- Aligns to nodes using april tag offsets
+
+### Autonomous
+4 red side autons:
+- Red 1: Place and mobility
+- Red 2: Place and auto balance
+- Red 2: Place, mobility, and auto balance
+- Red 3: Place, move to center line
