@@ -40,10 +40,10 @@ public class Vision extends SubsystemBase{
 
     }
 
-    public void GoToTag(){
-        RobotContainer.s_Swerve.rotateToAngle(BLUE_SUBSTATION_PIPELINE);
-        Limelight.setPipeline(0);
-        
+    public void GoToTag(int pipeline){
+        // RobotContainer.s_Swerve.rotateToAngle(180);
+        Limelight.setPipeline(pipeline);
+
         if (Limelight.hasValidTarget() && Limelight.getArea() < Constants.Vision.areaThreshold) {
             double y_vel;
             if (Math.abs(Limelight.getXOffset()) > Constants.Vision.xOffsetThreshold) {
@@ -56,24 +56,20 @@ public class Vision extends SubsystemBase{
       
             Translation2d velocity = new Translation2d(Constants.Vision.xVelocity, y_vel);
             RobotContainer.s_Swerve.drive(velocity, 0, true, false);
-        } else if (!Limelight.hasValidTarget()) {
-            RobotContainer.s_Swerve.drive(new Translation2d(0, 0), Constants.Vision.spinVelocity, true, false);
-        }
-
+        } 
         
-
-
+        else if (!Limelight.hasValidTarget()) {
+            RobotContainer.s_Swerve.drive(new Translation2d(.5, 0), 0, true, false);
+        }
     }
 
     public Command goLeft() {
         Trajectory goL = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        RobotContainer.s_Swerve.getPose(),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(0, 5, new Rotation2d(0)),
-        Robot.config);
+            RobotContainer.s_Swerve.getPose(),
+            List.of(),
+            new Pose2d(0, 5, new Rotation2d(0)),
+            Robot.config
+        );
 
         return loadCommand(goL);
     }

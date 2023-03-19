@@ -100,6 +100,8 @@ public class RobotContainer {
     private final JoystickButton elevatorPivot = new JoystickButton(operator, 10);
     private final GamepadAxisButton raiseElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == -1); // Up
     private final GamepadAxisButton lowerElevator = new GamepadAxisButton(() -> operator.getRawAxis(1) == 1); // Down
+    private final JoystickButton alignCubePointLeft = new JoystickButton(operator, 12);
+    private final JoystickButton alignCubePointRight = new JoystickButton(operator, 11);
 
     /* Subsystems */
     public static final Swerve s_Swerve = new Swerve();
@@ -194,13 +196,22 @@ public class RobotContainer {
         // rightButton.whileTrue(new RotateToAngle(90));
         // downButton.whileTrue(new RotateToAngle(180));
         // leftButton.whileTrue(new RotateToAngle(270));
-        // push.onTrue(new InstantCom//mand(() -> s_Pusher.togglePusher()));
+        // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         alignCone.whileTrue(new NodeAlign(AlignType.CONE));
         //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        alignCube.whileTrue(new VisionAlignLime());
-        // alignCube.onTrue(new GoCone().andThen(loadSathya(() -> loadCommand(s_Vision.getSathya()))));
+        alignCube.whileTrue(new VisionAlignLime(4)); //normal tag pipeline is 4
+
+         //align to imaginary point left of tag
+         alignCubePointLeft.whileTrue(new SequentialCommandGroup(
+            //new RotateToAngle(180)
+            new VisionAlignLime(0) //point to left of tag is pipeline 0
+        ));
+
+        //align to imaginary point right of tag 
+        alignCubePointRight.whileTrue(new SequentialCommandGroup(
+            new VisionAlignLime(3) //point to the right of tag is pipeline 3
+        ));
 
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw(true)).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));
@@ -241,14 +252,14 @@ public class RobotContainer {
     }
 
     private void configureAutons() {
-        autonChooser.addOption("Place Balance", Autons.auto1);
-        autonChooser.addOption("Place Mobility Balance", Autons.auto2);
-        autonChooser.addOption("Place Mobility Red 3", Autons.auto3);
-        autonChooser.addOption("Place Mobility Red 1", Autons.auto4);
+        autonChooser.addOption("Red 2: Place Balance", Autons.auto1);
+        autonChooser.addOption("Red 2: Place Mobility Balance", Autons.auto2);
+        autonChooser.addOption("Red 3: Place Mobility", Autons.auto3);
+        autonChooser.addOption("REd 1: Place Mobility", Autons.auto4);
     }
 
     private void configureSensors() {
-        clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
+        // clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
 
         // Piece dropped OR claw closed
         clawBeam.onFalse(
@@ -262,10 +273,6 @@ public class RobotContainer {
                 new LedCommand(LEDColor.OFF, LEDMode.STATIC)
             )
         );
-    }
-
-    private static Command loadSathya(Supplier<Command> com) {
-        return com.get();
     }
 
     public static Trajectory loadTrajectory(String path) {

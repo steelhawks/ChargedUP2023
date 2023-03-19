@@ -10,31 +10,30 @@ import frc.robot.RobotContainer;
 
 public class VisionAlignLime extends CommandBase {
   
-  public VisionAlignLime() {
+  private int pipeline; 
+  
+  public VisionAlignLime(int pipeline) {
     addRequirements(RobotContainer.s_Swerve);
+    this.pipeline = pipeline; 
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.s_Vision.GoToTag();
+    RobotContainer.s_Vision.GoToTag(pipeline);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     RobotContainer.s_Swerve.stop();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Limelight.getArea() > 1.6;
+    return Limelight.getArea() > 2.3;
   }
 }
