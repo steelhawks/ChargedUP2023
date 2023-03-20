@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
+// import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -83,11 +83,9 @@ public class Claw extends SubsystemBase {
     //   (3365.1329 - 7.4814) /
     //   (1 + Math.pow(colorSensor.getProximity() / 6.7177, 1.4908)); 
 
-      SmartDashboard.putNumber("color sensor", colorSensor.getProximity()); 
+    SmartDashboard.putNumber("color sensor", colorSensor.getProximity()); 
       // System.out.println(colorSensor.getProximity());
     SmartDashboard.putString("color", colorMatch.matchClosestColor(colorSensor.getColor()).color.toString());
-    
-
   }
 
   public boolean isClosed() {

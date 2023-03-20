@@ -1,7 +1,6 @@
 package frc.robot.commands.Elevator;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.lib.util.ElevatorLevels;
@@ -43,10 +42,10 @@ public class ElevatorCommand extends CommandBase {
 
     if (level == ElevatorLevels.HOME) {
       if(RobotContainer.s_Elevator.getEncoderRotations() > Constants.Elevator.minPivotEncoderPos + Constants.Elevator.minPivotTolerance) {
-        speed = 0.6; // 0.5
+        speed = 0.6;
       }
       else {
-        speed = 0.45; // 0.35
+        speed = 0.45;
       }
     }
 

@@ -179,6 +179,16 @@ public final class Constants {
         public static final double NodeDistance = 20; // TODO find constant
     }
 
+    // Auto balance constants
+    public static final class AutoBalance {
+        public static final double kP = 0.05;
+        public static final double kI = 0.0038;
+        public static final double kD = 0.00595;
+
+        public static final double setpoint = -0.4;
+        public static final double tolerance = 0.4;
+    }
+
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;

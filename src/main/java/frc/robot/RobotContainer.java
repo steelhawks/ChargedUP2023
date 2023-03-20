@@ -2,13 +2,10 @@ package frc.robot;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.Supplier;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -23,27 +20,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.lib.util.AlignType;
 import frc.lib.util.ElevatorLevels;
 import frc.lib.util.GamepadAxisButton;
 import frc.lib.util.LEDColor;
 import frc.lib.util.LEDMode;
-import frc.lib.util.LimelightTrajectory;
 import frc.robot.commands.Claw.*;
 import frc.robot.commands.Drivetrain.*;
 import frc.robot.commands.Elevator.*;
 import frc.robot.commands.Led.*;
-import frc.robot.commands.Vision.GoCone;
-import frc.robot.commands.Vision.GoLeftApriltag;
 import frc.robot.commands.Vision.VisionAlignLime;
 
 import frc.robot.subsystems.*;
@@ -71,24 +62,6 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, 7); // Left trigger
     private final JoystickButton alignCubePointLeft = new JoystickButton(driver, 5); // Left Bumper
     private final JoystickButton alignCubePointRight = new JoystickButton(driver, 6); // Right Bumper
-    // private final POVButton upButton = new POVButton(driver, 0);
-    // private final POVButton rightButton = new POVButton(driver, 90);
-    // private final POVButton downButton = new POVButton(driver, 180);
-    // private final POVButton leftButton = new POVButton(driver, 270);
-
-    /*Operator Controller Buttons*/ 
-    // private final JoystickButton homeElevator = new JoystickButton(operator, 6); // RIGHT BUMPER
-    // private final JoystickButton lowElevator = new JoystickButton(operator, 2); // A
-    // private final JoystickButton midElevator = new JoystickButton(operator, 3); // B
-    // private final JoystickButton highElevator = new JoystickButton(operator, 4); // Y
-    // private final POVButton raiseElevator = new POVButton(operator, 0); // Up
-    // private final POVButton lowerElevator = new POVButton(operator, 180); // Down
-    // private final JoystickButton toggleClaw = new JoystickButton(operator, 5); // Left bumper
-    // private final JoystickButton toggleElevator = new JoystickButton(operator, 1); // X
-    // private final JoystickButton requestCone = new JoystickButton(operator, 7); // Left trigger
-    // private final JoystickButton requestCube = new JoystickButton(operator, 8); //Right trigger
-    // private final JoystickButton doubleSubButtion = new JoystickButton(operator, 10); //start button
-    // private final JoystickButton singleSubButton = new JoystickButton(operator, 9);
 
     /* Operator Button Board Buttons */
     private final JoystickButton homeElevator = new JoystickButton(operator, 5);
@@ -124,16 +97,7 @@ public class RobotContainer {
     // Claw Beam
     Trigger clawBeam = new Trigger(s_Claw.getBeam()::get);
 
-    // Vision Test
-    // public static LimelightTrajectory limeTraj;
-
     public RobotContainer() {
-        // limeTraj = new LimelightTrajectory();
-        // compressor.disable();
-
-        // Start camera server
-        // CameraServer.startAutomaticCapture();
-
         LiveWindow.disableAllTelemetry();
         DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -143,6 +107,7 @@ public class RobotContainer {
         configureSensors();
     }
 
+    /* Command to move the elevator to a given level */
     private static Command elevatorLevelCommand(LEDColor color, ElevatorLevels level) {
         Command com = new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -159,6 +124,7 @@ public class RobotContainer {
         return com;
     }
 
+    /* Command to mot ethe elevator to a given level in AUTON */
     private static Command autoElevatorLevelCommand(LEDColor color, ElevatorLevels level) {
         Command com = new SequentialCommandGroup(
             new ParallelCommandGroup(
@@ -179,7 +145,7 @@ public class RobotContainer {
     }
 
     private static Command requestPieceCommand(LEDColor color){
-        Command com = new SequentialCommandGroup(new Request(color),
+        return new SequentialCommandGroup(new Request(color),
         new ToggleClaw(),
         new ParallelRaceGroup(
           new LedCommand(LEDColor.GREEN, LEDMode.PULSE),
@@ -187,11 +153,9 @@ public class RobotContainer {
         ),
         new LedCommand(LEDColor.OFF, LEDMode.STATIC)
       );
-      
-      return com;
     }
 
-    public void configureMoreButtonBindings(int num) {
+    public void configureModuleResetBinding(int num) {
         zeroCumulativeGyros.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));
     }
 
@@ -201,19 +165,10 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
         autoBalance.whileTrue(new BalanceCommand());
-        // upButton.whileTrue(new RotateToAngle(0));
-        // rightButton.whileTrue(new RotateToAngle(90));
-        // downButton.whileTrue(new RotateToAngle(180));
-        // leftButton.whileTrue(new RotateToAngle(270));
-        // push.onTrue(new InstantCommand(() -> s_Pusher.togglePusher()));
         push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
-        // alignCone.onTrue(new InstantCommand(() ->RobotContainer.s_Vision.scheduleCommand()));
-        //alignCube.whileTrue(new NodeAlign(AlignType.CUBE));
-        // alignCube.whileTrue(new VisionAlignLime(4)); //normal tag pipeline is 4
 
          //align to imaginary point left of tag
          alignCubePointLeft.whileTrue(new SequentialCommandGroup(
-            //new RotateToAngle(180)
             new VisionAlignLime(3) //point to left of tag is pipeline 0
         ));
 
@@ -271,8 +226,6 @@ public class RobotContainer {
     }
 
     private void configureSensors() {
-        // clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
-
         // Piece dropped OR claw closed
         // clawBeam.onTrue(
         //     new SequentialCommandGroup(
@@ -314,7 +267,6 @@ public class RobotContainer {
           RobotContainer.s_Swerve::setModuleStates,
           RobotContainer.s_Swerve);
             
-          // return swerveControllerCommand;
         return new InstantCommand(() -> RobotContainer.s_Swerve.resetOdometry(trajectory.getInitialPose())).andThen(swerveControllerCommand);
     }
 
@@ -400,11 +352,6 @@ public class RobotContainer {
         );
 
         private static final Command auto7 = new InstantCommand();
-
-
-        /* Vision Test */
-        // private static final LimelightTrajectory trajectory = new LimelightTrajectory();
-        // private static final Command auto5 = loadCommand(trajectory.generateTargetTrajectory(Robot.config));
     }
 
     public SendableChooser<Command> getAutonChooser() {

@@ -2,7 +2,6 @@ package frc.robot.commands.Elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 import java.util.HashSet;
@@ -10,8 +9,7 @@ import java.util.Set;
 
 public class ToggleElevator implements Command {
 
-  public ToggleElevator() {
-  }
+  public ToggleElevator() {}
 
   @Override
   public Set<Subsystem> getRequirements() 
@@ -35,6 +33,5 @@ public class ToggleElevator implements Command {
   }
 
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 }
