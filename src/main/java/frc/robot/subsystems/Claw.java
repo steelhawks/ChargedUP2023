@@ -84,7 +84,7 @@ public class Claw extends SubsystemBase {
     //   (1 + Math.pow(colorSensor.getProximity() / 6.7177, 1.4908)); 
 
       SmartDashboard.putNumber("color sensor", colorSensor.getProximity()); 
-      System.out.println(colorSensor.getProximity());
+      // System.out.println(colorSensor.getProximity());
     SmartDashboard.putString("color", colorMatch.matchClosestColor(colorSensor.getColor()).color.toString());
     
 

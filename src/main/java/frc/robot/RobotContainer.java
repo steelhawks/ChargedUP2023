@@ -274,7 +274,7 @@ public class RobotContainer {
         // clawBeam.onTrue(new InstantCommand(() -> System.out.println("Claw Open!")));
 
         // Piece dropped OR claw closed
-        // clawBeam.onFalse(
+        // clawBeam.onTrue(
         //     new SequentialCommandGroup(
         //         new WaitCommand(0.4),
         //         new CloseClaw(true),
@@ -426,5 +426,18 @@ public class RobotContainer {
         if (!seven.get()) return Autons.auto3; // red 4
 
         return Autons.auto7;
+    }
+
+    public String getAutonName() {
+        if (!zero.get()) return "Blue 1"; // blue 1
+        if (!one.get()) return "Blue 2"; // blue 2
+        if (!two.get()) return "Blue 3"; // blue 3
+        if (!three.get()) return "Blue 4"; // blue 4
+        if (!four.get()) return "Red 1"; // red 1
+        if (!five.get()) return "Red 2"; // red 2
+        if (!six.get()) return "Red 3"; // red 3
+        if (!seven.get()) return "Red 4"; // red 4
+
+        return "Nothing";
     }
 }

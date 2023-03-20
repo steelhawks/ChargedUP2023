@@ -61,7 +61,7 @@ public class ElevatorCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     if (level == ElevatorLevels.HOME) {
-      return RobotContainer.s_Elevator.limitPressed();
+      return RobotContainer.s_Elevator.limitLowPressed();
     }
 
     return setter.atSetpoint();

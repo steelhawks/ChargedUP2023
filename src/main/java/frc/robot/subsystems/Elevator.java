@@ -22,7 +22,8 @@ public class Elevator extends SubsystemBase {
   private CANCoder can;
   private double initialRotations;
 
-  private DigitalInput limitSwitch;
+  private DigitalInput limitSwitchLow;
+  private DigitalInput limitSwitchHigh;
 
   private static final PneumaticsModuleType PNEUMATIC_TYPE = PneumaticsModuleType.REVPH;
 
@@ -35,10 +36,13 @@ public class Elevator extends SubsystemBase {
     can = new CANCoder(Constants.Elevator.canCoderID);
     initialRotations = getEncoderRotations();
 
-    limitSwitch = new DigitalInput(Constants.Elevator.limitSwitchPort);
+    limitSwitchLow = new DigitalInput(Constants.Elevator.limitSwitchLowPort);
+    // limitSwitchHigh = new DigitalInput(Constants.Elevator.limitSwitchHighPort);
 
     pistonVal = false; // true is down
 
+    
+    // pistonsUp();
     configMotors();
     configCanCoders();
   }
@@ -76,10 +80,10 @@ public class Elevator extends SubsystemBase {
         togglePistons();
         System.out.println("AUTO TOGGLE WIEFNWEJF");
       }
-    } else if (!moveUp && !limitPressed()) {
+    } else if (!moveUp && !limitLowPressed()) {
       motorOne.set(speed);
       motorTwo.set(speed);
-    } else if (!moveUp && limitPressed()) {
+    } else if (!moveUp && limitLowPressed()) {
       can.setPosition(0);
       stop();
     }
@@ -95,12 +99,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getEncoderRotations() {
-    return -(can.getPosition() - initialRotations) / 360;
+    return (can.getPosition() - initialRotations) / 360;
   }
 
-  public boolean limitPressed() {
-    return !limitSwitch.get();
+  public boolean limitLowPressed() {
+    return !limitSwitchLow.get();
   }
+
+  // public boolean limitHighPressed() {
+  //   return !limitSwitchHigh.get();
+  // }
 
   private void configMotors() {
     motorOne.configFactoryDefault();
@@ -127,6 +135,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Encoder Values", getEncoderRotations());
-    SmartDashboard.putBoolean("Elevator Limit", limitPressed());
+    SmartDashboard.putBoolean("Elevator Low Limit", limitLowPressed());
+    // SmartDashboard.putBoolean("Elevator High Limit", limitHighPressed());
   }
 }

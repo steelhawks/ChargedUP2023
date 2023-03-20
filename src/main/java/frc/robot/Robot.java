@@ -1,15 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.TransferHandler;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
@@ -36,9 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.lib.util.LEDColor;
 import frc.lib.util.Limelight;
-import frc.lib.util.LimelightTrajectory;
 import frc.robot.commands.Drivetrain.BalanceCommand;
-import frc.robot.commands.Vision.VisionAlignLime;
 
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
@@ -54,7 +46,6 @@ public class Robot extends TimedRobot {
   public static TrajectoryConfig config;
   private List<Trajectory> trajectories = new ArrayList<>();
 
-  // private LimelightTrajectory traj = new LimelightTrajectory();
 
    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
@@ -86,7 +77,6 @@ public class Robot extends TimedRobot {
     moduleChooser = new SendableChooser<>();
     moduleCumulativeChooser = new SendableChooser<>();
     pathChooser = new SendableChooser<>();
-    //plateBeam = new DigitalInput(3); 
     config = new TrajectoryConfig(
       Constants.AutoConstants.kMaxSpeedMetersPerSecond,
       Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -100,11 +90,6 @@ public class Robot extends TimedRobot {
       // End 3 meters straight ahead of where we started, facing forward
       new Pose2d(3, 0, new Rotation2d(0)),
       config);
-
-    // Trajectory rightCode = TrajectoryGenerator.generateTrajectory(
-    //   new Pose2d(0, 0, new Rotation2d(0)),
-    //   List.of(),
-    //   new Pose2d(Limelight.getApriTagPose()[0], Limelight.getApriTagPose()[2] + Constants.Vision.NodeDistance, new Rotation2d(0)), config);
 
       trajectories.add(exampleTrajectory); // S curve
       trajectories.add(loadTrajectory("pathplanner/generatedJSON/Test Path.wpilib.json")); // Left then up
@@ -213,6 +198,8 @@ public class Robot extends TimedRobot {
     else {
       RobotContainer.s_Led.setColor(LEDColor.RED);
     }
+
+    SmartDashboard.putString("Chosen Auton", m_robotContainer.getAutonName());
   }
 
   @Override
