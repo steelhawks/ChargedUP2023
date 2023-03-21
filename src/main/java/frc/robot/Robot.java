@@ -1,7 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,13 +60,17 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {
-    RobotContainer.s_Led.setColor(LEDColor.RED);
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {
     SmartDashboard.putString("Chosen Auton", m_robotContainer.getAutonName());
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      RobotContainer.s_Led.setColor(LEDColor.BLUE);
+    }
+    else {
+      RobotContainer.s_Led.setColor(LEDColor.RED);
+    }
   }
 
   @Override

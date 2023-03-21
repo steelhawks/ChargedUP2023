@@ -18,8 +18,8 @@ public class ElevatorCommand extends CommandBase {
   public ElevatorCommand(ElevatorLevels level) {
     this.level = level;
 
-    setter = new PIDController(0.7, 0, 0);
-    setter.setTolerance(0.1);
+    setter = new PIDController(Constants.Elevator.kP, Constants.Elevator.kI, Constants.Elevator.kD);
+    setter.setTolerance(Constants.Elevator.tolerance);
     setter.setSetpoint(level.getEncoderVal());
 
     addRequirements(RobotContainer.s_Elevator);
@@ -42,10 +42,10 @@ public class ElevatorCommand extends CommandBase {
 
     if (level == ElevatorLevels.HOME) {
       if(RobotContainer.s_Elevator.getEncoderRotations() > Constants.Elevator.minPivotEncoderPos + Constants.Elevator.minPivotTolerance) {
-        speed = 0.6;
+        speed = Constants.Elevator.homeSpeed;
       }
       else {
-        speed = 0.45;
+        speed = Constants.Elevator.homeLowSpeed;
       }
     }
 

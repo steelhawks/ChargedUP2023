@@ -36,12 +36,11 @@ public class Elevator extends SubsystemBase {
     initialRotations = getEncoderRotations();
 
     limitSwitchLow = new DigitalInput(Constants.Elevator.limitSwitchLowPort);
-    // limitSwitchHigh = new DigitalInput(Constants.Elevator.limitSwitchHighPort);
+    limitSwitchHigh = new DigitalInput(Constants.Elevator.limitSwitchHighPort);
 
     pistonVal = false; // true is down
 
-    
-    // pistonsUp();
+    pistonsUp();
     configMotors();
     configCanCoders();
   }
@@ -57,20 +56,22 @@ public class Elevator extends SubsystemBase {
 
   private void pistonsUp() {
     pistonOne.set(Value.kForward);
-    System.out.println("forward");
+    System.out.println("running piston up");
     pistonVal = false;
 
   }
 
   private void pistonsDown() {
     pistonOne.set(Value.kReverse);
-    System.out.println("reverse");
+    System.out.println("running piston down");
     pistonVal = true;
   }
 
   public void moveElevator(double speed, boolean isManual, boolean doubleSub) {
     double encoderVal = getEncoderRotations();
     boolean moveUp = speed < 0;
+
+    if (limitHighPressed() && moveUp) return;
 
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
       motorOne.set(speed);
@@ -105,9 +106,9 @@ public class Elevator extends SubsystemBase {
     return !limitSwitchLow.get();
   }
 
-  // public boolean limitHighPressed() {
-  //   return !limitSwitchHigh.get();
-  // }
+  public boolean limitHighPressed() {
+    return !limitSwitchHigh.get();
+  }
 
   private void configMotors() {
     motorOne.configFactoryDefault();
@@ -135,6 +136,6 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Encoder Values", getEncoderRotations());
     SmartDashboard.putBoolean("Elevator Low Limit", limitLowPressed());
-    // SmartDashboard.putBoolean("Elevator High Limit", limitHighPressed());
+    SmartDashboard.putBoolean("Elevator High Limit", limitHighPressed());
   }
 }

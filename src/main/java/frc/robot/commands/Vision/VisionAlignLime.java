@@ -14,13 +14,11 @@ public class VisionAlignLime extends CommandBase {
   
   public VisionAlignLime(int pipeline) {
     addRequirements(RobotContainer.s_Swerve);
-    this.pipeline = pipeline; 
+    this.pipeline = pipeline;
   }
 
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {

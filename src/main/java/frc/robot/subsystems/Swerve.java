@@ -88,14 +88,22 @@ public class Swerve extends SubsystemBase {
     }
 
     public void shiftGear() {
-        if (speedMultiplier == 1) {
-            speedMultiplier = 0.2;
-            isShifted = true;
+        if (!isShifted) {
+            setLowGear();
         }
         else {
-            speedMultiplier = 1;
-            isShifted = false;
+            setHighGear();
         }
+    }
+
+    public void setHighGear() {
+        speedMultiplier = 1;
+        isShifted = false;
+    }
+
+    public void setLowGear() {
+        speedMultiplier = 0.2;
+        isShifted = true;
     }
 
     public void resetModule(int index) {

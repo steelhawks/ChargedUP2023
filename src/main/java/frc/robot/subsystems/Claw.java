@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.ColorMatch;
+// import com.revrobotics.ColorMatch;
 // import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorSensorV3;
+// import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -22,8 +22,8 @@ public class Claw extends SubsystemBase {
   private boolean requestClose;
   private DigitalInput beamBreaker;
 
-  private final ColorSensorV3 colorSensor;
-  private final ColorMatch colorMatch;
+  // private final ColorSensorV3 colorSensor;
+  // private final ColorMatch colorMatch;
 
   private static final Color CONE_COLOR = new Color(0.361, 0.524, 0.113);
   private static final Color CUBE_COLOR = new Color(0.245, 0.411, 0.343);
@@ -34,13 +34,15 @@ public class Claw extends SubsystemBase {
     clawPiston = new DoubleSolenoid(PNEUMATICS_MODULE_TYPE, Constants.Claw.SolenoidForward, Constants.Claw.SolenoidReverse);
     beamBreaker = new DigitalInput(Constants.Claw.beamPort);
 
-    this.colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    this.colorMatch = new ColorMatch();
-    this.colorMatch.addColorMatch(CUBE_COLOR);
-    this.colorMatch.addColorMatch(CONE_COLOR);
+    // this.colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+    // this.colorMatch = new ColorMatch();
+    // this.colorMatch.addColorMatch(CUBE_COLOR);
+    // this.colorMatch.addColorMatch(CONE_COLOR);
 
     isClosed = true;
     requestClose = true;
+
+    closeClaw(false);
   }
 
   public void toggleClaw() {
@@ -83,9 +85,9 @@ public class Claw extends SubsystemBase {
     //   (3365.1329 - 7.4814) /
     //   (1 + Math.pow(colorSensor.getProximity() / 6.7177, 1.4908)); 
 
-    SmartDashboard.putNumber("color sensor", colorSensor.getProximity()); 
+    // SmartDashboard.putNumber("color sensor", colorSensor.getProximity()); 
       // System.out.println(colorSensor.getProximity());
-    SmartDashboard.putString("color", colorMatch.matchClosestColor(colorSensor.getColor()).color.toString());
+    // SmartDashboard.putString("color", colorMatch.matchClosestColor(colorSensor.getColor()).color.toString());
   }
 
   public boolean isClosed() {

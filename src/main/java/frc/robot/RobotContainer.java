@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.lib.util.AlignType;
 import frc.lib.util.ElevatorLevels;
 import frc.lib.util.GamepadAxisButton;
 import frc.lib.util.LEDColor;
@@ -54,14 +54,14 @@ public class RobotContainer {
     private final int rotationAxis = 2;
 
     /* Driver Buttons */
-    private final JoystickButton zeroCumulativeGyros = new JoystickButton(driver, 2); // A
-    private final JoystickButton zeroGyro = new JoystickButton(driver, 3); // B
-    private final JoystickButton autoBalance = new JoystickButton(driver, 1); // X
-    private final JoystickButton shiftGear = new JoystickButton(driver, 11); // Left Stick
-    private final JoystickButton push = new JoystickButton(driver, 8); // Right trigger
-    private final JoystickButton robotCentric = new JoystickButton(driver, 7); // Left trigger
-    private final JoystickButton alignCubePointLeft = new JoystickButton(driver, 5); // Left Bumper
-    private final JoystickButton alignCubePointRight = new JoystickButton(driver, 6); // Right Bumper
+    private final JoystickButton aButton = new JoystickButton(driver, 2); // A
+    private final JoystickButton bButton = new JoystickButton(driver, 3); // B
+    private final JoystickButton xButton = new JoystickButton(driver, 1); // X
+    private final JoystickButton leftStick = new JoystickButton(driver, 11); // Left Stick
+    private final JoystickButton rightTrigger = new JoystickButton(driver, 8); // Right trigger
+    private final JoystickButton leftTrigger = new JoystickButton(driver, 7); // Left trigger
+    private final JoystickButton robotCentric = new JoystickButton(driver, 5); // Left Bumper
+    private final JoystickButton rightBumper = new JoystickButton(driver, 6); // Right Bumper
 
     /* Operator Button Board Buttons */
     private final JoystickButton homeElevator = new JoystickButton(operator, 5);
@@ -156,26 +156,27 @@ public class RobotContainer {
     }
 
     public void configureModuleResetBinding(int num) {
-        zeroCumulativeGyros.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));
+        aButton.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));
     }
 
     private void configureButtonBindings() {
 
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        shiftGear.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
-        autoBalance.whileTrue(new BalanceCommand());
-        push.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
+        bButton.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        leftStick.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
+        xButton.whileTrue(new BalanceCommand());
+        rightTrigger.onTrue(new InstantCommand(() -> s_Swerve.shiftGear()));
+        leftTrigger.whileTrue(new NodeAlign(AlignType.CONE));
 
          //align to imaginary point left of tag
-         alignCubePointLeft.whileTrue(new SequentialCommandGroup(
-            new VisionAlignLime(3) //point to left of tag is pipeline 0
-        ));
+        // leftTrigger.whileTrue(new SequentialCommandGroup(
+        //     new VisionAlignLime(3) //point to left of tag is pipeline 0
+        // ));
 
         //align to imaginary point right of tag 
-        alignCubePointRight.whileTrue(new SequentialCommandGroup(
-            new VisionAlignLime(0) //point to the right of tag is pipeline 3
-        ));
+        // rightBumper.whileTrue(new SequentialCommandGroup(
+        //     new VisionAlignLime(0) //point to the right of tag is pipeline 3
+        // ));
 
         /* Operator Buttons */
         homeElevator.onTrue(new InstantCommand(() -> s_Claw.openClaw(true)).andThen(elevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME)));

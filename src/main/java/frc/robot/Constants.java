@@ -153,7 +153,15 @@ public final class Constants {
         public static final boolean canCoderInvert = true;
 
         public static final int limitSwitchLowPort = 1;
-        public static final int limitSwitchHighPort = 3;
+        public static final int  limitSwitchHighPort = 3;
+
+        public static final double kP = 0.7;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double tolerance = 0.1;
+
+        public static final double homeSpeed = 0.6;
+        public static final double homeLowSpeed = 0.45;
     }
 
     // Claw constants
@@ -166,7 +174,8 @@ public final class Constants {
     // LED constants
     public static final class Led {
         public static final int port = 0;
-        public static final int length = 60;
+        public static final int length = 137;
+        // 1-69 and 70 - 137 is other side of robot
     }
 
     // Vision constants
