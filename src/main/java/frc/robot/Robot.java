@@ -64,13 +64,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("Chosen Auton", m_robotContainer.getAutonName());
-    if (DriverStation.getAlliance() == Alliance.Blue) {
-      RobotContainer.s_Led.setColor(LEDColor.BLUE);
-    }
-    else {
-      RobotContainer.s_Led.setColor(LEDColor.RED);
-    }
+    // SmartDashboard.putString("Chosen Auton", m_robotContainer.getAutonName());
+    // if (DriverStation.getAlliance() == Alliance.Blue) {
+    //   RobotContainer.s_Led.setColor(LEDColor.BLUE);
+    // }
+    // else {
+    //   RobotContainer.s_Led.setColor(LEDColor.RED);
+    // }
+    RobotContainer.s_Led.rainbow();
   }
 
   @Override

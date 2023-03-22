@@ -98,6 +98,7 @@ public class RobotContainer {
     Trigger clawBeam = new Trigger(s_Claw.getBeam()::get);
 
     public RobotContainer() {
+        compressor.disable();
         LiveWindow.disableAllTelemetry();
         DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -112,6 +113,7 @@ public class RobotContainer {
         Command com = new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new ElevatorCommand(level),
+                new InstantCommand(() -> s_Elevator.pistonsDown()),
                 new LedCommand(color, LEDMode.STATIC)
             ),
             new ParallelRaceGroup(
