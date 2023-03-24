@@ -139,9 +139,9 @@ public final class Constants {
         /* Encoder Levels */
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
-        public static final double midEncoderPos = 2.85;
+        public static final double midEncoderPos = 2.75; //2.85
         public static final double highEncoderPos = 4.1;
-        public static final double doubleSubEncoderPos = 2.2;
+        public static final double doubleSubEncoderPos = 2.1;
         public static final double minPivotEncoderPos = 1.39; // When robot automatically pivots up
         public static final double minPivotTolerance = 0.41; // When to start decelerating when returning home
         public static final double maxPivotEncoderPos = 1.4; // When robot automatically pivots down
@@ -153,7 +153,7 @@ public final class Constants {
         public static final boolean canCoderInvert = true;
 
         public static final int limitSwitchLowPort = 1;
-        public static final int  limitSwitchHighPort = 3;
+        public static final int limitSwitchHighPort = 3;
 
         public static final double kP = 0.7;
         public static final double kI = 0.0;

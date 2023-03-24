@@ -3,6 +3,7 @@ package frc.robot;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -98,10 +99,11 @@ public class RobotContainer {
     Trigger clawBeam = new Trigger(s_Claw.getBeam()::get);
 
     public RobotContainer() {
-        compressor.disable();
+        // compressor.disable();
         LiveWindow.disableAllTelemetry();
         DriverStation.silenceJoystickConnectionWarning(true);
 
+        CameraServer.startAutomaticCapture();
         configureButtonBindings();
         configureDefaultCommands();
         configureAutons();
@@ -131,6 +133,7 @@ public class RobotContainer {
         Command com = new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new ElevatorCommand(level),
+                new InstantCommand(() -> s_Elevator.pistonsDown()),
                 new LedCommand(color, LEDMode.STATIC)
             ),
             new ParallelCommandGroup(
@@ -146,16 +149,16 @@ public class RobotContainer {
         return com;
     }
 
-    private static Command requestPieceCommand(LEDColor color){
-        return new SequentialCommandGroup(new Request(color),
-        new ToggleClaw(),
-        new ParallelRaceGroup(
-          new LedCommand(LEDColor.GREEN, LEDMode.PULSE),
-          new WaitCommand(1)
-        ),
-        new LedCommand(LEDColor.OFF, LEDMode.STATIC)
-      );
-    }
+    // private static Command requestPieceCommand(LEDColor color){
+    //     return new SequentialCommandGroup(new Request(color),
+    //     new ToggleClaw(),
+    //     new ParallelRaceGroup(
+    //       new LedCommand(LEDColor.GREEN, LEDMode.PULSE),
+    //       new WaitCommand(1)
+    //     ),
+    //     new LedCommand(LEDColor.OFF, LEDMode.STATIC)
+    //   );
+    // }
 
     public void configureModuleResetBinding(int num) {
         aButton.onTrue(new InstantCommand(() -> s_Swerve.resetCumulativeModules(num)));
@@ -191,18 +194,20 @@ public class RobotContainer {
         toggleClaw.onTrue(new ToggleClaw());
         elevatorPivot.onTrue(new ToggleElevator());
 
-        requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW).andThen(
-            new ParallelRaceGroup(
-                new WaitCommand(0.5),
-                new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
-            ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
-        ));
-        requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE).andThen(
-            new ParallelRaceGroup(
-                new WaitCommand(0.5),
-                new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
-            ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
-        ));
+        // requestCone.onTrue(requestPieceCommand(LEDColor.YELLOW).andThen(
+        //     new ParallelRaceGroup(
+        //         new WaitCommand(0.5),
+        //         new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+        //     ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
+        // ));
+        // requestCube.onTrue(requestPieceCommand(LEDColor.PURPLE).andThen(
+        //     new ParallelRaceGroup(
+        //         new WaitCommand(0.5),
+        //         new LedCommand(LEDColor.GREEN, LEDMode.PULSE)
+        //     ).andThen(new LedCommand(LEDColor.OFF, LEDMode.STATIC))
+        // ));
+        requestCone.onTrue(new LedCommand(LEDColor.YELLOW, LEDMode.STATIC));
+        requestCube.onTrue(new LedCommand(LEDColor.PURPLE, LEDMode.STATIC));
     }
 
     private void configureDefaultCommands() {
@@ -216,6 +221,8 @@ public class RobotContainer {
                 () -> driver.getPOV()
             )
         );
+        s_Led.setDefaultCommand(new LedClaw());
+
     }
 
     private void configureAutons() {
@@ -294,7 +301,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility Slow.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Charge Station Mobility
                     new WaitCommand(7)
                 )
             ),
@@ -321,7 +328,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Red Side 1 Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Red Side 1 Mobility Slow.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Red Side 1 Mobility
                     new WaitCommand(4)
                 )
             )
@@ -334,7 +341,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Blue Side 1 Mobility.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))),
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Blue Side 1 Mobility Slow.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Blue Side 1 Mobility
                     new WaitCommand(4)
                 )
             )

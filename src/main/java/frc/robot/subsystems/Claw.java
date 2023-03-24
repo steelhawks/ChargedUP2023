@@ -42,7 +42,7 @@ public class Claw extends SubsystemBase {
     isClosed = true;
     requestClose = true;
 
-    closeClaw(false);
+    // closeClaw(false);
   }
 
   public void toggleClaw() {

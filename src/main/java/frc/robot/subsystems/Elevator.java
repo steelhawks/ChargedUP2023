@@ -40,7 +40,7 @@ public class Elevator extends SubsystemBase {
 
     pistonVal = false; // true is down
 
-    pistonsUp();
+    // pistonsUp();
     configMotors();
     configCanCoders();
   }
@@ -71,14 +71,17 @@ public class Elevator extends SubsystemBase {
     double encoderVal = getEncoderRotations();
     boolean moveUp = speed < 0;
 
-    if (limitHighPressed() && moveUp) return;
+
 
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
-      motorOne.set(speed);
-      motorTwo.set(speed);
-      if (!isManual && encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal && !doubleSub) {
-        // togglePistons();
-        System.out.println("AUTO TOGGLE WIEFNWEJF");
+      if(!limitHighPressed()) stop();
+      else {
+        motorOne.set(speed);
+        motorTwo.set(speed);
+        if (!isManual && encoderVal >= Constants.Elevator.maxPivotEncoderPos && !pistonVal && !doubleSub) {
+          // togglePistons();
+          System.out.println("AUTO TOGGLE WIEFNWEJF");
+        }
       }
     } else if (!moveUp && !limitLowPressed()) {
       motorOne.set(speed);
@@ -107,7 +110,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean limitHighPressed() {
-    return !limitSwitchHigh.get();
+    return limitSwitchHigh.get();
   }
 
   private void configMotors() {
