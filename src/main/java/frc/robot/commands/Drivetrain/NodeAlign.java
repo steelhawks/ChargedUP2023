@@ -21,7 +21,7 @@ public class NodeAlign implements Command {
     this.piece = piece;
 
     if (piece == AlignType.CONE) {
-      controller = new PIDController(0.15, 0, 0.001);
+      controller = new PIDController(0.1, 0, 0); // 0.15, 0, 0.001
       controller.setTolerance(0.7);
     }
     else {
