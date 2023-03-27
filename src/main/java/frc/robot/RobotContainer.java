@@ -69,6 +69,7 @@ public class RobotContainer {
     private final JoystickButton lowElevator = new JoystickButton(operator, 3);
     private final JoystickButton midElevator = new JoystickButton(operator, 2);
     private final JoystickButton highElevator = new JoystickButton(operator, 1);
+    private final JoystickButton singleSubButton = new JoystickButton(operator, 11);
     private final JoystickButton toggleClaw = new JoystickButton(operator, 4);
     private final JoystickButton doubleSubButton = new JoystickButton(operator, 6);
     private final JoystickButton requestCone = new JoystickButton(operator, 7);
@@ -189,6 +190,8 @@ public class RobotContainer {
         midElevator.onTrue(elevatorLevelCommand(LEDColor.BLUE, ElevatorLevels.MID));
         highElevator.onTrue(elevatorLevelCommand(LEDColor.RED, ElevatorLevels.HIGH));
         doubleSubButton.onTrue(elevatorLevelCommand(LEDColor.ORANGE, ElevatorLevels.DOUBLE_STATION));
+        singleSubButton.onTrue(elevatorLevelCommand(LEDColor.CYAN, ElevatorLevels.SINGLE_STATION));
+
         raiseElevator.whileTrue(new ElevatorManual(true));
         lowerElevator.whileTrue(new ElevatorManual(false));
         toggleClaw.onTrue(new ToggleClaw());
@@ -301,7 +304,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 autoElevatorLevelCommand(LEDColor.WHITE, ElevatorLevels.HOME),
                 new ParallelRaceGroup(
-                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility Slow.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Charge Station Mobility
+                    loadCommand(loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility Slow Long.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Charge Station Mobility Slow
                     new WaitCommand(7)
                 )
             ),
@@ -362,6 +365,16 @@ public class RobotContainer {
         );
 
         private static final Command auto7 = new InstantCommand();
+
+        //Mobility and Balance (WITHOUT PLACING)
+        private static final Command auto8 = new SequentialCommandGroup(
+            new ParallelRaceGroup(
+                loadCommand(loadTrajectory("pathplanner/generatedJSON/Charge Station Mobility Slow Long.wpilib.json")).andThen(new InstantCommand (() -> System.out.println("DONE\n\n\n\n\n\n\nDONE"))), // Charge Station Mobility Slow
+                new WaitCommand(7)
+            ),
+            new BalanceCommand()
+            // new LedCommand(null, LEDMode.RAINBOW)
+        );
     }
 
     public SendableChooser<Command> getAutonChooser() {
@@ -373,14 +386,14 @@ public class RobotContainer {
     // }
 
     public Command getAutonomousCommand() {
-        if (!zero.get()) return Autons.auto6; // blue 1
-        if (!one.get()) return Autons.auto1; // blue 2
-        if (!two.get()) return Autons.auto2; // blue 3
-        if (!three.get()) return Autons.auto5; // blue 4
-        if (!four.get()) return Autons.auto4; // red 1
-        if (!five.get()) return Autons.auto1; // red 2
-        if (!six.get()) return Autons.auto2; // red 3
-        if (!seven.get()) return Autons.auto3; // red 4
+        if (!zero.get()) return Autons.auto6; // blue 1     10
+        if (!one.get()) return Autons.auto1; // blue 2      11
+        if (!two.get()) return Autons.auto2; // blue 3      12
+        if (!three.get()) return Autons.auto5; // blue 4    13
+        if (!four.get()) return Autons.auto4; // red 1      18
+        if (!five.get()) return Autons.auto1; // red 2      19
+        if (!six.get()) return Autons.auto2; // red 3       20
+        if (!seven.get()) return Autons.auto3; // red 4     21
 
         return Autons.auto7;
     }

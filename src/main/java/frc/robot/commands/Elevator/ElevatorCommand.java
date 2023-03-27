@@ -49,7 +49,7 @@ public class ElevatorCommand extends CommandBase {
       }
     }
 
-    if (level == ElevatorLevels.DOUBLE_STATION) {
+    if (level == ElevatorLevels.DOUBLE_STATION || level == ElevatorLevels.SINGLE_STATION) {
       RobotContainer.s_Elevator.moveElevator(speed, false, true);
     }
     else {

@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     Limelight.updateValues();
     SmartDashboard.putNumber("Pressure", RobotContainer.compressor.getPressure());
+    SmartDashboard.putString("Chosen auton", m_robotContainer.getAutonName());
   }
 
   @Override
