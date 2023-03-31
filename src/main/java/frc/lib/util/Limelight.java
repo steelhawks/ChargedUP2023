@@ -24,7 +24,7 @@ public class Limelight {
 
     public static void init(){
         tableInstance = NetworkTableInstance.getDefault();
-        table = tableInstance.getTable("limelight");
+        table = tableInstance.getTable("limelight-top");
         pipeline = 0;
     }
 

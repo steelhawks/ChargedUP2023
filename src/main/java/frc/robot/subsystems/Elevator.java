@@ -71,8 +71,6 @@ public class Elevator extends SubsystemBase {
     double encoderVal = getEncoderRotations();
     boolean moveUp = speed < 0;
 
-
-
     if (moveUp && encoderVal < Constants.Elevator.maxEncoderPos) {
       if(!limitHighPressed()) stop();
       else {

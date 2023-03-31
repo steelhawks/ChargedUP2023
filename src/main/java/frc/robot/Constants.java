@@ -91,7 +91,7 @@ public final class Constants {
             public static final int driveMotorID = 7;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(30.41); //17.930
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(39.8); //30.41
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -139,7 +139,7 @@ public final class Constants {
         /* Encoder Levels */
         public static final double homeEncoderPos = 0;
         public static final double lowEncoderPos = 1.235;
-        public static final double midEncoderPos = 2.75; //2.85
+        public static final double midEncoderPos = 2.65; //2.85
         public static final double highEncoderPos = 4.1;
         public static final double doubleSubEncoderPos = 2.1;
         public static final double singleSubEncoderPos = 0.33;
